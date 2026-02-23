@@ -1008,12 +1008,12 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
   <meta name="description" content="Remove 1-5 negative items from your credit report using federal law. Pay only when progress is made. 90-day money-back guarantee. Start with a $99 forensic audit.">
   <meta property="og:title" content="Clean It Up — Precision Credit Repair | Basic Plan">
   <meta property="og:description" content="You're 1-5 items away from the credit score you deserve. Federal law backed credit repair starting at $99.">
-  <meta property="og:image" content="https://www.genspark.ai/api/files/s/lrprJh4M">
+  <meta property="og:image" content="https://clean-it-up-funnel.pages.dev/static/credit-repair-hero-anime-rick-jefferson-basic-plan.png">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Clean It Up — Precision Credit Repair | Basic Plan">
   <meta name="twitter:description" content="Remove 1-5 negative items from your credit report using federal law. 90-day money-back guarantee.">
-  <meta name="twitter:image" content="https://www.genspark.ai/api/files/s/lrprJh4M">
+  <meta name="twitter:image" content="https://clean-it-up-funnel.pages.dev/static/credit-repair-hero-anime-rick-jefferson-basic-plan.png">
   <meta name="keywords" content="credit repair services, Rick Jefferson credit expert, FCRA credit repair, tri-bureau credit repair, credit score improvement, $99 credit repair plan, no pay until progress credit repair, TransUnion Equifax Experian disputes">
   <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#x1f6e1;</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1231,7 +1231,7 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
 
     <!-- HERO IMAGE -->
     <div class="hero-img">
-      <img src="https://www.genspark.ai/api/files/s/lrprJh4M" alt="Credit repair services Rick Jefferson anime style hero banner showing tri-bureau credit score rising from 580 to 750 with FCRA compliance and $99 basic plan pricing" title="Rick Jefferson Credit Repair Basic Plan - Remove 1-5 Items, No Pay Until Progress" width="1365" height="768" fetchpriority="high" loading="eager">
+      <img src="/static/credit-repair-hero-anime-rick-jefferson-basic-plan.png" alt="Credit repair services Rick Jefferson anime style hero banner showing tri-bureau credit score rising from 580 to 750 with FCRA compliance and $99 basic plan pricing" title="Rick Jefferson Credit Repair Basic Plan - Remove 1-5 Items, No Pay Until Progress" width="1365" height="768" fetchpriority="high" loading="eager">
     </div>
 
     <div class="hc" style="padding-top:0">
@@ -1273,7 +1273,7 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
 
       <!-- PAIN POINTS IMAGE -->
       <div class="sec-img ao s1">
-        <img src="https://www.genspark.ai/api/files/s/MQzVrV53" alt="Common credit repair problems visualization showing paid collections still on report, old late payments dragging score, DIY disputes rejected, confusion about removable items - Rick Jefferson solutions" title="Credit Repair Pain Points - Why DIY Disputes Fail and Expert Help Succeeds" width="1024" height="1024" loading="lazy">
+        <img src="/static/credit-repair-pain-points-problem-visualization.png" alt="Common credit repair problems visualization showing paid collections still on report, old late payments dragging score, DIY disputes rejected, confusion about removable items - Rick Jefferson solutions" title="Credit Repair Pain Points - Why DIY Disputes Fail and Expert Help Succeeds" width="1024" height="1024" loading="lazy">
       </div>
 
       <div class="pg">
@@ -1295,7 +1295,7 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
 
       <!-- VALUE STACK IMAGE -->
       <div class="sec-img ao s1" style="margin-bottom:3rem">
-        <img src="https://www.genspark.ai/api/files/s/2vRLsR9K" alt="Credit repair basic plan value stack showing $872 total value for $99 monthly including forensic audit, restoration roadmap, statute-specific disputes, progress reports, email support, education library - Rick Jefferson" title="Credit Repair Basic Plan Value - $872 Worth of Services for $99/Month" width="1024" height="1024" loading="lazy">
+        <img src="/static/credit-repair-value-stack-package-inclusions.png" alt="Credit repair basic plan value stack showing $872 total value for $99 monthly including forensic audit, restoration roadmap, statute-specific disputes, progress reports, email support, education library - Rick Jefferson" title="Credit Repair Basic Plan Value - $872 Worth of Services for $99/Month" width="1024" height="1024" loading="lazy">
       </div>
 
       <div class="fg">
@@ -1325,7 +1325,7 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
 
       <!-- PROCESS WORKFLOW IMAGE -->
       <div class="sec-img ao s1" style="margin-bottom:3rem">
-        <img src="https://www.genspark.ai/api/files/s/UE00KFzE" alt="5-step credit repair process workflow diagram Rick Jefferson showing MyFreeScoreNow monitoring activation, forensic audit, statute-specific FCRA disputes, and pay-only-when-progress-made billing" title="How Credit Repair Works - 5-Step FCRA-Backed Process by Rick Jefferson" width="1365" height="768" loading="lazy">
+        <img src="/static/credit-repair-5-step-process-workflow-diagram.png" alt="5-step credit repair process workflow diagram Rick Jefferson showing MyFreeScoreNow monitoring activation, forensic audit, statute-specific FCRA disputes, and pay-only-when-progress-made billing" title="How Credit Repair Works - 5-Step FCRA-Backed Process by Rick Jefferson" width="1365" height="768" loading="lazy">
       </div>
 
       <div class="stl">
@@ -1345,7 +1345,7 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
 
       <!-- COMPLIANCE IMAGE -->
       <div class="sec-img ao s1" style="margin-bottom:2rem">
-        <img src="https://www.genspark.ai/api/files/s/OwYLOgsK" alt="Federal credit repair compliance badges showing CROA, FCRA, FDCPA, TSR, FTC, CFPB alignment - Rick Jefferson Solutions fully compliant credit repair organization" title="Federally Compliant Credit Repair - CROA, FCRA, FDCPA, TSR Certified" width="1024" height="768" loading="lazy">
+        <img src="/static/credit-repair-federal-compliance-trust-badges.png" alt="Federal credit repair compliance badges showing CROA, FCRA, FDCPA, TSR, FTC, CFPB alignment - Rick Jefferson Solutions fully compliant credit repair organization" title="Federally Compliant Credit Repair - CROA, FCRA, FDCPA, TSR Certified" width="1024" height="768" loading="lazy">
       </div>
 
       <div class="cpg">
@@ -1366,7 +1366,7 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
 
       <!-- CTA URGENCY BANNER IMAGE -->
       <div class="cta-banner-img ao">
-        <img src="https://www.genspark.ai/api/files/s/nwESbFu5" alt="Credit repair enrollment call-to-action banner showing limited 12 spots remaining this month, countdown timer, start basic plan $99 button - Rick Jefferson urgency offer" title="Enroll Now - Limited Credit Repair Spots Available This Month" width="1365" height="768" loading="lazy">
+        <img src="/static/credit-repair-cta-enrollment-closing-urgency-banner.png" alt="Credit repair enrollment call-to-action banner showing limited 12 spots remaining this month, countdown timer, start basic plan $99 button - Rick Jefferson urgency offer" title="Enroll Now - Limited Credit Repair Spots Available This Month" width="1365" height="768" loading="lazy">
       </div>
 
       <div class="ao">
@@ -1376,7 +1376,7 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
 
       <!-- GUARANTEE SEAL IMAGE -->
       <div class="guarantee-img ao">
-        <img src="https://www.genspark.ai/api/files/s/xXymvXu5" alt="90-day money-back guarantee seal for credit repair services - no verified improvement equals full refund, no questions, no conditions - Rick Jefferson commitment" title="90-Day Money-Back Guarantee - Risk-Free Credit Repair Services" width="1024" height="1024" loading="lazy">
+        <img src="/static/credit-repair-90-day-money-back-guarantee-seal.png" alt="90-day money-back guarantee seal for credit repair services - no verified improvement equals full refund, no questions, no conditions - Rick Jefferson commitment" title="90-Day Money-Back Guarantee - Risk-Free Credit Repair Services" width="1024" height="1024" loading="lazy">
       </div>
 
       <div class="gb ao">
