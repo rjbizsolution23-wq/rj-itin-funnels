@@ -1073,12 +1073,12 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
   <meta name="description" content="ITIN credit repair for individuals without an SSN. Remove negative items from your ITIN credit file using FCRA, ECOA &amp; federal law. All 3 bureaus accept ITINs. 90-day money-back guarantee. $99 forensic audit.">
   <meta property="og:title" content="Clean It Up — ITIN Credit Repair | No SSN Required">
   <meta property="og:description" content="Have an ITIN? You have the SAME credit dispute rights as SSN holders under federal law. We fix ITIN credit files across all 3 bureaus. $99 to start.">
-  <meta property="og:image" content="https://media.rickjeffersonsolutions.com/basic/Professional_credit_repair_hero_banner_image_featu-1771867694534.png">
+  <meta property="og:image" content="https://media.rickjeffersonsolutions.com/basic%20%20ITIN/Professional_ITIN_credit_repair_hero_banner_featur-1771876741852.png">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Clean It Up — ITIN Credit Repair | No SSN Required">
   <meta name="twitter:description" content="ITIN holders have FULL credit dispute rights under FCRA &amp; ECOA. We repair ITIN credit files across TransUnion, Equifax &amp; Experian. 90-day guarantee.">
-  <meta name="twitter:image" content="https://media.rickjeffersonsolutions.com/basic/Professional_credit_repair_hero_banner_image_featu-1771867694534.png">
+  <meta name="twitter:image" content="https://media.rickjeffersonsolutions.com/basic%20%20ITIN/Professional_ITIN_credit_repair_hero_banner_featur-1771876741852.png">
   <meta name="keywords" content="ITIN credit repair, credit repair with ITIN number, ITIN credit score, fix credit without SSN, ITIN credit file disputes, ITIN TransUnion Equifax Experian, FCRA ITIN rights, ECOA credit protection, credit repair for immigrants, ITIN credit bureau disputes, Rick Jefferson ITIN credit expert, $99 ITIN credit audit">
   <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#x1f6e1;</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1296,7 +1296,7 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
 
     <!-- HERO IMAGE -->
     <div class="hero-img">
-      <img src="https://media.rickjeffersonsolutions.com/basic/Professional_credit_repair_hero_banner_image_featu-1771867694534.png" alt="Credit repair services Rick Jefferson anime style hero banner showing tri-bureau credit score rising from 580 to 750 with FCRA compliance and $99 basic plan pricing" title="Rick Jefferson Credit Repair Basic Plan - Remove 1-5 Items, No Pay Until Progress" width="1365" height="768" fetchpriority="high" loading="eager">
+      <img src="https://media.rickjeffersonsolutions.com/basic%20%20ITIN/Professional_ITIN_credit_repair_hero_banner_featur-1771876741852.png" alt="ITIN credit repair hero banner featuring Rick Jefferson - fix your credit with an ITIN number, all 3 bureaus accept ITINs, FCRA and ECOA protected, $99 basic plan" title="ITIN Credit Repair by Rick Jefferson - No SSN Required, Full Federal Protection" width="1365" height="768" fetchpriority="high" loading="eager">
     </div>
 
     <div class="hc" style="padding-top:0">
@@ -1339,7 +1339,7 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
 
       <!-- PAIN POINTS IMAGE -->
       <div class="sec-img ao s1">
-        <img src="https://media.rickjeffersonsolutions.com/basic/Professional_credit_repair_pain_points_visualizati-1771867699218.png" alt="Common credit repair problems visualization showing paid collections still on report, old late payments dragging score, DIY disputes rejected, confusion about removable items - Rick Jefferson solutions" title="Credit Repair Pain Points - Why DIY Disputes Fail and Expert Help Succeeds" width="1024" height="1024" loading="lazy">
+        <img src="https://media.rickjeffersonsolutions.com/basic%20%20ITIN/ITIN_credit_problems_visualization_2x2_grid_with_R-1771876471341.png" alt="ITIN credit problems visualization 2x2 grid - told we cant help you with ITIN, collections on ITIN file, cant get approved for mortgage or auto loan, dont know how to dispute with ITIN number" title="ITIN Credit Repair Pain Points - Problems ITIN Holders Face Every Day" width="1024" height="1024" loading="lazy">
       </div>
 
       <div class="pg">
@@ -1361,7 +1361,7 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
 
       <!-- VALUE STACK IMAGE -->
       <div class="sec-img ao s1" style="margin-bottom:3rem">
-        <img src="https://media.rickjeffersonsolutions.com/basic/Professional_credit_repair_value_stack_visualizati-1771867708829.png" alt="Credit repair basic plan value stack showing $872 total value for $99 monthly including forensic audit, restoration roadmap, statute-specific disputes, progress reports, email support, education library - Rick Jefferson" title="Credit Repair Basic Plan Value - $872 Worth of Services for $99/Month" width="1024" height="1024" loading="lazy">
+        <img src="https://media.rickjeffersonsolutions.com/basic%20%20ITIN/Bilingual_support_split-screen_English_leftSpanis-1771876500803.png" alt="ITIN credit repair bilingual support - English and Spanish split screen showing full service in both languages, $872 total value for $99 monthly, forensic audit, restoration roadmap, disputes, progress reports" title="Bilingual ITIN Credit Repair - English and Spanish Support Included" width="1024" height="1024" loading="lazy">
       </div>
 
       <div class="fg">
@@ -1391,7 +1391,7 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
 
       <!-- PROCESS WORKFLOW IMAGE -->
       <div class="sec-img ao s1" style="margin-bottom:3rem">
-        <img src="https://media.rickjeffersonsolutions.com/basic/Professional_credit_repair_process_workflow_diagra-1771867705162.png" alt="5-step credit repair process workflow diagram Rick Jefferson showing MyFreeScoreNow monitoring activation, forensic audit, statute-specific FCRA disputes, and pay-only-when-progress-made billing" title="How Credit Repair Works - 5-Step FCRA-Backed Process by Rick Jefferson" width="1365" height="768" loading="lazy">
+        <img src="https://media.rickjeffersonsolutions.com/basic%20%20ITIN/5-step_ITIN_credit_repair_workflow_horizontal_time-1771876767740.png" alt="5-step ITIN credit repair workflow - activate MyFreeScoreNow with ITIN, pay $99 audit fee, review ITIN credit audit, file ITIN-specific bureau disputes, pay only when progress is made" title="How ITIN Credit Repair Works - 5-Step Process Using FCRA and ECOA" width="1365" height="768" loading="lazy">
       </div>
 
       <div class="stl">
@@ -1411,7 +1411,7 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
 
       <!-- COMPLIANCE IMAGE -->
       <div class="sec-img ao s1" style="margin-bottom:2rem">
-        <img src="/static/credit-repair-federal-compliance-trust-badges.png" alt="Federal credit repair compliance badges showing CROA, FCRA, FDCPA, TSR, FTC, CFPB alignment - Rick Jefferson Solutions fully compliant credit repair organization" title="Federally Compliant Credit Repair - CROA, FCRA, FDCPA, TSR Certified" width="1024" height="768" loading="lazy">
+        <img src="https://media.rickjeffersonsolutions.com/basic%20%20ITIN/Federal_law_protection_badges_2x3_grid_for_ITIN_B-1771876776233.png" alt="Federal law protection badges for ITIN credit repair - ECOA national origin protection, FCRA same rights same law, CROA compliant, FDCPA enforced, TSR FTC CFPB aligned, state law compliant" title="ITIN Holders Have Full Federal Protection - ECOA, FCRA, CROA, FDCPA Compliance Badges" width="1024" height="768" loading="lazy">
       </div>
 
       <div class="cpg">
@@ -1432,7 +1432,7 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
 
       <!-- CTA URGENCY BANNER IMAGE -->
       <div class="cta-banner-img ao">
-        <img src="https://media.rickjeffersonsolutions.com/basic/Professional_call-to-action_enrollment_urgency_ban-1771867717605.png" alt="Credit repair enrollment call-to-action banner showing limited 12 spots remaining this month, countdown timer, start basic plan $99 button - Rick Jefferson urgency offer" title="Enroll Now - Limited Credit Repair Spots Available This Month" width="1365" height="768" loading="lazy">
+        <img src="https://media.rickjeffersonsolutions.com/basic%20%20ITIN/Final_CTA_urgency_banner_full-width_Ocean_Drive_Pi-1771876505174.png" alt="ITIN credit repair enrollment CTA banner - ready to clean up your ITIN credit file, limited spots, $99 audit, 90-day money-back guarantee, start now" title="Start Your ITIN Credit Repair Now - Limited Spots Available" width="1365" height="768" loading="lazy">
       </div>
 
       <div class="ao">
