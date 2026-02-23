@@ -152,7 +152,7 @@ app.post('/api/checkout', async (c) => {
     params.append('cancel_url', `${c.req.header('origin') || 'https://clean-it-up-funnel.pages.dev'}/?canceled=true`)
     params.append('line_items[0][price_data][currency]', 'usd')
     params.append('line_items[0][price_data][product_data][name]', 'Forensic 3-Bureau Credit Audit')
-    params.append('line_items[0][price_data][product_data][description]', 'Complete forensic audit across TransUnion, Equifax, and Experian + Personalized 10-Point Restoration Roadmap. Delivered within 5 business days.')
+    params.append('line_items[0][price_data][product_data][description]', 'Complete forensic audit across TransUnion, Equifax, and Experian + Personalized 10-Point Restoration Roadmap. Delivered within 24–48 hours.')
     params.append('line_items[0][price_data][unit_amount]', '9900') // $99.00
     params.append('line_items[0][quantity]', '1')
     params.append('payment_method_types[0]', 'card')
@@ -447,7 +447,7 @@ function successPageHTML(): string {
       <div class="step">
         <div class="step-num">3</div>
         <div>
-          <h3>Audit Delivered in 5 Business Days</h3>
+          <h3>Audit Delivered in 24–48 Hours</h3>
           <p>Your complete forensic 3-bureau audit + personalized 10-Point Restoration Roadmap will be emailed to you.</p>
         </div>
       </div>
@@ -940,7 +940,7 @@ function termsPageHTML(): string {
 
     <h2>4. Fees and Billing</h2>
     <h3>4.1 Audit Fee</h3>
-    <p>A one-time fee of $99.00 is charged for your forensic 3-bureau credit audit and personalized 10-Point Restoration Roadmap. This fee is for a <strong>completed, delivered product</strong> and is charged at the time of purchase via Stripe secure checkout. The completed audit and roadmap are delivered within 5 business days.</p>
+    <p>A one-time fee of $99.00 is charged for your forensic 3-bureau credit audit and personalized 10-Point Restoration Roadmap. This fee is for a <strong>completed, delivered product</strong> and is charged at the time of purchase via Stripe secure checkout. The completed audit and roadmap are delivered within 24–48 hours.</p>
     <h3>4.2 Monthly Service Fee</h3>
     <p>A monthly service fee of $99.00 covers dispute filing, tracking, follow-up, and progress reporting. <strong>This fee is charged only in months where verifiable progress has been documented</strong> (deletions, corrections, or verified score improvements). If no progress is made in a given month, no service fee is charged for that month.</p>
     <h3>4.3 No Advance Fees for Disputes</h3>
@@ -1330,7 +1330,7 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
 
       <div class="stl">
         <div class="sc ao asl s1"><div class="sn">01</div><div><h3>Activate MyFreeScoreNow Monitoring ($29.99/mo)</h3><p>This gives us live tri-bureau visibility into your file — real-time intelligence to track every deletion, change, and score movement. Required before any work begins.</p></div></div>
-        <div class="sc ao asl s2"><div class="sn">02</div><div><h3>Pay Your One-Time Audit Fee ($99)</h3><p>Covers your complete forensic 3-bureau credit audit plus personalized 10-Point Restoration Roadmap. Delivered within 5 business days.</p></div></div>
+        <div class="sc ao asl s2"><div class="sn">02</div><div><h3>Pay Your One-Time Audit Fee ($99)</h3><p>Covers your complete forensic 3-bureau credit audit plus personalized 10-Point Restoration Roadmap. Delivered within 24–48 hours.</p></div></div>
         <div class="sc ao asl s3"><div class="sn">03</div><div><h3>Review Your Audit Report &amp; Roadmap</h3><p>Before a single dispute goes out, you see exactly what we found and what we're targeting. No surprises. No black boxes.</p></div></div>
         <div class="sc ao asl s4"><div class="sn">04</div><div><h3>We File Statute-Specific Disputes</h3><p>Personalized letters citing specific FCRA violations. We track every 30-day response window and re-dispute with escalated arguments when bureaus push back.</p></div></div>
         <div class="sc ao asl s5"><div class="sn">05</div><div><h3>You're Only Billed When Things Move</h3><p>Documented deletions, corrections, or verified score improvements = your $99 monthly fee is charged. Nothing moved? Not billed. Simple.</p></div></div>
@@ -1433,7 +1433,7 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
           <p>Your info has been captured. Complete these two steps to begin your credit repair:</p>
           <div class="nsa">
             <div class="nsi"><div class="nsn">1</div><div><a href="${mfsnUrl}" target="_blank" id="mfsnLink">Activate MyFreeScoreNow Monitoring &rarr;</a><br><span>$29.99/mo — Required before audit begins</span></div></div>
-            <div class="nsi"><div class="nsn">2</div><div><a href="#" onclick="startCheckout()" id="checkoutLink">Pay $99 Audit Fee (Secure Checkout) &rarr;</a><br><span>Stripe-secured payment — Audit delivered in 5 business days</span></div></div>
+            <div class="nsi"><div class="nsn">2</div><div><a href="#" onclick="startCheckout()" id="checkoutLink">Pay $99 Audit Fee (Secure Checkout) &rarr;</a><br><span>Stripe-secured payment — Audit delivered in 24–48 hours</span></div></div>
           </div>
         </div>
       </div>
