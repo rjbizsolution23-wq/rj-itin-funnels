@@ -1337,11 +1337,6 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
         <p class="sts">Having an ITIN doesn't mean you have fewer rights — but the system makes it feel that way. We fix that.</p>
       </div>
 
-      <!-- PAIN POINTS IMAGE -->
-      <div class="sec-img ao s1">
-        <img src="https://media.rickjeffersonsolutions.com/basic%20%20ITIN/ITIN_credit_problems_visualization_2x2_grid_with_R-1771876471341.png" alt="ITIN credit problems visualization 2x2 grid - told we cant help you with ITIN, collections on ITIN file, cant get approved for mortgage or auto loan, dont know how to dispute with ITIN number" title="ITIN Credit Repair Pain Points - Problems ITIN Holders Face Every Day" width="1024" height="1024" loading="lazy">
-      </div>
-
       <div class="pg">
         <div class="pc ao s1"><div class="iw"><i data-lucide="x-circle"></i></div><h3>Told "we can't help you" because you have an ITIN</h3><p>Wrong. Under ECOA (15 U.S.C. § 1691), creditors cannot discriminate based on national origin. Your ITIN file has the same rights.</p></div>
         <div class="pc ao s2"><div class="iw"><i data-lucide="x-circle"></i></div><h3>Collections or errors reporting on your ITIN credit file</h3><p>Bureaus accept ITINs — and the FCRA requires them to investigate disputes from ITIN holders the same as SSN holders.</p></div>
