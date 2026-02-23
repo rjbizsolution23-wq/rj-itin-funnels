@@ -1083,9 +1083,18 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
   <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#x1f6e1;</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;600;700;900&family=Noto+Sans:wght@400;600;700;900&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <style>
+    /* ===== LANGUAGE SWITCHER ===== */
+    .lang-bar{position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(90deg,#1e1b4b,#172554);border-bottom:1px solid rgba(59,130,246,0.3);padding:.35rem 1rem;display:flex;align-items:center;justify-content:center;gap:.4rem;font-size:.8rem;flex-wrap:wrap}
+    .lang-label{color:#9ca3af;margin-right:.15rem;font-size:.7rem}
+    .lang-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#d1d5db;padding:.25rem .6rem;border-radius:6px;font-size:.72rem;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:.3rem;font-family:inherit;white-space:nowrap}
+    .lang-btn:hover{background:rgba(59,130,246,.3);border-color:rgba(59,130,246,.5);color:#fff}
+    .lang-btn.active{background:linear-gradient(135deg,#3b82f6,#06b6d4);border-color:transparent;color:#fff;font-weight:700}
+    .lang-btn .flag{font-size:.95rem;line-height:1}
+    body.has-lang-bar{padding-top:36px}
+    @media(max-width:600px){.lang-bar{gap:.25rem;padding:.3rem .5rem}.lang-btn{padding:.2rem .45rem;font-size:.65rem}.lang-label{display:none}body.has-lang-bar{padding-top:34px}}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html{scroll-behavior:smooth}
     body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:#030712;color:#fff;line-height:1.6;overflow-x:hidden}
@@ -1278,7 +1287,16 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
   }
   </script>
 </head>
-<body>
+<body class="has-lang-bar">
+
+  <!-- ===== LANGUAGE SWITCHER BAR ===== -->
+  <div class="lang-bar" id="langBar">
+    <span class="lang-label" data-i18n="lang_label">Language:</span>
+    <button class="lang-btn active" onclick="switchLang('en')" data-lang="en"><span class="flag">&#127482;&#127480;</span> English</button>
+    <button class="lang-btn" onclick="switchLang('es')" data-lang="es"><span class="flag">&#127474;&#127485;</span> Español</button>
+    <button class="lang-btn" onclick="switchLang('zh')" data-lang="zh"><span class="flag">&#127464;&#127475;</span> 中文</button>
+    <button class="lang-btn" onclick="switchLang('vi')" data-lang="vi"><span class="flag">&#127483;&#127475;</span> Tiếng Việt</button>
+  </div>
 
   <!-- ===== HERO SECTION ===== -->
   <section class="hero" id="hero">
@@ -1289,9 +1307,9 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
     </div>
 
     <div class="hc">
-      <div class="ub"><i data-lucide="alert-triangle"></i><span>Limited Spots Available This Month — Only 12 Remaining</span></div>
-      <h1>Have an ITIN? You Have<span class="gt">Full Credit Repair Rights</span></h1>
-      <p class="st">All three credit bureaus — TransUnion, Equifax, and Experian — accept ITIN numbers. Under the FCRA and ECOA, you have the <strong>exact same dispute rights</strong> as SSN holders. We use federal law to challenge every inaccurate item on your ITIN credit file — and you don't pay a cent until something actually gets removed.</p>
+      <div class="ub"><i data-lucide="alert-triangle"></i><span data-i18n="hero_urgency">Limited Spots Available This Month — Only 12 Remaining</span></div>
+      <h1 data-i18n="hero_title" data-i18n-html="1">Have an ITIN? You Have<span class="gt">Full Credit Repair Rights</span></h1>
+      <p class="st" data-i18n="hero_subtitle">All three credit bureaus — TransUnion, Equifax, and Experian — accept ITIN numbers. Under the FCRA and ECOA, you have the <strong>exact same dispute rights</strong> as SSN holders. We use federal law to challenge every inaccurate item on your ITIN credit file — and you don't pay a cent until something actually gets removed.</p>
     </div>
 
     <!-- HERO IMAGE -->
@@ -1301,27 +1319,27 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
 
     <div class="hc" style="padding-top:0">
       <div class="vp">
-        <span class="vpi">&#10003; Works With ITIN — No SSN Needed</span>
-        <span class="vpi">&#10003; All 3 Bureaus Accept ITINs</span>
-        <span class="vpi">&#10003; FCRA + ECOA Protected</span>
-        <span class="vpi">&#10003; No Pay Until Progress</span>
-        <span class="vpi">&#10003; 90-Day Money Back</span>
-        <span class="vpi">&#10003; Starts at $99</span>
+        <span class="vpi" data-i18n="vp_itin">&#10003; Works With ITIN — No SSN Needed</span>
+        <span class="vpi" data-i18n="vp_bureaus">&#10003; All 3 Bureaus Accept ITINs</span>
+        <span class="vpi" data-i18n="vp_fcra">&#10003; FCRA + ECOA Protected</span>
+        <span class="vpi" data-i18n="vp_nopay">&#10003; No Pay Until Progress</span>
+        <span class="vpi" data-i18n="vp_guarantee">&#10003; 90-Day Money Back</span>
+        <span class="vpi" data-i18n="vp_price">&#10003; Starts at $99</span>
       </div>
       <div class="cdw">
-        <p class="cdl">&#9889; Enrollment Closes In</p>
+        <p class="cdl" data-i18n="countdown_label">&#9889; Enrollment Closes In</p>
         <div class="cdt">
-          <div class="cdb"><div class="cdv" id="cd-h">23</div><div class="cdu">Hours</div></div>
-          <div class="cdb"><div class="cdv" id="cd-m">59</div><div class="cdu">Minutes</div></div>
-          <div class="cdb"><div class="cdv" id="cd-s">59</div><div class="cdu">Seconds</div></div>
+          <div class="cdb"><div class="cdv" id="cd-h">23</div><div class="cdu" data-i18n="cd_hours">Hours</div></div>
+          <div class="cdb"><div class="cdv" id="cd-m">59</div><div class="cdu" data-i18n="cd_minutes">Minutes</div></div>
+          <div class="cdb"><div class="cdv" id="cd-s">59</div><div class="cdu" data-i18n="cd_seconds">Seconds</div></div>
         </div>
       </div>
       <div class="cw">
-        <button class="cb" onclick="openModal()"><span>&#9654; Start My Basic Plan Now &#9654;</span><i data-lucide="arrow-right"></i></button>
+        <button class="cb" onclick="openModal()"><span data-i18n="hero_cta">&#9654; Start My Basic Plan Now &#9654;</span><i data-lucide="arrow-right"></i></button>
       </div>
-      <p class="cts">+ $29.99/mo credit monitoring required &bull; One-time $99 audit fee &bull; Only billed when progress is made</p>
+      <p class="cts" data-i18n="hero_price_note">+ $29.99/mo credit monitoring required &bull; One-time $99 audit fee &bull; Only billed when progress is made</p>
       <div class="spots-bar">
-        <p class="spots-text">Limited Spots Available This Month - <em>Only 12 Remaining</em></p>
+        <p class="spots-text" data-i18n="spots_text">Limited Spots Available This Month - <em>Only 12 Remaining</em></p>
         <div class="bar-track"><div class="bar-fill"></div></div>
         <p class="bar-label">12 of 24</p>
       </div>
@@ -1333,8 +1351,8 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
   <section class="sp" id="problems">
     <div class="cs">
       <div class="tc ao">
-        <h2 class="stt">Sound Familiar? ITIN Credit Holders Face These Every Day</h2>
-        <p class="sts">Having an ITIN doesn't mean you have fewer rights — but the system makes it feel that way. We fix that.</p>
+        <h2 class="stt" data-i18n="pain_title">Sound Familiar? ITIN Credit Holders Face These Every Day</h2>
+        <p class="sts" data-i18n="pain_subtitle">Having an ITIN doesn't mean you have fewer rights — but the system makes it feel that way. We fix that.</p>
       </div>
 
       <!-- PAIN POINTS IMAGE — Bilingual Support -->
@@ -1343,10 +1361,10 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
       </div>
 
       <div class="pg">
-        <div class="pc ao s1"><div class="iw"><i data-lucide="x-circle"></i></div><h3>Told "we can't help you" because you have an ITIN</h3><p>Wrong. Under ECOA (15 U.S.C. § 1691), creditors cannot discriminate based on national origin. Your ITIN file has the same rights.</p></div>
-        <div class="pc ao s2"><div class="iw"><i data-lucide="x-circle"></i></div><h3>Collections or errors reporting on your ITIN credit file</h3><p>Bureaus accept ITINs — and the FCRA requires them to investigate disputes from ITIN holders the same as SSN holders.</p></div>
-        <div class="pc ao s3"><div class="iw"><i data-lucide="x-circle"></i></div><h3>Can't get approved for a mortgage, auto loan, or credit card</h3><p>Inaccurate negatives on your ITIN file block approvals. ITIN loans exist — but only if your report is clean.</p></div>
-        <div class="pc ao s4"><div class="iw"><i data-lucide="x-circle"></i></div><h3>Don't know how to dispute with an ITIN number</h3><p>Bureaus have different ITIN dispute procedures. We know exactly how to file with TransUnion, Equifax, and Experian using your ITIN.</p></div>
+        <div class="pc ao s1"><div class="iw"><i data-lucide="x-circle"></i></div><h3 data-i18n="pain1_title">Told "we can't help you" because you have an ITIN</h3><p data-i18n="pain1_desc">Wrong. Under ECOA (15 U.S.C. § 1691), creditors cannot discriminate based on national origin. Your ITIN file has the same rights.</p></div>
+        <div class="pc ao s2"><div class="iw"><i data-lucide="x-circle"></i></div><h3 data-i18n="pain2_title">Collections or errors reporting on your ITIN credit file</h3><p data-i18n="pain2_desc">Bureaus accept ITINs — and the FCRA requires them to investigate disputes from ITIN holders the same as SSN holders.</p></div>
+        <div class="pc ao s3"><div class="iw"><i data-lucide="x-circle"></i></div><h3 data-i18n="pain3_title">Can't get approved for a mortgage, auto loan, or credit card</h3><p data-i18n="pain3_desc">Inaccurate negatives on your ITIN file block approvals. ITIN loans exist — but only if your report is clean.</p></div>
+        <div class="pc ao s4"><div class="iw"><i data-lucide="x-circle"></i></div><h3 data-i18n="pain4_title">Don't know how to dispute with an ITIN number</h3><p data-i18n="pain4_desc">Bureaus have different ITIN dispute procedures. We know exactly how to file with TransUnion, Equifax, and Experian using your ITIN.</p></div>
       </div>
     </div>
   </section>
@@ -1355,31 +1373,31 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
   <section class="sf" id="features">
     <div class="ct">
       <div class="tc ao">
-        <h2 class="stt">Everything You Get With The <span style="color:#60a5fa">ITIN Basic Plan</span></h2>
-        <p class="sts">Credit repair built specifically for ITIN holders. We know the bureau-specific ITIN procedures, the federal laws that protect you, and exactly how to get results.</p>
+        <h2 class="stt" data-i18n="feat_title" data-i18n-html="1">Everything You Get With The <span style="color:#60a5fa">ITIN Basic Plan</span></h2>
+        <p class="sts" data-i18n="feat_subtitle">Credit repair built specifically for ITIN holders. We know the bureau-specific ITIN procedures, the federal laws that protect you, and exactly how to get results.</p>
       </div>
 
       <!-- VALUE STACK IMAGE -->
       <div class="sec-img ao s1" style="margin-bottom:3rem">
-        <img src="https://media.rickjeffersonsolutions.com/basic%20%20ITIN/ITIN_Basic_Plan_value_stack_2x3_grid_on_dark_backg-1771876762102.png" alt="ITIN Basic Plan value stack 2x3 grid - forensic 3-bureau ITIN audit, ITIN-specific restoration roadmap, up to 15 statute-specific disputes per month, monthly ITIN credit progress reports, bilingual English and Spanish support, ITIN credit building library" title="ITIN Credit Repair Basic Plan - $872 Value for $99/Month" width="1024" height="1024" loading="lazy">
+        <img src="https://media.rickjeffersonsolutions.com/basic%20%20ITIN/ITIN_Basic_Plan_value_stack_2x3_grid_on_dark_backg-1771876762102.png" alt="ITIN Basic Plan value stack 2x3 grid" title="ITIN Credit Repair Basic Plan - $872 Value for $99/Month" width="1024" height="1024" loading="lazy">
       </div>
 
       <div class="fg">
-        <div class="fc2 ao s1"><div class="fch"><div class="iw"><i data-lucide="file-text"></i></div><span class="fv">$199 Value</span></div><h3>Forensic 3-Bureau ITIN Credit Audit</h3><p>Your full ITIN credit file across TransUnion, Equifax, and Experian — every tradeline, inquiry, and public record reviewed against FCRA accuracy standards using your ITIN number.</p></div>
-        <div class="fc2 ao s2"><div class="fch"><div class="iw"><i data-lucide="bar-chart-2"></i></div><span class="fv">$149 Value</span></div><h3>ITIN-Specific Restoration Roadmap</h3><p>Custom strategy built for ITIN credit files. We know which bureaus require mail-in disputes for ITIN holders vs. online, and we map your 30/60/90-day milestones accordingly.</p></div>
-        <div class="fc2 ao s3"><div class="fch"><div class="iw"><i data-lucide="shield"></i></div><span class="fv">$297 Value</span></div><h3>Up to 15 Statute-Specific Disputes/Mo</h3><p>Personalized dispute letters citing FCRA §611, §623, §605 and ECOA protections — filed with each bureau using their ITIN-specific dispute procedures.</p></div>
-        <div class="fc2 ao s4"><div class="fch"><div class="iw"><i data-lucide="trending-up"></i></div><span class="fv">$99 Value</span></div><h3>Monthly ITIN Credit Progress Reports</h3><p>Documentation of every bureau response, deletion, correction, and score change on your ITIN credit file delivered each billing cycle.</p></div>
-        <div class="fc2 ao s5"><div class="fch"><div class="iw"><i data-lucide="mail"></i></div><span class="fv">$79 Value</span></div><h3>Bilingual Support (English &amp; Spanish)</h3><p>Direct access with guaranteed one-business-day response. Our team communicates in both English and Spanish to ensure nothing gets lost in translation.</p></div>
-        <div class="fc2 ao s6"><div class="fch"><div class="iw"><i data-lucide="book-open"></i></div><span class="fv">$49 Value</span></div><h3>ITIN Credit Building Library</h3><p>How to build credit with an ITIN, secured cards that accept ITINs, ITIN mortgage readiness, utilization strategy, and credit maintenance protocols.</p></div>
+        <div class="fc2 ao s1"><div class="fch"><div class="iw"><i data-lucide="file-text"></i></div><span class="fv">$199 Value</span></div><h3 data-i18n="f1_title">Forensic 3-Bureau ITIN Credit Audit</h3><p data-i18n="f1_desc">Your full ITIN credit file across TransUnion, Equifax, and Experian — every tradeline, inquiry, and public record reviewed against FCRA accuracy standards using your ITIN number.</p></div>
+        <div class="fc2 ao s2"><div class="fch"><div class="iw"><i data-lucide="bar-chart-2"></i></div><span class="fv">$149 Value</span></div><h3 data-i18n="f2_title">ITIN-Specific Restoration Roadmap</h3><p data-i18n="f2_desc">Custom strategy built for ITIN credit files. We know which bureaus require mail-in disputes for ITIN holders vs. online, and we map your 30/60/90-day milestones accordingly.</p></div>
+        <div class="fc2 ao s3"><div class="fch"><div class="iw"><i data-lucide="shield"></i></div><span class="fv">$297 Value</span></div><h3 data-i18n="f3_title">Up to 15 Statute-Specific Disputes/Mo</h3><p data-i18n="f3_desc">Personalized dispute letters citing FCRA §611, §623, §605 and ECOA protections — filed with each bureau using their ITIN-specific dispute procedures.</p></div>
+        <div class="fc2 ao s4"><div class="fch"><div class="iw"><i data-lucide="trending-up"></i></div><span class="fv">$99 Value</span></div><h3 data-i18n="f4_title">Monthly ITIN Credit Progress Reports</h3><p data-i18n="f4_desc">Documentation of every bureau response, deletion, correction, and score change on your ITIN credit file delivered each billing cycle.</p></div>
+        <div class="fc2 ao s5"><div class="fch"><div class="iw"><i data-lucide="mail"></i></div><span class="fv">$79 Value</span></div><h3 data-i18n="f5_title">Bilingual Support (English &amp; Spanish)</h3><p data-i18n="f5_desc">Direct access with guaranteed one-business-day response. Our team communicates in both English and Spanish to ensure nothing gets lost in translation.</p></div>
+        <div class="fc2 ao s6"><div class="fch"><div class="iw"><i data-lucide="book-open"></i></div><span class="fv">$49 Value</span></div><h3 data-i18n="f6_title">ITIN Credit Building Library</h3><p data-i18n="f6_desc">How to build credit with an ITIN, secured cards that accept ITINs, ITIN mortgage readiness, utilization strategy, and credit maintenance protocols.</p></div>
       </div>
 
       <div class="vs ao asi">
-        <p class="lb">Total Value of Everything Above</p>
+        <p class="lb" data-i18n="vs_total_label">Total Value of Everything Above</p>
         <p class="op">$872</p>
-        <p class="nl">You Pay Just</p>
-        <p class="ap">$99<span class="pr">/month</span></p>
-        <p class="pn">+ $99 one-time audit fee + $29.99/mo monitoring<br><strong>Billed only when verifiable progress is made</strong></p>
-        <div style="margin-top:1.5rem"><button class="cb" onclick="openModal()" style="font-size:1.1rem"><span>&#9654; Claim This Deal Now</span><i data-lucide="arrow-right"></i></button></div>
+        <p class="nl" data-i18n="vs_pay_label">You Pay Just</p>
+        <p class="ap">$99<span class="pr" data-i18n="vs_per_month">/month</span></p>
+        <p class="pn" data-i18n="vs_price_note">+ $99 one-time audit fee + $29.99/mo monitoring<br><strong>Billed only when verifiable progress is made</strong></p>
+        <div style="margin-top:1.5rem"><button class="cb" onclick="openModal()" style="font-size:1.1rem"><span data-i18n="vs_cta">&#9654; Claim This Deal Now</span><i data-lucide="arrow-right"></i></button></div>
       </div>
     </div>
   </section>
@@ -1387,19 +1405,19 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
   <!-- ===== HOW IT WORKS ===== -->
   <section class="ss" id="how-it-works">
     <div class="cs">
-      <h2 class="stt tc ao" style="margin-bottom:2.5rem">How ITIN Credit Repair Works</h2>
+      <h2 class="stt tc ao" style="margin-bottom:2.5rem" data-i18n="how_title">How ITIN Credit Repair Works</h2>
 
       <!-- PROCESS WORKFLOW IMAGE -->
       <div class="sec-img ao s1" style="margin-bottom:3rem">
-        <img src="https://media.rickjeffersonsolutions.com/basic%20%20ITIN/5-step_ITIN_credit_repair_workflow_horizontal_time-1771876767740.png" alt="5-step ITIN credit repair workflow - activate MyFreeScoreNow with ITIN, pay $99 audit fee, review ITIN credit audit, file ITIN-specific bureau disputes, pay only when progress is made" title="How ITIN Credit Repair Works - 5-Step Process Using FCRA and ECOA" width="1365" height="768" loading="lazy">
+        <img src="https://media.rickjeffersonsolutions.com/basic%20%20ITIN/5-step_ITIN_credit_repair_workflow_horizontal_time-1771876767740.png" alt="5-step ITIN credit repair workflow" title="How ITIN Credit Repair Works - 5-Step Process Using FCRA and ECOA" width="1365" height="768" loading="lazy">
       </div>
 
       <div class="stl">
-        <div class="sc ao asl s1"><div class="sn">01</div><div><h3>Activate MyFreeScoreNow Monitoring ($29.99/mo)</h3><p>Enroll using your ITIN — MyFreeScoreNow accepts ITIN numbers. This gives us live tri-bureau visibility into your ITIN credit file to track every deletion, change, and score movement.</p></div></div>
-        <div class="sc ao asl s2"><div class="sn">02</div><div><h3>Pay Your One-Time Audit Fee ($99)</h3><p>We pull and analyze your complete ITIN credit file across all 3 bureaus. Your forensic audit + ITIN-specific restoration roadmap are delivered within 24–48 hours.</p></div></div>
-        <div class="sc ao asl s3"><div class="sn">03</div><div><h3>Review Your ITIN Credit Audit &amp; Roadmap</h3><p>Before a single dispute goes out, you see exactly what's on your ITIN file, what's challengeable, and our strategy for each bureau's ITIN-specific dispute process.</p></div></div>
-        <div class="sc ao asl s4"><div class="sn">04</div><div><h3>We File ITIN-Specific Bureau Disputes</h3><p>Personalized letters citing FCRA §611, §623, §605 and ECOA §1691 protections. Filed using each bureau's ITIN dispute procedures — some require mail-in, some accept online. We handle it all.</p></div></div>
-        <div class="sc ao asl s5"><div class="sn">05</div><div><h3>You're Only Billed When Things Move</h3><p>Documented deletions, corrections, or verified score improvements on your ITIN credit file = your $99 monthly fee. Nothing moved? Not billed. Period.</p></div></div>
+        <div class="sc ao asl s1"><div class="sn">01</div><div><h3 data-i18n="step1_title">Activate MyFreeScoreNow Monitoring ($29.99/mo)</h3><p data-i18n="step1_desc">Enroll using your ITIN — MyFreeScoreNow accepts ITIN numbers. This gives us live tri-bureau visibility into your ITIN credit file to track every deletion, change, and score movement.</p></div></div>
+        <div class="sc ao asl s2"><div class="sn">02</div><div><h3 data-i18n="step2_title">Pay Your One-Time Audit Fee ($99)</h3><p data-i18n="step2_desc">We pull and analyze your complete ITIN credit file across all 3 bureaus. Your forensic audit + ITIN-specific restoration roadmap are delivered within 24–48 hours.</p></div></div>
+        <div class="sc ao asl s3"><div class="sn">03</div><div><h3 data-i18n="step3_title">Review Your ITIN Credit Audit &amp; Roadmap</h3><p data-i18n="step3_desc">Before a single dispute goes out, you see exactly what's on your ITIN file, what's challengeable, and our strategy for each bureau's ITIN-specific dispute process.</p></div></div>
+        <div class="sc ao asl s4"><div class="sn">04</div><div><h3 data-i18n="step4_title">We File ITIN-Specific Bureau Disputes</h3><p data-i18n="step4_desc">Personalized letters citing FCRA §611, §623, §605 and ECOA §1691 protections. Filed using each bureau's ITIN dispute procedures — some require mail-in, some accept online. We handle it all.</p></div></div>
+        <div class="sc ao asl s5"><div class="sn">05</div><div><h3 data-i18n="step5_title">You're Only Billed When Things Move</h3><p data-i18n="step5_desc">Documented deletions, corrections, or verified score improvements on your ITIN credit file = your $99 monthly fee. Nothing moved? Not billed. Period.</p></div></div>
       </div>
     </div>
   </section>
@@ -1407,20 +1425,20 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
   <!-- ===== COMPLIANCE SECTION ===== -->
   <section class="scp" id="compliance">
     <div class="cs">
-      <h3 class="cpt ao">&#128274; ITIN Holders Have Full Federal Protection — Here's the Law</h3>
+      <h3 class="cpt ao" data-i18n="comp_title">&#128274; ITIN Holders Have Full Federal Protection — Here's the Law</h3>
 
       <!-- COMPLIANCE IMAGE -->
       <div class="sec-img ao s1" style="margin-bottom:2rem">
-        <img src="https://media.rickjeffersonsolutions.com/basic%20%20ITIN/Federal_law_protection_badges_2x3_grid_for_ITIN_B-1771876776233.png" alt="Federal law protection badges for ITIN credit repair - ECOA national origin protection, FCRA same rights same law, CROA compliant, FDCPA enforced, TSR FTC CFPB aligned, state law compliant" title="ITIN Holders Have Full Federal Protection - ECOA, FCRA, CROA, FDCPA Compliance Badges" width="1024" height="768" loading="lazy">
+        <img src="https://media.rickjeffersonsolutions.com/basic%20%20ITIN/Federal_law_protection_badges_2x3_grid_for_ITIN_B-1771876776233.png" alt="Federal law protection badges for ITIN credit repair" title="ITIN Holders Have Full Federal Protection" width="1024" height="768" loading="lazy">
       </div>
 
       <div class="cpg">
-        <div class="cpc ao s1"><h4>ECOA Protected (15 U.S.C. &sect; 1691)</h4><p>The Equal Credit Opportunity Act prohibits discrimination based on national origin. Creditors and bureaus <strong>cannot</strong> treat your ITIN file differently than an SSN file.</p></div>
-        <div class="cpc ao s2"><h4>FCRA — Same Rights, Same Law</h4><p>Under the FCRA, ITIN holders have the <strong>exact same</strong> dispute rights as SSN holders. §611, §623, §605 — all apply to your ITIN credit file. 30-day investigation windows enforced.</p></div>
-        <div class="cpc ao s3"><h4>CROA Compliant</h4><p>Written contract provided. 3-day cancellation right honored. No advance fees charged until services are performed. Full consumer disclosure per 15 U.S.C. &sect; 1679c.</p></div>
-        <div class="cpc ao s4"><h4>FDCPA Enforced</h4><p>Collection accounts on your ITIN file challenged under FDCPA. Debt validation rights (15 U.S.C. &sect; 1692g) cited. Collectors cannot discriminate based on ITIN status.</p></div>
-        <div class="cpc ao s5"><h4>TSR + FTC + CFPB Aligned</h4><p>No advance fees per TSR. Section 5 FTC Act compliant. CFPB Regulation V and F procedures followed for all ITIN disputes.</p></div>
-        <div class="cpc ao s6"><h4>State Law Compliant</h4><p>New Mexico Unfair Practices Act compliant. State cancellation rights honored. ITIN holders receive all applicable state protections.</p></div>
+        <div class="cpc ao s1"><h4 data-i18n="comp1_title">ECOA Protected (15 U.S.C. &sect; 1691)</h4><p data-i18n="comp1_desc">The Equal Credit Opportunity Act prohibits discrimination based on national origin. Creditors and bureaus <strong>cannot</strong> treat your ITIN file differently than an SSN file.</p></div>
+        <div class="cpc ao s2"><h4 data-i18n="comp2_title">FCRA — Same Rights, Same Law</h4><p data-i18n="comp2_desc">Under the FCRA, ITIN holders have the <strong>exact same</strong> dispute rights as SSN holders. §611, §623, §605 — all apply to your ITIN credit file. 30-day investigation windows enforced.</p></div>
+        <div class="cpc ao s3"><h4 data-i18n="comp3_title">CROA Compliant</h4><p data-i18n="comp3_desc">Written contract provided. 3-day cancellation right honored. No advance fees charged until services are performed. Full consumer disclosure per 15 U.S.C. &sect; 1679c.</p></div>
+        <div class="cpc ao s4"><h4 data-i18n="comp4_title">FDCPA Enforced</h4><p data-i18n="comp4_desc">Collection accounts on your ITIN file challenged under FDCPA. Debt validation rights (15 U.S.C. &sect; 1692g) cited. Collectors cannot discriminate based on ITIN status.</p></div>
+        <div class="cpc ao s5"><h4 data-i18n="comp5_title">TSR + FTC + CFPB Aligned</h4><p data-i18n="comp5_desc">No advance fees per TSR. Section 5 FTC Act compliant. CFPB Regulation V and F procedures followed for all ITIN disputes.</p></div>
+        <div class="cpc ao s6"><h4 data-i18n="comp6_title">State Law Compliant</h4><p data-i18n="comp6_desc">New Mexico Unfair Practices Act compliant. State cancellation rights honored. ITIN holders receive all applicable state protections.</p></div>
       </div>
       <p class="ao" style="text-align:center;margin-top:1.5rem;font-size:.8rem;color:#6b7280">Full legal disclosures: <a href="/legal" style="color:#60a5fa">Legal &amp; Compliance</a> &bull; <a href="/consumer-rights" style="color:#60a5fa">Consumer Rights</a> &bull; <a href="/cancellation" style="color:#60a5fa">Cancellation Policy</a></p>
     </div>
@@ -1436,8 +1454,8 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
       </div>
 
       <div class="ao">
-        <h2 class="stt" style="margin-bottom:1.5rem">Ready to Clean Up Your <span style="color:#60a5fa">ITIN Credit File</span>?</h2>
-        <p class="sts" style="margin-bottom:2rem">Your ITIN gives you credit rights under federal law. Start with your $99 audit — see exactly what's on your ITIN file across all 3 bureaus. Then watch us legally challenge every inaccurate item — and only pay when we get results.</p>
+        <h2 class="stt" style="margin-bottom:1.5rem" data-i18n="cta_title" data-i18n-html="1">Ready to Clean Up Your <span style="color:#60a5fa">ITIN Credit File</span>?</h2>
+        <p class="sts" style="margin-bottom:2rem" data-i18n="cta_subtitle">Your ITIN gives you credit rights under federal law. Start with your $99 audit — see exactly what's on your ITIN file across all 3 bureaus. Then watch us legally challenge every inaccurate item — and only pay when we get results.</p>
       </div>
 
       <!-- GUARANTEE SEAL IMAGE -->
@@ -1447,13 +1465,13 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
 
       <div class="gb ao">
         <div class="shi"><i data-lucide="shield-check"></i></div>
-        <h3>90-Day Money-Back Guarantee</h3>
-        <p>If we can't show a single verified improvement in 90 days, you get every package fee back. No questions. No conditions. No runaround.</p>
+        <h3 data-i18n="guarantee_title">90-Day Money-Back Guarantee</h3>
+        <p data-i18n="guarantee_desc">If we can't show a single verified improvement in 90 days, you get every package fee back. No questions. No conditions. No runaround.</p>
       </div>
 
       <div class="ao">
-        <button class="cb" onclick="openModal()" style="margin:0 auto;font-size:1.3rem;padding:1.4rem 3rem"><span>&#9654; START MY BASIC PLAN NOW &#9654;</span><i data-lucide="arrow-right"></i></button>
-        <p class="fn" style="margin-top:1.25rem">$99 audit fee + $29.99/mo monitoring to start. Monthly $99 fee only charged when progress is verified.<br>Cancel anytime within 3 business days per CROA rights.</p>
+        <button class="cb" onclick="openModal()" style="margin:0 auto;font-size:1.3rem;padding:1.4rem 3rem"><span data-i18n="final_cta">&#9654; START MY BASIC PLAN NOW &#9654;</span><i data-lucide="arrow-right"></i></button>
+        <p class="fn" style="margin-top:1.25rem" data-i18n="final_price_note">$99 audit fee + $29.99/mo monitoring to start. Monthly $99 fee only charged when progress is verified.<br>Cancel anytime within 3 business days per CROA rights.</p>
       </div>
     </div>
   </section>
@@ -1481,22 +1499,22 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
     <div class="md">
       <button class="mc" onclick="closeModal()">&times;</button>
       <div id="formView">
-        <h2>Start Your Basic Plan</h2>
-        <p class="ms">Enter your info below. After submitting, you'll be directed to secure payment for your $99 forensic audit.</p>
+        <h2 data-i18n="modal_title">Start Your Basic Plan</h2>
+        <p class="ms" data-i18n="modal_subtitle">Enter your info below. After submitting, you'll be directed to secure payment for your $99 forensic audit.</p>
         <form id="leadForm" onsubmit="handleSubmit(event)">
-          <div class="fg2"><label for="name">Full Name *</label><input type="text" id="name" name="name" placeholder="John Smith" required></div>
-          <div class="fg2"><label for="email">Email Address *</label><input type="email" id="email" name="email" placeholder="john@example.com" required></div>
-          <div class="fg2"><label for="phone">Phone Number</label><input type="tel" id="phone" name="phone" placeholder="(555) 123-4567"></div>
-          <button type="submit" class="fs" id="submitBtn">Claim My Spot — $99 Audit</button>
-          <p class="fnt">&#128274; Your information is 100% secure and never shared.</p>
+          <div class="fg2"><label for="name" data-i18n="form_name">Full Name *</label><input type="text" id="name" name="name" placeholder="John Smith" required></div>
+          <div class="fg2"><label for="email" data-i18n="form_email">Email Address *</label><input type="email" id="email" name="email" placeholder="john@example.com" required></div>
+          <div class="fg2"><label for="phone" data-i18n="form_phone">Phone Number</label><input type="tel" id="phone" name="phone" placeholder="(555) 123-4567"></div>
+          <button type="submit" class="fs" id="submitBtn" data-i18n="form_submit">Claim My Spot — $99 Audit</button>
+          <p class="fnt" data-i18n="form_secure">&#128274; Your information is 100% secure and never shared.</p>
           <p class="fnt" style="margin-top:.5rem;line-height:1.5">By submitting, you acknowledge our <a href="/consumer-rights" target="_blank" style="color:#60a5fa">Consumer Rights Disclosure</a>, <a href="/terms" target="_blank" style="color:#60a5fa">Terms of Service</a>, and <a href="/privacy" target="_blank" style="color:#60a5fa">Privacy Policy</a>. You have the right to cancel within 3 business days of signing any contract (<a href="/cancellation" target="_blank" style="color:#60a5fa">Cancellation Policy</a>). No credit repair fees are charged until services are fully performed.</p>
         </form>
       </div>
       <div id="successView" style="display:none">
         <div class="fsu">
           <div class="ci"><i data-lucide="check-circle"></i></div>
-          <h3>You're In!</h3>
-          <p>Your info has been captured. Complete these two steps to begin your credit repair:</p>
+          <h3 data-i18n="success_title">You're In!</h3>
+          <p data-i18n="success_desc">Your info has been captured. Complete these two steps to begin your credit repair:</p>
           <div class="nsa">
             <div class="nsi"><div class="nsn">1</div><div><a href="${mfsnUrl}" target="_blank" id="mfsnLink">Activate MyFreeScoreNow Monitoring &rarr;</a><br><span>$29.99/mo — Required before audit begins</span></div></div>
             <div class="nsi"><div class="nsn">2</div><div><a href="#" onclick="startCheckout()" id="checkoutLink">Pay $99 Audit Fee (Secure Checkout) &rarr;</a><br><span>Stripe-secured payment — Audit delivered in 24–48 hours</span></div></div>
@@ -1507,11 +1525,337 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
   </div>
 
   <!-- STICKY CTA BAR -->
-  <div class="sb" id="stickyBar"><button class="cb" onclick="openModal()" style="animation:none"><span>&#9654; Start My Basic Plan — $99</span><i data-lucide="arrow-right"></i></button></div>
+  <div class="sb" id="stickyBar"><button class="cb" onclick="openModal()" style="animation:none"><span data-i18n="sticky_cta">&#9654; Start My Basic Plan — $99</span><i data-lucide="arrow-right"></i></button></div>
 
   <script>
     let currentLeadId=null,currentEmail=null,currentName=null;
-    document.addEventListener('DOMContentLoaded',function(){lucide.createIcons();initP();initAO();initSB();initImgLoad()});
+
+    // ===== MULTILINGUAL TRANSLATION ENGINE =====
+    var currentLang = 'en';
+    var translations = {
+      // ===== SPANISH (ES) =====
+      es: {
+        lang_label: 'Idioma:',
+        hero_urgency: 'Cupos Limitados Este Mes — Solo Quedan 12',
+        hero_title: '¿Tienes un ITIN? Tienes <span class="gt">Derechos Completos de Reparación de Crédito</span>',
+        hero_subtitle: 'Las tres agencias de crédito — TransUnion, Equifax y Experian — aceptan números ITIN. Bajo la FCRA y ECOA, tienes los <strong>mismos derechos de disputa</strong> que los titulares de SSN. Usamos la ley federal para impugnar cada elemento inexacto en tu archivo de crédito ITIN — y no pagas nada hasta que algo se elimine.',
+        vp_itin: '✓ Funciona Con ITIN — Sin SSN',
+        vp_bureaus: '✓ Las 3 Agencias Aceptan ITIN',
+        vp_fcra: '✓ Protegido por FCRA + ECOA',
+        vp_nopay: '✓ No Pagas Hasta Ver Progreso',
+        vp_guarantee: '✓ Garantía de 90 Días',
+        vp_price: '✓ Desde $99',
+        countdown_label: '⚡ La Inscripción Cierra En',
+        cd_hours: 'Horas',
+        cd_minutes: 'Minutos',
+        cd_seconds: 'Segundos',
+        hero_cta: '▶ Comenzar Mi Plan Básico Ahora ▶',
+        hero_price_note: '+ $29.99/mes monitoreo de crédito requerido • Tarifa única de auditoría $99 • Solo se cobra cuando hay progreso',
+        spots_text: 'Cupos Limitados Este Mes - <em>Solo Quedan 12</em>',
+        pain_title: '¿Te Suena Familiar? Los Titulares de ITIN Enfrentan Esto a Diario',
+        pain_subtitle: 'Tener un ITIN no significa que tienes menos derechos — pero el sistema lo hace parecer así. Nosotros lo arreglamos.',
+        pain1_title: 'Te dicen "no podemos ayudarte" porque tienes un ITIN',
+        pain1_desc: 'Incorrecto. Bajo la ECOA (15 U.S.C. § 1691), los acreedores no pueden discriminar por origen nacional. Tu archivo ITIN tiene los mismos derechos.',
+        pain2_title: 'Cobranzas o errores reportados en tu archivo de crédito ITIN',
+        pain2_desc: 'Las agencias aceptan ITIN — y la FCRA les obliga a investigar disputas de titulares de ITIN igual que las de titulares de SSN.',
+        pain3_title: 'No puedes obtener aprobación para hipoteca, auto o tarjeta de crédito',
+        pain3_desc: 'Los negativos inexactos en tu archivo ITIN bloquean aprobaciones. Los préstamos ITIN existen — pero solo si tu reporte está limpio.',
+        pain4_title: 'No sabes cómo disputar con un número ITIN',
+        pain4_desc: 'Las agencias tienen diferentes procedimientos de disputa ITIN. Nosotros sabemos exactamente cómo presentar ante TransUnion, Equifax y Experian con tu ITIN.',
+        feat_title: 'Todo Lo Que Obtienes Con El <span style="color:#60a5fa">Plan Básico ITIN</span>',
+        feat_subtitle: 'Reparación de crédito diseñada específicamente para titulares de ITIN. Conocemos los procedimientos ITIN de cada agencia, las leyes federales que te protegen, y exactamente cómo obtener resultados.',
+        f1_title: 'Auditoría Forense ITIN de 3 Agencias',
+        f1_desc: 'Tu archivo completo de crédito ITIN en TransUnion, Equifax y Experian — cada línea comercial, consulta y registro público revisado contra los estándares de precisión FCRA usando tu número ITIN.',
+        f2_title: 'Hoja de Ruta de Restauración Específica para ITIN',
+        f2_desc: 'Estrategia personalizada para archivos de crédito ITIN. Sabemos qué agencias requieren disputas por correo para titulares de ITIN vs. en línea, y mapeamos tus hitos de 30/60/90 días.',
+        f3_title: 'Hasta 15 Disputas por Estatuto/Mes',
+        f3_desc: 'Cartas de disputa personalizadas citando FCRA §611, §623, §605 y protecciones ECOA — presentadas ante cada agencia usando sus procedimientos específicos de disputa ITIN.',
+        f4_title: 'Reportes Mensuales de Progreso de Crédito ITIN',
+        f4_desc: 'Documentación de cada respuesta de agencia, eliminación, corrección y cambio de puntaje en tu archivo de crédito ITIN entregada en cada ciclo de facturación.',
+        f5_title: 'Soporte Bilingüe (Inglés y Español)',
+        f5_desc: 'Acceso directo con respuesta garantizada en un día hábil. Nuestro equipo se comunica en inglés y español para que nada se pierda en la traducción.',
+        f6_title: 'Biblioteca de Construcción de Crédito ITIN',
+        f6_desc: 'Cómo construir crédito con un ITIN, tarjetas aseguradas que aceptan ITIN, preparación hipotecaria ITIN, estrategia de utilización y protocolos de mantenimiento.',
+        vs_total_label: 'Valor Total de Todo Lo Anterior',
+        vs_pay_label: 'Tú Pagas Solo',
+        vs_per_month: '/mes',
+        vs_price_note: '+ $99 tarifa única de auditoría + $29.99/mes monitoreo<br><strong>Solo se cobra cuando se verifica progreso</strong>',
+        vs_cta: '▶ Reclamar Esta Oferta Ahora',
+        how_title: 'Cómo Funciona la Reparación de Crédito ITIN',
+        step1_title: 'Activar Monitoreo MyFreeScoreNow ($29.99/mes)',
+        step1_desc: 'Inscríbete usando tu ITIN — MyFreeScoreNow acepta números ITIN. Esto nos da visibilidad en tiempo real de tu archivo de crédito ITIN en las 3 agencias.',
+        step2_title: 'Paga Tu Tarifa Única de Auditoría ($99)',
+        step2_desc: 'Extraemos y analizamos tu archivo completo de crédito ITIN en las 3 agencias. Tu auditoría forense + hoja de ruta específica ITIN se entregan en 24–48 horas.',
+        step3_title: 'Revisa Tu Auditoría de Crédito ITIN y Hoja de Ruta',
+        step3_desc: 'Antes de enviar una sola disputa, ves exactamente qué hay en tu archivo ITIN, qué es impugnable, y nuestra estrategia para el proceso de disputa específico de cada agencia.',
+        step4_title: 'Presentamos Disputas Específicas de ITIN',
+        step4_desc: 'Cartas personalizadas citando FCRA §611, §623, §605 y ECOA §1691. Presentadas usando los procedimientos de disputa ITIN de cada agencia — algunas requieren correo, otras aceptan en línea.',
+        step5_title: 'Solo Se Te Cobra Cuando Hay Resultados',
+        step5_desc: 'Eliminaciones documentadas, correcciones o mejoras verificadas en tu archivo de crédito ITIN = tu tarifa mensual de $99. ¿Nada se movió? No se cobra. Punto.',
+        comp_title: '🔒 Los Titulares de ITIN Tienen Protección Federal Completa — Aquí Está la Ley',
+        comp1_title: 'Protegido por ECOA (15 U.S.C. § 1691)',
+        comp1_desc: 'La Ley de Igualdad de Oportunidades de Crédito prohíbe la discriminación por origen nacional. Los acreedores y agencias <strong>no pueden</strong> tratar tu archivo ITIN diferente que uno de SSN.',
+        comp2_title: 'FCRA — Mismos Derechos, Misma Ley',
+        comp2_desc: 'Bajo la FCRA, los titulares de ITIN tienen los <strong>mismos derechos</strong> de disputa que los de SSN. §611, §623, §605 — todos aplican a tu archivo ITIN. Ventanas de investigación de 30 días cumplidas.',
+        comp3_title: 'Cumplimiento CROA',
+        comp3_desc: 'Contrato por escrito proporcionado. Derecho de cancelación de 3 días honrado. Sin cargos anticipados hasta que los servicios se realicen. Divulgación completa per 15 U.S.C. § 1679c.',
+        comp4_title: 'FDCPA Aplicada',
+        comp4_desc: 'Cuentas de cobranza en tu archivo ITIN impugnadas bajo FDCPA. Derechos de validación de deuda (15 U.S.C. § 1692g) citados. Los cobradores no pueden discriminar por estatus ITIN.',
+        comp5_title: 'TSR + FTC + CFPB Alineados',
+        comp5_desc: 'Sin cargos anticipados per TSR. Cumplimiento de Sección 5 de la Ley FTC. Procedimientos de Regulación V y F del CFPB seguidos para todas las disputas ITIN.',
+        comp6_title: 'Cumplimiento de Ley Estatal',
+        comp6_desc: 'Cumplimiento con la Ley de Prácticas Injustas de Nuevo México. Derechos de cancelación estatales honrados. Los titulares de ITIN reciben todas las protecciones estatales aplicables.',
+        cta_title: '¿Listo Para Limpiar Tu <span style="color:#60a5fa">Archivo de Crédito ITIN</span>?',
+        cta_subtitle: 'Tu ITIN te da derechos crediticios bajo la ley federal. Comienza con tu auditoría de $99 — ve exactamente qué hay en tu archivo ITIN en las 3 agencias. Luego mira cómo impugnamos legalmente cada elemento inexacto — y solo paga cuando obtengamos resultados.',
+        guarantee_title: 'Garantía de Devolución de 90 Días',
+        guarantee_desc: 'Si no podemos mostrar una sola mejora verificada en 90 días, te devolvemos cada tarifa. Sin preguntas. Sin condiciones.',
+        final_cta: '▶ COMENZAR MI PLAN BÁSICO AHORA ▶',
+        final_price_note: 'Tarifa de auditoría $99 + monitoreo $29.99/mes para empezar. Tarifa mensual de $99 solo se cobra cuando el progreso es verificado.<br>Cancela en cualquier momento dentro de 3 días hábiles per derechos CROA.',
+        modal_title: 'Comienza Tu Plan Básico',
+        modal_subtitle: 'Ingresa tu información abajo. Después de enviar, serás dirigido al pago seguro para tu auditoría forense de $99.',
+        form_name: 'Nombre Completo *',
+        form_email: 'Correo Electrónico *',
+        form_phone: 'Número de Teléfono',
+        form_submit: 'Reclamar Mi Cupo — Auditoría $99',
+        form_secure: '🔒 Tu información es 100% segura y nunca se comparte.',
+        success_title: '¡Estás Dentro!',
+        success_desc: 'Tu información ha sido capturada. Completa estos dos pasos para comenzar tu reparación de crédito:',
+        sticky_cta: '▶ Comenzar Mi Plan Básico — $99'
+      },
+
+      // ===== CHINESE SIMPLIFIED (ZH) =====
+      zh: {
+        lang_label: '语言：',
+        hero_urgency: '本月名额有限 — 仅剩12个名额',
+        hero_title: '有ITIN？您拥有<span class="gt">完整的信用修复权利</span>',
+        hero_subtitle: '三大信用机构 — TransUnion、Equifax和Experian — 均接受ITIN号码。根据FCRA和ECOA，您拥有与SSN持有者<strong>完全相同的争议权利</strong>。我们运用联邦法律质疑您ITIN信用档案中的每一个不准确项目 — 在实际删除之前，您无需支付任何费用。',
+        vp_itin: '✓ 使用ITIN — 无需SSN',
+        vp_bureaus: '✓ 三大机构均接受ITIN',
+        vp_fcra: '✓ FCRA + ECOA保护',
+        vp_nopay: '✓ 无进展不收费',
+        vp_guarantee: '✓ 90天退款保证',
+        vp_price: '✓ 起价$99',
+        countdown_label: '⚡ 注册截止倒计时',
+        cd_hours: '小时',
+        cd_minutes: '分钟',
+        cd_seconds: '秒',
+        hero_cta: '▶ 立即开始我的基础计划 ▶',
+        hero_price_note: '+ 每月$29.99信用监控 • 一次性$99审计费 • 仅在有进展时收费',
+        spots_text: '本月名额有限 - <em>仅剩12个</em>',
+        pain_title: '听起来很熟悉？ITIN持有者每天都面临这些问题',
+        pain_subtitle: '拥有ITIN并不意味着您的权利更少 — 但制度让人感觉如此。我们来解决这个问题。',
+        pain1_title: '因为有ITIN就被告知"我们无法帮助您"',
+        pain1_desc: '错误。根据ECOA（15 U.S.C. § 1691），债权人不能基于国籍进行歧视。您的ITIN档案拥有同等权利。',
+        pain2_title: 'ITIN信用档案上有催收或错误报告',
+        pain2_desc: '信用机构接受ITIN — FCRA要求他们像调查SSN持有者的争议一样调查ITIN持有者的争议。',
+        pain3_title: '无法获得房贷、车贷或信用卡批准',
+        pain3_desc: '您ITIN档案上的不准确负面信息阻碍了审批。ITIN贷款是存在的 — 但前提是您的报告是干净的。',
+        pain4_title: '不知道如何用ITIN号码进行争议',
+        pain4_desc: '各信用机构有不同的ITIN争议程序。我们清楚知道如何使用您的ITIN向TransUnion、Equifax和Experian提交争议。',
+        feat_title: '<span style="color:#60a5fa">ITIN基础计划</span>包含的所有内容',
+        feat_subtitle: '专为ITIN持有者设计的信用修复服务。我们了解各机构的ITIN特定程序、保护您的联邦法律，以及如何获得切实成果。',
+        f1_title: 'ITIN三机构法医审计',
+        f1_desc: '使用您的ITIN号码对TransUnion、Equifax和Experian的完整ITIN信用档案进行审查 — 每一条交易记录、查询和公共记录都对照FCRA准确性标准进行核实。',
+        f2_title: 'ITIN专属修复路线图',
+        f2_desc: '为ITIN信用档案量身定制的策略。我们知道哪些机构要求ITIN持有者邮寄争议，哪些接受在线提交，并相应规划您的30/60/90天里程碑。',
+        f3_title: '每月最多15项法规争议',
+        f3_desc: '引用FCRA §611、§623、§605和ECOA保护条款的个性化争议信 — 使用各机构的ITIN特定争议程序提交。',
+        f4_title: '每月ITIN信用进度报告',
+        f4_desc: '记录每个机构的回复、删除、更正和您ITIN信用档案上的分数变化，在每个计费周期交付。',
+        f5_title: '双语支持（英语和西班牙语）',
+        f5_desc: '直接联系，保证一个工作日内回复。我们的团队使用英语和西班牙语沟通，确保没有任何信息遗漏。',
+        f6_title: 'ITIN信用建设资料库',
+        f6_desc: '如何用ITIN建立信用、接受ITIN的担保卡、ITIN房贷准备、利用率策略和信用维护方案。',
+        vs_total_label: '以上全部的总价值',
+        vs_pay_label: '您只需支付',
+        vs_per_month: '/月',
+        vs_price_note: '+ $99一次性审计费 + $29.99/月监控<br><strong>仅在验证有进展时收费</strong>',
+        vs_cta: '▶ 立即获取此优惠',
+        how_title: 'ITIN信用修复如何运作',
+        step1_title: '激活MyFreeScoreNow监控（$29.99/月）',
+        step1_desc: '使用您的ITIN注册 — MyFreeScoreNow接受ITIN号码。这让我们能实时查看您三大机构的ITIN信用档案，追踪每一次删除、变更和分数变动。',
+        step2_title: '支付一次性审计费（$99）',
+        step2_desc: '我们提取并分析您在三大机构的完整ITIN信用档案。您的法医审计+ITIN专属修复路线图将在24-48小时内交付。',
+        step3_title: '审查您的ITIN信用审计和路线图',
+        step3_desc: '在发送任何争议之前，您将准确看到ITIN档案上的内容、哪些可以质疑，以及我们针对各机构ITIN特定争议流程的策略。',
+        step4_title: '我们提交ITIN专属机构争议',
+        step4_desc: '引用FCRA §611、§623、§605和ECOA §1691保护条款的个性化信函。使用各机构的ITIN争议程序提交 — 有些需要邮寄，有些接受在线。我们全部处理。',
+        step5_title: '仅在有进展时收费',
+        step5_desc: '您ITIN信用档案上有记录的删除、更正或验证的分数提升 = 您的$99月费。没有变动？不收费。就是这样。',
+        comp_title: '🔒 ITIN持有者享有完整联邦保护 — 以下是法律依据',
+        comp1_title: 'ECOA保护（15 U.S.C. § 1691）',
+        comp1_desc: '《平等信贷机会法》禁止基于国籍的歧视。债权人和信用机构<strong>不能</strong>区别对待您的ITIN档案和SSN档案。',
+        comp2_title: 'FCRA — 相同权利，相同法律',
+        comp2_desc: '根据FCRA，ITIN持有者与SSN持有者拥有<strong>完全相同的</strong>争议权利。§611、§623、§605 — 全部适用于您的ITIN信用档案。30天调查期强制执行。',
+        comp3_title: 'CROA合规',
+        comp3_desc: '提供书面合同。3天取消权保证。服务完成前不收取预付费用。完全符合15 U.S.C. § 1679c消费者披露要求。',
+        comp4_title: 'FDCPA执行',
+        comp4_desc: '根据FDCPA质疑您ITIN档案上的催收账户。引用债务验证权利（15 U.S.C. § 1692g）。催收者不得因ITIN身份进行歧视。',
+        comp5_title: 'TSR + FTC + CFPB对齐',
+        comp5_desc: '根据TSR无预付费。符合FTC法第5节。CFPB法规V和F程序适用于所有ITIN争议。',
+        comp6_title: '州法律合规',
+        comp6_desc: '符合新墨西哥州《不公平商业行为法》。州取消权保证。ITIN持有者享有所有适用的州保护。',
+        cta_title: '准备好清理您的<span style="color:#60a5fa">ITIN信用档案</span>了吗？',
+        cta_subtitle: '您的ITIN赋予您联邦法律下的信用权利。从$99审计开始 — 准确了解您在三大机构的ITIN档案内容。然后看我们合法质疑每一个不准确项目 — 只在我们取得成果时付费。',
+        guarantee_title: '90天退款保证',
+        guarantee_desc: '如果90天内我们无法展示任何一项经验证的改善，您将获得全额退款。无需理由。无附加条件。',
+        final_cta: '▶ 立即开始我的基础计划 ▶',
+        final_price_note: '$99审计费 + $29.99/月监控开始。月费$99仅在进展验证后收取。<br>根据CROA权利，可在3个工作日内随时取消。',
+        modal_title: '开始您的基础计划',
+        modal_subtitle: '请在下方填写您的信息。提交后，您将被引导至$99法医审计的安全支付页面。',
+        form_name: '全名 *',
+        form_email: '电子邮件 *',
+        form_phone: '电话号码',
+        form_submit: '确认名额 — $99审计',
+        form_secure: '🔒 您的信息100%安全，绝不共享。',
+        success_title: '您已加入！',
+        success_desc: '您的信息已记录。完成以下两个步骤开始您的信用修复：',
+        sticky_cta: '▶ 开始我的基础计划 — $99'
+      },
+
+      // ===== VIETNAMESE (VI) =====
+      vi: {
+        lang_label: 'Ngôn ngữ:',
+        hero_urgency: 'Số Lượng Có Hạn Trong Tháng Này — Chỉ Còn 12 Suất',
+        hero_title: 'Có ITIN? Bạn Có <span class="gt">Quyền Sửa Chữa Tín Dụng Đầy Đủ</span>',
+        hero_subtitle: 'Cả ba cơ quan tín dụng — TransUnion, Equifax và Experian — đều chấp nhận số ITIN. Theo FCRA và ECOA, bạn có <strong>quyền tranh chấp giống hệt</strong> như người có SSN. Chúng tôi sử dụng luật liên bang để phản đối mọi thông tin không chính xác trên hồ sơ tín dụng ITIN của bạn — và bạn không phải trả một xu nào cho đến khi có kết quả thực sự.',
+        vp_itin: '✓ Hoạt Động Với ITIN — Không Cần SSN',
+        vp_bureaus: '✓ Cả 3 Cơ Quan Chấp Nhận ITIN',
+        vp_fcra: '✓ Được FCRA + ECOA Bảo Vệ',
+        vp_nopay: '✓ Không Trả Cho Đến Khi Có Tiến Triển',
+        vp_guarantee: '✓ Bảo Đảm Hoàn Tiền 90 Ngày',
+        vp_price: '✓ Bắt Đầu Từ $99',
+        countdown_label: '⚡ Đăng Ký Kết Thúc Trong',
+        cd_hours: 'Giờ',
+        cd_minutes: 'Phút',
+        cd_seconds: 'Giây',
+        hero_cta: '▶ Bắt Đầu Gói Cơ Bản Ngay ▶',
+        hero_price_note: '+ $29.99/tháng giám sát tín dụng • Phí kiểm toán một lần $99 • Chỉ tính phí khi có tiến triển',
+        spots_text: 'Số Lượng Có Hạn Trong Tháng — <em>Chỉ Còn 12 Suất</em>',
+        pain_title: 'Nghe Quen Không? Người Có ITIN Gặp Những Điều Này Mỗi Ngày',
+        pain_subtitle: 'Có ITIN không có nghĩa bạn có ít quyền hơn — nhưng hệ thống khiến bạn cảm thấy vậy. Chúng tôi sẽ sửa điều đó.',
+        pain1_title: 'Bị nói "chúng tôi không thể giúp bạn" vì bạn có ITIN',
+        pain1_desc: 'Sai. Theo ECOA (15 U.S.C. § 1691), chủ nợ không được phân biệt đối xử dựa trên nguồn gốc quốc gia. Hồ sơ ITIN của bạn có cùng quyền.',
+        pain2_title: 'Thu nợ hoặc lỗi báo cáo trên hồ sơ tín dụng ITIN',
+        pain2_desc: 'Các cơ quan chấp nhận ITIN — và FCRA yêu cầu họ điều tra tranh chấp từ người có ITIN giống như người có SSN.',
+        pain3_title: 'Không được duyệt vay mua nhà, mua xe hoặc thẻ tín dụng',
+        pain3_desc: 'Thông tin tiêu cực không chính xác trên hồ sơ ITIN chặn phê duyệt. Vay ITIN có tồn tại — nhưng chỉ khi báo cáo sạch.',
+        pain4_title: 'Không biết cách tranh chấp với số ITIN',
+        pain4_desc: 'Các cơ quan có quy trình tranh chấp ITIN khác nhau. Chúng tôi biết chính xác cách nộp với TransUnion, Equifax và Experian bằng ITIN của bạn.',
+        feat_title: 'Tất Cả Những Gì Bạn Nhận Được Với <span style="color:#60a5fa">Gói Cơ Bản ITIN</span>',
+        feat_subtitle: 'Sửa chữa tín dụng được xây dựng đặc biệt cho người có ITIN. Chúng tôi biết quy trình ITIN của từng cơ quan, luật liên bang bảo vệ bạn, và chính xác cách đạt kết quả.',
+        f1_title: 'Kiểm Toán Pháp Y ITIN 3 Cơ Quan',
+        f1_desc: 'Hồ sơ tín dụng ITIN đầy đủ tại TransUnion, Equifax và Experian — mọi dòng giao dịch, yêu cầu và hồ sơ công khai được xem xét theo tiêu chuẩn chính xác FCRA.',
+        f2_title: 'Lộ Trình Phục Hồi Riêng Cho ITIN',
+        f2_desc: 'Chiến lược tùy chỉnh cho hồ sơ tín dụng ITIN. Chúng tôi biết cơ quan nào yêu cầu tranh chấp qua thư cho ITIN và lập kế hoạch mốc 30/60/90 ngày.',
+        f3_title: 'Tối Đa 15 Tranh Chấp Theo Luật/Tháng',
+        f3_desc: 'Thư tranh chấp cá nhân hóa trích dẫn FCRA §611, §623, §605 và bảo vệ ECOA — nộp tại mỗi cơ quan theo quy trình tranh chấp ITIN.',
+        f4_title: 'Báo Cáo Tiến Độ Tín Dụng ITIN Hàng Tháng',
+        f4_desc: 'Tài liệu ghi nhận mọi phản hồi, xóa, sửa và thay đổi điểm số trên hồ sơ tín dụng ITIN được giao mỗi chu kỳ thanh toán.',
+        f5_title: 'Hỗ Trợ Song Ngữ (Tiếng Anh & Tây Ban Nha)',
+        f5_desc: 'Truy cập trực tiếp với cam kết phản hồi trong một ngày làm việc. Đội ngũ giao tiếp bằng tiếng Anh và Tây Ban Nha.',
+        f6_title: 'Thư Viện Xây Dựng Tín Dụng ITIN',
+        f6_desc: 'Cách xây dựng tín dụng với ITIN, thẻ bảo đảm chấp nhận ITIN, chuẩn bị vay mua nhà ITIN, chiến lược sử dụng và quy trình duy trì tín dụng.',
+        vs_total_label: 'Tổng Giá Trị Tất Cả Ở Trên',
+        vs_pay_label: 'Bạn Chỉ Trả',
+        vs_per_month: '/tháng',
+        vs_price_note: '+ $99 phí kiểm toán một lần + $29.99/tháng giám sát<br><strong>Chỉ tính phí khi tiến triển được xác minh</strong>',
+        vs_cta: '▶ Nhận Ưu Đãi Này Ngay',
+        how_title: 'Quy Trình Sửa Chữa Tín Dụng ITIN',
+        step1_title: 'Kích Hoạt Giám Sát MyFreeScoreNow ($29.99/tháng)',
+        step1_desc: 'Đăng ký bằng ITIN — MyFreeScoreNow chấp nhận số ITIN. Điều này cho chúng tôi khả năng theo dõi trực tiếp hồ sơ tín dụng ITIN tại cả 3 cơ quan.',
+        step2_title: 'Thanh Toán Phí Kiểm Toán Một Lần ($99)',
+        step2_desc: 'Chúng tôi kéo và phân tích hồ sơ tín dụng ITIN đầy đủ tại 3 cơ quan. Kiểm toán + lộ trình ITIN được giao trong 24-48 giờ.',
+        step3_title: 'Xem Xét Kiểm Toán Tín Dụng ITIN & Lộ Trình',
+        step3_desc: 'Trước khi gửi bất kỳ tranh chấp nào, bạn sẽ thấy chính xác những gì có trên hồ sơ ITIN, những gì có thể tranh chấp, và chiến lược của chúng tôi.',
+        step4_title: 'Chúng Tôi Nộp Tranh Chấp ITIN Cho Từng Cơ Quan',
+        step4_desc: 'Thư cá nhân trích dẫn FCRA §611, §623, §605 và ECOA §1691. Nộp theo quy trình tranh chấp ITIN của từng cơ quan — có nơi yêu cầu thư, có nơi chấp nhận trực tuyến.',
+        step5_title: 'Chỉ Tính Phí Khi Có Kết Quả',
+        step5_desc: 'Xóa, sửa hoặc cải thiện điểm được xác minh trên hồ sơ tín dụng ITIN = phí $99/tháng. Không có thay đổi? Không tính phí. Chấm hết.',
+        comp_title: '🔒 Người Có ITIN Được Bảo Vệ Đầy Đủ Bởi Luật Liên Bang',
+        comp1_title: 'ECOA Bảo Vệ (15 U.S.C. § 1691)',
+        comp1_desc: 'Đạo luật Cơ hội Tín dụng Bình đẳng cấm phân biệt đối xử dựa trên nguồn gốc quốc gia. Chủ nợ <strong>không thể</strong> đối xử khác với hồ sơ ITIN.',
+        comp2_title: 'FCRA — Cùng Quyền, Cùng Luật',
+        comp2_desc: 'Theo FCRA, người có ITIN có <strong>quyền tranh chấp giống hệt</strong> như người có SSN. §611, §623, §605 — tất cả áp dụng cho hồ sơ ITIN.',
+        comp3_title: 'Tuân Thủ CROA',
+        comp3_desc: 'Hợp đồng bằng văn bản. Quyền hủy 3 ngày. Không thu phí trước khi dịch vụ hoàn thành. Tiết lộ đầy đủ theo 15 U.S.C. § 1679c.',
+        comp4_title: 'FDCPA Thực Thi',
+        comp4_desc: 'Tài khoản thu nợ trên hồ sơ ITIN được tranh chấp theo FDCPA. Quyền xác minh nợ (15 U.S.C. § 1692g). Không phân biệt đối xử ITIN.',
+        comp5_title: 'TSR + FTC + CFPB Phù Hợp',
+        comp5_desc: 'Không phí trước theo TSR. Tuân thủ Mục 5 Đạo luật FTC. Quy trình CFPB Quy định V và F cho mọi tranh chấp ITIN.',
+        comp6_title: 'Tuân Thủ Luật Tiểu Bang',
+        comp6_desc: 'Tuân thủ Đạo luật Thực Hành Không Công Bằng New Mexico. Quyền hủy tiểu bang được tôn trọng. Người có ITIN nhận mọi bảo vệ tiểu bang.',
+        cta_title: 'Sẵn Sàng Làm Sạch <span style="color:#60a5fa">Hồ Sơ Tín Dụng ITIN</span>?',
+        cta_subtitle: 'ITIN cho bạn quyền tín dụng theo luật liên bang. Bắt đầu với kiểm toán $99 — xem chính xác nội dung hồ sơ ITIN tại cả 3 cơ quan. Rồi xem chúng tôi hợp pháp phản đối mọi thông tin không chính xác — chỉ trả khi có kết quả.',
+        guarantee_title: 'Bảo Đảm Hoàn Tiền 90 Ngày',
+        guarantee_desc: 'Nếu 90 ngày không có cải thiện được xác minh, bạn được hoàn lại toàn bộ. Không câu hỏi. Không điều kiện.',
+        final_cta: '▶ BẮT ĐẦU GÓI CƠ BẢN NGAY ▶',
+        final_price_note: 'Phí kiểm toán $99 + giám sát $29.99/tháng. Phí $99/tháng chỉ khi tiến triển được xác minh.<br>Hủy trong 3 ngày làm việc theo quyền CROA.',
+        modal_title: 'Bắt Đầu Gói Cơ Bản',
+        modal_subtitle: 'Nhập thông tin bên dưới. Sau khi gửi, bạn sẽ được chuyển đến thanh toán an toàn cho kiểm toán pháp y $99.',
+        form_name: 'Họ và Tên *',
+        form_email: 'Địa Chỉ Email *',
+        form_phone: 'Số Điện Thoại',
+        form_submit: 'Đăng Ký — Kiểm Toán $99',
+        form_secure: '🔒 Thông tin của bạn 100% an toàn và không bao giờ được chia sẻ.',
+        success_title: 'Bạn Đã Tham Gia!',
+        success_desc: 'Thông tin đã được ghi nhận. Hoàn thành hai bước sau để bắt đầu sửa chữa tín dụng:',
+        sticky_cta: '▶ Bắt Đầu Gói Cơ Bản — $99'
+      }
+    };
+
+    // ===== TRANSLATION ENGINE =====
+    function switchLang(lang) {
+      currentLang = lang;
+      localStorage.setItem('funnel_lang', lang);
+      document.documentElement.lang = lang;
+      
+      // Update active button
+      document.querySelectorAll('.lang-btn').forEach(function(btn) {
+        btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+      });
+      
+      // If English, restore original content
+      if (lang === 'en') {
+        document.querySelectorAll('[data-i18n]').forEach(function(el) {
+          var orig = el.getAttribute('data-i18n-orig');
+          if (orig !== null) {
+            if (el.getAttribute('data-i18n-html') === '1') {
+              el.innerHTML = orig;
+            } else {
+              el.innerHTML = orig;
+            }
+          }
+        });
+        return;
+      }
+      
+      var dict = translations[lang];
+      if (!dict) return;
+      
+      document.querySelectorAll('[data-i18n]').forEach(function(el) {
+        var key = el.getAttribute('data-i18n');
+        // Save original English on first switch
+        if (!el.hasAttribute('data-i18n-orig')) {
+          el.setAttribute('data-i18n-orig', el.innerHTML);
+        }
+        if (dict[key]) {
+          el.innerHTML = dict[key];
+        }
+      });
+    }
+
+    // Auto-detect language on load
+    function detectLang() {
+      var saved = localStorage.getItem('funnel_lang');
+      if (saved && translations[saved]) { switchLang(saved); return; }
+      var browserLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
+      if (browserLang.startsWith('es')) switchLang('es');
+      else if (browserLang.startsWith('zh')) switchLang('zh');
+      else if (browserLang.startsWith('vi')) switchLang('vi');
+    }
+
+    document.addEventListener('DOMContentLoaded',function(){lucide.createIcons();initP();initAO();initSB();initImgLoad();detectLang()});
 
     // Countdown Timer
     (function(){let h=23,m=59,s=59;const hE=document.getElementById('cd-h'),mE=document.getElementById('cd-m'),sE=document.getElementById('cd-s');setInterval(function(){if(s>0)s--;else if(m>0){m--;s=59}else if(h>0){h--;m=59;s=59}else{h=23;m=59;s=59}hE.textContent=String(h).padStart(2,'0');mE.textContent=String(m).padStart(2,'0');sE.textContent=String(s).padStart(2,'0')},1000)})();
