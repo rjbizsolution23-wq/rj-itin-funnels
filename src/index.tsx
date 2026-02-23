@@ -1337,6 +1337,11 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
         <p class="sts">Having an ITIN doesn't mean you have fewer rights — but the system makes it feel that way. We fix that.</p>
       </div>
 
+      <!-- PAIN POINTS IMAGE — Bilingual Support -->
+      <div class="sec-img ao s1">
+        <img src="https://media.rickjeffersonsolutions.com/basic%20%20ITIN/Bilingual_support_split-screen_English_leftSpanis-1771876500803.png" alt="Bilingual ITIN credit repair support split-screen showing English and Spanish service - RJ Business Solutions helps ITIN holders in both languages" title="Bilingual ITIN Credit Repair - Full English and Spanish Support" width="1024" height="1024" loading="lazy">
+      </div>
+
       <div class="pg">
         <div class="pc ao s1"><div class="iw"><i data-lucide="x-circle"></i></div><h3>Told "we can't help you" because you have an ITIN</h3><p>Wrong. Under ECOA (15 U.S.C. § 1691), creditors cannot discriminate based on national origin. Your ITIN file has the same rights.</p></div>
         <div class="pc ao s2"><div class="iw"><i data-lucide="x-circle"></i></div><h3>Collections or errors reporting on your ITIN credit file</h3><p>Bureaus accept ITINs — and the FCRA requires them to investigate disputes from ITIN holders the same as SSN holders.</p></div>
