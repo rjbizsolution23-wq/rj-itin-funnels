@@ -151,8 +151,8 @@ app.post('/api/checkout', async (c) => {
     params.append('success_url', `${c.req.header('origin') || 'https://clean-it-up-funnel.pages.dev'}/success?session_id={CHECKOUT_SESSION_ID}`)
     params.append('cancel_url', `${c.req.header('origin') || 'https://clean-it-up-funnel.pages.dev'}/?canceled=true`)
     params.append('line_items[0][price_data][currency]', 'usd')
-    params.append('line_items[0][price_data][product_data][name]', 'Forensic 3-Bureau Credit Audit')
-    params.append('line_items[0][price_data][product_data][description]', 'Complete forensic audit across TransUnion, Equifax, and Experian + Personalized 10-Point Restoration Roadmap. Delivered within 24–48 hours.')
+    params.append('line_items[0][price_data][product_data][name]', 'Forensic 3-Bureau ITIN/SSN Credit Audit')
+    params.append('line_items[0][price_data][product_data][description]', 'Complete forensic audit of your ITIN or SSN credit file across TransUnion, Equifax, and Experian + Personalized 10-Point Restoration Roadmap. ITIN holders accepted. Delivered within 24–48 hours.')
     params.append('line_items[0][price_data][unit_amount]', '9900') // $99.00
     params.append('line_items[0][quantity]', '1')
     params.append('payment_method_types[0]', 'card')
@@ -226,7 +226,7 @@ app.post('/api/webhooks/stripe', async (c) => {
           session.payment_intent || null,
           session.id,
           session.amount_total || 9900,
-          'Forensic 3-Bureau Credit Audit Fee'
+          'Forensic 3-Bureau ITIN/SSN Credit Audit Fee'
         ).run()
 
         // Log activity
@@ -402,7 +402,7 @@ function successPageHTML(): string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Payment Confirmed | Clean It Up — RJ Business Solutions</title>
+  <title>Payment Confirmed | Clean It Up ITIN Credit Repair — RJ Business Solutions</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
@@ -427,7 +427,7 @@ function successPageHTML(): string {
   <div class="card">
     <div class="icon"><i data-lucide="check-circle-2"></i></div>
     <h1>Payment Confirmed!</h1>
-    <p class="sub">Your $99 forensic credit audit fee has been received. Here's what happens next:</p>
+    <p class="sub">Your $99 forensic ITIN/SSN credit audit fee has been received. Here's what happens next:</p>
 
     <div class="steps">
       <div class="step">
@@ -441,14 +441,14 @@ function successPageHTML(): string {
         <div class="step-num">2</div>
         <div>
           <h3>Activate Credit Monitoring</h3>
-          <p>If you haven't already, activate your MyFreeScoreNow monitoring so we can begin your audit.</p>
+          <p>If you haven't already, activate your MyFreeScoreNow monitoring using your ITIN or SSN so we can begin your audit.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">3</div>
         <div>
           <h3>Audit Delivered in 24–48 Hours</h3>
-          <p>Your complete forensic 3-bureau audit + personalized 10-Point Restoration Roadmap will be emailed to you.</p>
+          <p>Your complete forensic 3-bureau audit of your ITIN or SSN credit file + personalized 10-Point Restoration Roadmap will be emailed to you.</p>
         </div>
       </div>
     </div>
@@ -527,7 +527,7 @@ function legalLayout(title: string, metaDesc: string, content: string): string {
   </nav>
   <div class="container">
     <div class="legal-nav">
-      <a href="/legal">Disclosures &amp; Compliance</a>
+      <a href="/legal">Disclosures &amp; Compliance (ECOA, FCRA, CROA)</a>
       <a href="/consumer-rights">Consumer Rights (CROA)</a>
       <a href="/privacy">Privacy Policy</a>
       <a href="/terms">Terms of Service</a>
@@ -547,13 +547,17 @@ function legalLayout(title: string, metaDesc: string, content: string): string {
 // ========== /legal — FULL COMPLIANCE DISCLOSURES PAGE ==========
 function legalPageHTML(): string {
   return legalLayout(
-    'Legal Disclosures &amp; Federal Compliance',
-    'Complete federal legal disclosures for RJ Business Solutions credit repair services. CROA, FCRA, FDCPA, TSR, FTC, CFPB compliance.',
+    'Legal Disclosures &amp; Federal Compliance — ITIN Credit Repair',
+    'Complete federal legal disclosures for RJ Business Solutions ITIN credit repair services. CROA, FCRA, ECOA, FDCPA, TSR, FTC, CFPB compliance. ITIN holders have full credit dispute rights under federal law.',
     `<h1>Legal Disclosures &amp; Federal Compliance</h1>
-    <p class="updated">Last Updated: February 23, 2026 &bull; Effective for all services provided by RJ Business Solutions</p>
+    <p class="updated">Last Updated: February 23, 2026 &bull; Effective for all ITIN and SSN credit repair services provided by RJ Business Solutions</p>
 
     <div class="warning-box">
       <strong>Important Notice:</strong> RJ Business Solutions is a credit repair organization as defined under the Credit Repair Organizations Act (15 U.S.C. &sect; 1679 et seq.). We are not a law firm, we are not attorneys, and we do not provide legal advice. The information on this page is provided for transparency and compliance purposes only.
+    </div>
+
+    <div class="highlight-box">
+      <strong>&#127919; ITIN Credit Repair Clients:</strong> If you hold an Individual Taxpayer Identification Number (ITIN), you have the <strong>exact same credit dispute rights</strong> as Social Security Number (SSN) holders under the Fair Credit Reporting Act (FCRA) and Equal Credit Opportunity Act (ECOA). All three major credit bureaus — TransUnion, Equifax, and Experian — accept and maintain ITIN-based credit files. Our services are fully available to ITIN holders, and we use the same federal statutes to challenge inaccurate information on your ITIN credit file as we do for SSN-based files.
     </div>
 
     <!-- ═══════ CROA ═══════ -->
@@ -591,10 +595,28 @@ function legalPageHTML(): string {
       <li><strong>Consumer Waivers Void (15 U.S.C. &sect; 1679f):</strong> Any waiver of your rights under CROA is void and unenforceable.</li>
     </ul>
 
+    <!-- ═══════ ECOA ═══════ -->
+    <h2 id="ecoa"><span class="section-badge">ECOA</span> Equal Credit Opportunity Act (15 U.S.C. &sect; 1691)</h2>
+
+    <p>The Equal Credit Opportunity Act is <strong>critically important for ITIN holders</strong>. ECOA prohibits discrimination in any aspect of a credit transaction based on race, color, religion, national origin, sex, marital status, age, receipt of public assistance, or good-faith exercise of consumer rights.</p>
+
+    <h3>Why ECOA Matters for ITIN Credit Repair</h3>
+    <ul>
+      <li><strong>National Origin Protection (15 U.S.C. &sect; 1691(a)(1)):</strong> Creditors, lenders, and credit bureaus <strong>cannot</strong> treat your ITIN credit file differently than an SSN-based file based on your national origin. Any creditor who refuses to report, investigate, or correct information because you use an ITIN may be violating ECOA.</li>
+      <li><strong>Regulation B (12 C.F.R. Part 1002):</strong> The CFPB's Regulation B implements ECOA. It explicitly prohibits creditors from using immigration status or national origin as a factor in credit decisions when the applicant is otherwise creditworthy.</li>
+      <li><strong>Bureau Compliance:</strong> All three major credit bureaus (TransUnion, Equifax, and Experian) accept ITINs as valid identifiers for creating and maintaining credit files. They are required to investigate disputes from ITIN holders under the same FCRA procedures as SSN holders.</li>
+      <li><strong>Right to Sue (15 U.S.C. &sect; 1691e):</strong> If a creditor or bureau discriminates against you because of your ITIN status, you may sue for actual damages, punitive damages up to $10,000 (individual action), and attorney's fees.</li>
+    </ul>
+
+    <div class="croa-box">
+      <h3>&#128161; 2026 ECOA Update — DOJ &amp; CFPB Guidance</h3>
+      <p>In January 2026, the DOJ and CFPB withdrew their previous joint statement on creditor immigration-status considerations. However, the <strong>underlying ECOA statutory protections remain fully in effect</strong>. National-origin discrimination remains illegal under 15 U.S.C. &sect; 1691 regardless of any regulatory guidance changes. RJ Business Solutions will cite ECOA in any dispute where an ITIN holder's credit file appears to have been treated differently than an SSN holder's file.</p>
+    </div>
+
     <!-- ═══════ FCRA ═══════ -->
     <h2 id="fcra"><span class="section-badge">FCRA</span> Fair Credit Reporting Act (15 U.S.C. &sect; 1681)</h2>
 
-    <p>All dispute activities performed by RJ Business Solutions are conducted in accordance with the Fair Credit Reporting Act. We invoke specific FCRA provisions on your behalf to challenge inaccurate, incomplete, unverifiable, or obsolete information on your credit reports.</p>
+    <p>All dispute activities performed by RJ Business Solutions are conducted in accordance with the Fair Credit Reporting Act. We invoke specific FCRA provisions on your behalf to challenge inaccurate, incomplete, unverifiable, or obsolete information on your credit reports — <strong>whether your file is identified by SSN or ITIN</strong>.</p>
 
     <h3>Your Rights Under the FCRA</h3>
     <ul>
@@ -608,7 +630,22 @@ function legalPageHTML(): string {
     </ul>
 
     <div class="highlight-box">
-      <strong>How We Use the FCRA:</strong> Our disputes cite specific FCRA sections (primarily 611, 623, and 605) when challenging information with the credit bureaus. We do not file frivolous disputes or misrepresent information on your behalf. Every dispute is substantive, statute-specific, and tracked through the full 30-day investigation window.
+      <strong>How We Use the FCRA for ITIN Credit Files:</strong> Our disputes cite specific FCRA sections (primarily 611, 623, and 605) when challenging information with the credit bureaus. For ITIN holders, we file disputes using each bureau's ITIN-specific procedures — TransUnion and Equifax accept online ITIN disputes; Experian may require mail-in disputes for ITIN-identified files. We do not file frivolous disputes or misrepresent information on your behalf. Every dispute is substantive, statute-specific, and tracked through the full 30-day investigation window. ITIN holders receive identical FCRA protections as SSN holders — there is no legal distinction.
+    </div>
+
+    <!-- ═══════ ITIN-SPECIFIC BUREAU PROCEDURES ═══════ -->
+    <h2 id="itin-bureaus"><span class="section-badge">ITIN</span> ITIN-Specific Bureau Dispute Procedures (2026)</h2>
+
+    <p>Each credit bureau has specific procedures for ITIN-identified credit files. RJ Business Solutions is experienced with all three bureau systems and files disputes using the correct channel for each:</p>
+
+    <ul>
+      <li><strong>TransUnion &amp; ITIN:</strong> TransUnion accepts ITIN numbers for credit file identification. Disputes can be filed online, by phone (1-800-916-8800), or by mail. TransUnion's online dispute portal accepts ITINs in the identification field.</li>
+      <li><strong>Equifax &amp; ITIN:</strong> Equifax creates and maintains ITIN credit files. Disputes can be filed online at <a href="https://www.equifax.com/personal/disputes" target="_blank" rel="noopener">equifax.com/personal/disputes</a>, by phone (1-866-349-5191), or by mail. ITIN holders should use their ITIN where SSN is requested.</li>
+      <li><strong>Experian &amp; ITIN:</strong> Experian accepts ITINs for credit file identification. Some ITIN dispute procedures may require mail-in submissions with copies of your ITIN documentation (IRS Letter CP565 or ITIN card). We handle the appropriate filing method for each case.</li>
+    </ul>
+
+    <div class="highlight-box">
+      <strong>ITIN Credit File Building:</strong> If you hold an ITIN and do not yet have a credit file, you can establish one by applying for credit products that accept ITINs (certain secured credit cards, credit-builder loans, and ITIN mortgage programs). Once a creditor reports your account to the bureaus using your ITIN, your credit file is created. Our service includes guidance on ITIN-friendly credit-building products.
     </div>
 
     <!-- ═══════ FDCPA ═══════ -->
@@ -626,7 +663,7 @@ function legalPageHTML(): string {
     </ul>
 
     <div class="highlight-box">
-      <strong>How We Use the FDCPA:</strong> When a collection account on your credit report is found to be unverifiable or improperly reported, we may reference FDCPA &sect; 1692g debt validation requirements in our dispute strategy. If a collector has failed to validate a debt, reporting it to a CRA may violate both the FDCPA and the FCRA.
+      <strong>How We Use the FDCPA for ITIN Holders:</strong> When a collection account on your ITIN credit report is found to be unverifiable or improperly reported, we may reference FDCPA &sect; 1692g debt validation requirements in our dispute strategy. If a collector has failed to validate a debt, reporting it to a CRA may violate both the FDCPA and the FCRA. <strong>Important:</strong> Debt collectors cannot discriminate against ITIN holders or treat ITIN-identified debts differently than SSN-identified debts. ECOA protections apply to all collection activities.
     </div>
 
     <!-- ═══════ TSR ═══════ -->
@@ -677,10 +714,11 @@ function legalPageHTML(): string {
 
     <p>In addition to federal law, credit repair organizations may be subject to state-specific regulations. RJ Business Solutions complies with all applicable state laws, including but not limited to:</p>
     <ul>
-      <li><strong>New Mexico:</strong> As our principal place of business is in Tijeras, New Mexico, we comply with all New Mexico consumer protection statutes, including the Unfair Practices Act (NMSA 57-12-1 et seq.).</li>
+      <li><strong>New Mexico:</strong> As our principal place of business is in Tijeras, New Mexico, we comply with all New Mexico consumer protection statutes, including the Unfair Practices Act (NMSA 57-12-1 et seq.). New Mexico law does not distinguish between ITIN and SSN holders for consumer protection purposes.</li>
       <li><strong>State Bonding/Registration:</strong> Where required by state law, we maintain appropriate bonds and registrations.</li>
       <li><strong>State Cancellation Rights:</strong> Some states provide cancellation rights that exceed the federal 3-business-day period. Where applicable, the longer cancellation period applies.</li>
       <li><strong>State-Specific Disclosures:</strong> Additional disclosures required by your state of residence will be provided as part of your service contract.</li>
+      <li><strong>State ITIN Protections:</strong> Many states, including California (SB 1159), New York, Illinois, and others, have enacted additional protections prohibiting discrimination based on immigration status in credit and lending. We comply with all applicable state ITIN protection laws regardless of where our ITIN clients reside.</li>
     </ul>
 
     <!-- ═══════ RESULTS DISCLAIMER ═══════ -->
@@ -700,10 +738,11 @@ function legalPageHTML(): string {
     <ul>
       <li><strong>Federal Trade Commission (FTC):</strong> <a href="https://www.ftc.gov/complaint" target="_blank" rel="noopener">ftc.gov/complaint</a> | 1-877-FTC-HELP (1-877-382-4357) | 600 Pennsylvania Avenue NW, Washington, DC 20580</li>
       <li><strong>Consumer Financial Protection Bureau (CFPB):</strong> <a href="https://www.consumerfinance.gov/complaint/" target="_blank" rel="noopener">consumerfinance.gov/complaint</a> | 1-855-411-CFPB (1-855-411-2372)</li>
+      <li><strong>Department of Justice — Civil Rights Division:</strong> <a href="https://www.justice.gov/crt" target="_blank" rel="noopener">justice.gov/crt</a> (for ECOA national-origin discrimination complaints)</li>
       <li><strong>New Mexico Attorney General:</strong> <a href="https://www.nmag.gov/consumer-protection.aspx" target="_blank" rel="noopener">nmag.gov</a> | 1-844-255-9210 | P.O. Box 1508, Santa Fe, NM 87504</li>
-      <li><strong>TransUnion:</strong> <a href="https://www.transunion.com/dispute" target="_blank" rel="noopener">transunion.com/dispute</a> | 1-800-916-8800</li>
-      <li><strong>Equifax:</strong> <a href="https://www.equifax.com/personal/disputes" target="_blank" rel="noopener">equifax.com/personal/disputes</a> | 1-866-349-5191</li>
-      <li><strong>Experian:</strong> <a href="https://www.experian.com/disputes" target="_blank" rel="noopener">experian.com/disputes</a> | 1-888-397-3742</li>
+      <li><strong>TransUnion:</strong> <a href="https://www.transunion.com/dispute" target="_blank" rel="noopener">transunion.com/dispute</a> | 1-800-916-8800 (accepts ITIN disputes)</li>
+      <li><strong>Equifax:</strong> <a href="https://www.equifax.com/personal/disputes" target="_blank" rel="noopener">equifax.com/personal/disputes</a> | 1-866-349-5191 (accepts ITIN disputes)</li>
+      <li><strong>Experian:</strong> <a href="https://www.experian.com/disputes" target="_blank" rel="noopener">experian.com/disputes</a> | 1-888-397-3742 (accepts ITIN disputes — may require mail-in for ITIN files)</li>
     </ul>
 
     <h2 id="contact">Contact Us</h2>
@@ -717,10 +756,14 @@ function legalPageHTML(): string {
 // ========== /consumer-rights — CROA CONSUMER RIGHTS (STANDALONE) ==========
 function consumerRightsPageHTML(): string {
   return legalLayout(
-    'Consumer Credit File Rights Under State and Federal Law',
-    'Your consumer credit file rights under CROA, FCRA, and applicable state and federal law. Required disclosure from RJ Business Solutions.',
+    'Consumer Credit File Rights — ITIN &amp; SSN Holders',
+    'Your consumer credit file rights under CROA, FCRA, ECOA, and applicable state and federal law. ITIN holders have full credit dispute rights. Required disclosure from RJ Business Solutions.',
     `<h1>Consumer Credit File Rights Under State and Federal Law</h1>
     <p class="updated">Required Disclosure Pursuant to 15 U.S.C. &sect; 1679c (Credit Repair Organizations Act)</p>
+
+    <div class="highlight-box">
+      <strong>&#127919; ITIN Holders:</strong> Everything on this page applies equally to you. Under the FCRA and ECOA, ITIN holders have the <strong>exact same credit dispute rights</strong> as SSN holders. All three major credit bureaus accept ITINs for credit file identification and dispute filing.
+    </div>
 
     <div class="croa-box">
       <p>You have a right to dispute inaccurate information in your credit report by contacting the credit bureau directly. However, neither you nor any "credit repair" company or credit repair organization has the right to have accurate, current, and verifiable information removed from your credit report. The credit bureau must remove accurate, negative information from your report only if it is over 7 years old. Bankruptcy information can be reported for 10 years.</p>
@@ -744,19 +787,33 @@ function consumerRightsPageHTML(): string {
 
     <h2>Additional Resources for Consumers</h2>
     <ul>
-      <li><a href="https://www.annualcreditreport.com" target="_blank" rel="noopener">AnnualCreditReport.com</a> — Free annual credit reports from all three bureaus</li>
+      <li><a href="https://www.annualcreditreport.com" target="_blank" rel="noopener">AnnualCreditReport.com</a> — Free annual credit reports from all three bureaus (ITIN accepted)</li>
       <li><a href="https://www.consumerfinance.gov/consumer-tools/credit-reports-and-scores/" target="_blank" rel="noopener">CFPB Credit Reports &amp; Scores</a> — Consumer tools and educational resources</li>
       <li><a href="https://www.ftc.gov/legal-library/browse/statutes/credit-repair-organizations-act" target="_blank" rel="noopener">FTC — Credit Repair Organizations Act (Full Text)</a></li>
       <li><a href="https://www.ftc.gov/legal-library/browse/statutes/fair-credit-reporting-act" target="_blank" rel="noopener">FTC — Fair Credit Reporting Act (Full Text)</a></li>
       <li><a href="https://www.ftc.gov/legal-library/browse/rules/fair-debt-collection-practices-act-text" target="_blank" rel="noopener">FTC — Fair Debt Collection Practices Act (Full Text)</a></li>
+      <li><a href="https://www.ftc.gov/legal-library/browse/statutes/equal-credit-opportunity-act" target="_blank" rel="noopener">FTC — Equal Credit Opportunity Act (Full Text)</a></li>
     </ul>
 
+    <h2>Your ECOA Rights as an ITIN Holder</h2>
+    <div class="croa-box">
+      <h3>&#9989; Equal Credit Opportunity Act (15 U.S.C. &sect; 1691)</h3>
+      <p>The ECOA prohibits discrimination in credit transactions based on national origin. This means:</p>
+      <ul>
+        <li>Creditors <strong>cannot</strong> refuse to report your account to credit bureaus because you use an ITIN instead of an SSN</li>
+        <li>Credit bureaus <strong>cannot</strong> refuse to investigate your disputes because your file is ITIN-identified</li>
+        <li>Lenders <strong>cannot</strong> deny you credit solely because you use an ITIN</li>
+        <li>Collection agencies <strong>cannot</strong> treat your ITIN-identified debt differently than an SSN-identified debt</li>
+        <li>You have the right to sue for ECOA violations and recover actual damages, punitive damages, and attorney's fees</li>
+      </ul>
+    </div>
+
     <h2>Your Right to Self-Dispute</h2>
-    <p>You have the right to dispute inaccurate information on your credit report directly with the credit bureaus at no cost. You do not need to hire a credit repair organization to exercise this right. The credit bureaus' dispute processes are available at:</p>
+    <p>You have the right to dispute inaccurate information on your credit report directly with the credit bureaus at no cost — <strong>whether you have an SSN or an ITIN</strong>. You do not need to hire a credit repair organization to exercise this right. The credit bureaus' dispute processes are available at:</p>
     <ul>
-      <li><strong>TransUnion:</strong> <a href="https://www.transunion.com/dispute" target="_blank" rel="noopener">transunion.com/dispute</a> | 1-800-916-8800</li>
-      <li><strong>Equifax:</strong> <a href="https://www.equifax.com/personal/disputes" target="_blank" rel="noopener">equifax.com/personal/disputes</a> | 1-866-349-5191</li>
-      <li><strong>Experian:</strong> <a href="https://www.experian.com/disputes" target="_blank" rel="noopener">experian.com/disputes</a> | 1-888-397-3742</li>
+      <li><strong>TransUnion:</strong> <a href="https://www.transunion.com/dispute" target="_blank" rel="noopener">transunion.com/dispute</a> | 1-800-916-8800 (accepts ITIN for identification)</li>
+      <li><strong>Equifax:</strong> <a href="https://www.equifax.com/personal/disputes" target="_blank" rel="noopener">equifax.com/personal/disputes</a> | 1-866-349-5191 (accepts ITIN for identification)</li>
+      <li><strong>Experian:</strong> <a href="https://www.experian.com/disputes" target="_blank" rel="noopener">experian.com/disputes</a> | 1-888-397-3742 (accepts ITIN — may require mail-in for ITIN files)</li>
     </ul>`
   )
 }
@@ -764,8 +821,8 @@ function consumerRightsPageHTML(): string {
 // ========== /cancellation — CANCELLATION POLICY ==========
 function cancellationPageHTML(): string {
   return legalLayout(
-    'Cancellation Policy &amp; Notice of Right to Cancel',
-    'Your right to cancel credit repair services from RJ Business Solutions within 3 business days under CROA.',
+    'Cancellation Policy &amp; Notice of Right to Cancel — ITIN Credit Repair',
+    'Your right to cancel ITIN credit repair services from RJ Business Solutions within 3 business days under CROA. Same rights for ITIN and SSN holders.',
     `<h1>Cancellation Policy &amp; Notice of Right to Cancel</h1>
     <p class="updated">Effective February 23, 2026 &bull; In accordance with 15 U.S.C. &sect; 1679e</p>
 
@@ -810,20 +867,21 @@ function cancellationPageHTML(): string {
 // ========== /privacy — PRIVACY POLICY ==========
 function privacyPageHTML(): string {
   return legalLayout(
-    'Privacy Policy',
-    'Privacy policy for RJ Business Solutions credit repair services. How we collect, use, and protect your personal information.',
+    'Privacy Policy — ITIN Credit Repair',
+    'Privacy policy for RJ Business Solutions ITIN credit repair services. How we collect, use, and protect your personal information including ITIN data.',
     `<h1>Privacy Policy</h1>
     <p class="updated">Last Updated: February 23, 2026 &bull; Effective Date: February 23, 2026</p>
 
-    <p>RJ Business Solutions ("we," "us," or "our") respects your privacy and is committed to protecting the personal information you share with us. This Privacy Policy describes how we collect, use, disclose, and safeguard your information when you visit our website, use our credit repair services, or interact with us in any way.</p>
+    <p>RJ Business Solutions ("we," "us," or "our") respects your privacy and is committed to protecting the personal information you share with us. This Privacy Policy describes how we collect, use, disclose, and safeguard your information when you visit our website, use our ITIN or SSN credit repair services, or interact with us in any way.</p>
 
     <h2>1. Information We Collect</h2>
     <h3>1.1 Personal Information You Provide</h3>
     <ul>
       <li><strong>Contact Information:</strong> Full name, email address, phone number, mailing address</li>
+      <li><strong>Identification:</strong> Individual Taxpayer Identification Number (ITIN) <strong>or</strong> Social Security Number (SSN) — used exclusively for credit bureau communication and dispute filing. We accept either identifier and do <strong>not</strong> require an SSN.</li>
       <li><strong>Financial Information:</strong> Credit report data (accessed through MyFreeScoreNow with your authorization), credit scores, account information relevant to credit repair</li>
       <li><strong>Payment Information:</strong> Credit/debit card details processed through Stripe (we do not store your full card number)</li>
-      <li><strong>Identity Verification:</strong> Date of birth, last four digits of SSN (only when required for credit bureau communication)</li>
+      <li><strong>Identity Verification:</strong> Date of birth, ITIN or last four digits of SSN (only when required for credit bureau communication)</li>
     </ul>
     <h3>1.2 Automatically Collected Information</h3>
     <ul>
@@ -836,8 +894,8 @@ function privacyPageHTML(): string {
 
     <h2>2. How We Use Your Information</h2>
     <ul>
-      <li>To provide credit repair services as described in your service agreement</li>
-      <li>To communicate with credit bureaus and furnishers on your behalf</li>
+      <li>To provide credit repair services as described in your service agreement (for ITIN or SSN credit files)</li>
+      <li>To communicate with credit bureaus and furnishers on your behalf using your ITIN or SSN as the identifying number</li>
       <li>To process payments securely through Stripe</li>
       <li>To send service-related communications (reports, updates, billing)</li>
       <li>To respond to your inquiries and provide customer support</li>
@@ -846,12 +904,13 @@ function privacyPageHTML(): string {
     </ul>
 
     <h2>3. How We Share Your Information</h2>
-    <p>We do <strong>not</strong> sell, rent, or trade your personal information. We share your information only in the following circumstances:</p>
+    <p>We do <strong>not</strong> sell, rent, or trade your personal information — including your ITIN number. We share your information only in the following circumstances:</p>
     <ul>
-      <li><strong>Credit Bureaus:</strong> TransUnion, Equifax, and Experian — as necessary to file disputes on your behalf with your written authorization</li>
+      <li><strong>Credit Bureaus:</strong> TransUnion, Equifax, and Experian — as necessary to file disputes on your behalf with your written authorization. Your ITIN or SSN is transmitted to bureaus only for dispute filing and identity verification.</li>
       <li><strong>Creditors/Furnishers:</strong> As necessary to challenge inaccurate reporting on your behalf</li>
       <li><strong>Payment Processor:</strong> Stripe, Inc. — to process secure payments (<a href="https://stripe.com/privacy" target="_blank" rel="noopener">Stripe Privacy Policy</a>)</li>
-      <li><strong>Credit Monitoring:</strong> MyFreeScoreNow — you enroll directly with them; we access your reports with your authorization</li>
+      <li><strong>Credit Monitoring:</strong> MyFreeScoreNow — you enroll directly with them using your ITIN or SSN; we access your reports with your authorization</li>
+      <li><strong>Immigration Status:</strong> We do <strong>not</strong> collect, store, or share immigration or citizenship status information. Your ITIN is used solely for credit bureau identification and dispute filing.</li>
       <li><strong>Legal Requirements:</strong> When required by law, regulation, legal process, or enforceable governmental request</li>
     </ul>
 
@@ -913,34 +972,39 @@ function privacyPageHTML(): string {
 // ========== /terms — TERMS OF SERVICE ==========
 function termsPageHTML(): string {
   return legalLayout(
-    'Terms of Service',
-    'Terms of Service for RJ Business Solutions credit repair services. Service agreement, billing, cancellation, and dispute resolution.',
+    'Terms of Service — ITIN Credit Repair',
+    'Terms of Service for RJ Business Solutions ITIN credit repair services. Service agreement for ITIN and SSN holders, billing, cancellation, and dispute resolution.',
     `<h1>Terms of Service</h1>
     <p class="updated">Last Updated: February 23, 2026 &bull; Effective Date: February 23, 2026</p>
 
     <p>These Terms of Service ("Terms") govern your use of the credit repair services provided by RJ Business Solutions ("Company," "we," "us," or "our"). By engaging our services, you agree to these Terms in their entirety.</p>
 
     <h2>1. Services Provided</h2>
-    <p>RJ Business Solutions provides credit repair services, including but not limited to:</p>
+    <p>RJ Business Solutions provides credit repair services for individuals identified by either a Social Security Number (SSN) or Individual Taxpayer Identification Number (ITIN), including but not limited to:</p>
     <ul>
-      <li>Forensic 3-bureau credit audits (TransUnion, Equifax, Experian)</li>
-      <li>Personalized credit restoration roadmaps</li>
-      <li>Filing statute-specific disputes with credit bureaus and furnishers under the FCRA</li>
+      <li>Forensic 3-bureau ITIN or SSN credit audits (TransUnion, Equifax, Experian)</li>
+      <li>Personalized ITIN-specific or SSN-specific credit restoration roadmaps</li>
+      <li>Filing statute-specific disputes with credit bureaus and furnishers under the FCRA and ECOA</li>
+      <li>Using bureau-specific ITIN dispute procedures (online, mail-in, or phone as required by each bureau)</li>
       <li>Monitoring dispute responses and filing follow-up disputes</li>
       <li>Monthly progress reports</li>
-      <li>Credit education resources</li>
+      <li>ITIN credit-building education and bilingual support (English &amp; Spanish)</li>
     </ul>
     <p>We are a credit repair organization as defined under the Credit Repair Organizations Act (15 U.S.C. &sect; 1679 et seq.). We are <strong>not</strong> a law firm, we do <strong>not</strong> provide legal advice, and we do <strong>not</strong> guarantee any specific results.</p>
 
     <h2>2. Eligibility</h2>
-    <p>You must be at least 18 years old and a legal resident of the United States to use our services. You must provide accurate and truthful information throughout the engagement.</p>
+    <p>You must be at least 18 years old to use our services. You must hold either a valid Social Security Number (SSN) <strong>or</strong> a valid Individual Taxpayer Identification Number (ITIN) issued by the IRS. ITIN holders have the same eligibility and the same rights under federal law (FCRA, ECOA, CROA) as SSN holders. You must provide accurate and truthful information throughout the engagement.</p>
+
+    <div class="highlight-box">
+      <strong>ITIN Clients:</strong> Under the Equal Credit Opportunity Act (15 U.S.C. &sect; 1691), it is illegal to discriminate based on national origin. All three major credit bureaus accept ITINs. Our services, fees, and protections are identical for ITIN and SSN holders.
+    </div>
 
     <h2>3. Required Credit Monitoring</h2>
-    <p>Before we can begin any credit repair work, you must enroll in and maintain an active MyFreeScoreNow monitoring subscription ($29.99/month). This is a third-party service required for us to access your tri-bureau credit data. The monitoring fee is paid directly to MyFreeScoreNow and is separate from our service fees.</p>
+    <p>Before we can begin any credit repair work, you must enroll in and maintain an active MyFreeScoreNow monitoring subscription ($29.99/month). MyFreeScoreNow accepts ITIN numbers for enrollment. This is a third-party service required for us to access your tri-bureau credit data. The monitoring fee is paid directly to MyFreeScoreNow and is separate from our service fees.</p>
 
     <h2>4. Fees and Billing</h2>
     <h3>4.1 Audit Fee</h3>
-    <p>A one-time fee of $99.00 is charged for your forensic 3-bureau credit audit and personalized 10-Point Restoration Roadmap. This fee is for a <strong>completed, delivered product</strong> and is charged at the time of purchase via Stripe secure checkout. The completed audit and roadmap are delivered within 24–48 hours.</p>
+    <p>A one-time fee of $99.00 is charged for your forensic 3-bureau credit audit (SSN or ITIN) and personalized 10-Point Restoration Roadmap. This fee is for a <strong>completed, delivered product</strong> and is charged at the time of purchase via Stripe secure checkout. The completed audit and roadmap are delivered within 24–48 hours. ITIN audits use ITIN-specific bureau access procedures.</p>
     <h3>4.2 Monthly Service Fee</h3>
     <p>A monthly service fee of $99.00 covers dispute filing, tracking, follow-up, and progress reporting. <strong>This fee is charged only in months where verifiable progress has been documented</strong> (deletions, corrections, or verified score improvements). If no progress is made in a given month, no service fee is charged for that month.</p>
     <h3>4.3 No Advance Fees for Disputes</h3>
@@ -954,8 +1018,8 @@ function termsPageHTML(): string {
 
     <h2>6. Client Responsibilities</h2>
     <ul>
-      <li>Provide accurate and truthful information at all times</li>
-      <li>Maintain active MyFreeScoreNow credit monitoring throughout the engagement</li>
+      <li>Provide accurate and truthful information at all times, including your correct SSN or ITIN</li>
+      <li>Maintain active MyFreeScoreNow credit monitoring throughout the engagement (ITIN accepted for enrollment)</li>
       <li>Respond promptly to requests for information or documentation</li>
       <li>Review all dispute letters and reports provided to you</li>
       <li>Not file additional disputes independently while we are actively working on your file (to avoid conflicting dispute processes)</li>
@@ -965,8 +1029,9 @@ function termsPageHTML(): string {
     <h2>7. What We Do NOT Do</h2>
     <ul>
       <li>We do <strong>not</strong> guarantee specific credit score increases or removal of specific items</li>
-      <li>We do <strong>not</strong> advise you to misrepresent your identity or create a "new" credit file</li>
+      <li>We do <strong>not</strong> advise you to misrepresent your identity, use someone else's SSN, or create a "new" credit file — this includes never advising ITIN holders to use a fabricated SSN</li>
       <li>We do <strong>not</strong> advise you to dispute accurate, current, and verifiable information</li>
+      <li>We do <strong>not</strong> engage in "credit profile number" (CPN) schemes — CPNs are illegal and often constitute identity fraud</li>
       <li>We do <strong>not</strong> provide legal advice or legal representation</li>
       <li>We do <strong>not</strong> charge for services before they are performed</li>
     </ul>
@@ -1004,17 +1069,17 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clean It Up | Precision Credit Repair for 1-5 Negative Items | RJ Business Solutions</title>
-  <meta name="description" content="Remove 1-5 negative items from your credit report using federal law. Pay only when progress is made. 90-day money-back guarantee. Start with a $99 forensic audit.">
-  <meta property="og:title" content="Clean It Up — Precision Credit Repair | Basic Plan">
-  <meta property="og:description" content="You're 1-5 items away from the credit score you deserve. Federal law backed credit repair starting at $99.">
+  <title>Clean It Up | ITIN Credit Repair — Fix Your Credit With an ITIN Number | RJ Business Solutions</title>
+  <meta name="description" content="ITIN credit repair for individuals without an SSN. Remove negative items from your ITIN credit file using FCRA, ECOA &amp; federal law. All 3 bureaus accept ITINs. 90-day money-back guarantee. $99 forensic audit.">
+  <meta property="og:title" content="Clean It Up — ITIN Credit Repair | No SSN Required">
+  <meta property="og:description" content="Have an ITIN? You have the SAME credit dispute rights as SSN holders under federal law. We fix ITIN credit files across all 3 bureaus. $99 to start.">
   <meta property="og:image" content="https://media.rickjeffersonsolutions.com/basic/Professional_credit_repair_hero_banner_image_featu-1771867694534.png">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Clean It Up — Precision Credit Repair | Basic Plan">
-  <meta name="twitter:description" content="Remove 1-5 negative items from your credit report using federal law. 90-day money-back guarantee.">
+  <meta name="twitter:title" content="Clean It Up — ITIN Credit Repair | No SSN Required">
+  <meta name="twitter:description" content="ITIN holders have FULL credit dispute rights under FCRA &amp; ECOA. We repair ITIN credit files across TransUnion, Equifax &amp; Experian. 90-day guarantee.">
   <meta name="twitter:image" content="https://media.rickjeffersonsolutions.com/basic/Professional_credit_repair_hero_banner_image_featu-1771867694534.png">
-  <meta name="keywords" content="credit repair services, Rick Jefferson credit expert, FCRA credit repair, tri-bureau credit repair, credit score improvement, $99 credit repair plan, no pay until progress credit repair, TransUnion Equifax Experian disputes">
+  <meta name="keywords" content="ITIN credit repair, credit repair with ITIN number, ITIN credit score, fix credit without SSN, ITIN credit file disputes, ITIN TransUnion Equifax Experian, FCRA ITIN rights, ECOA credit protection, credit repair for immigrants, ITIN credit bureau disputes, Rick Jefferson ITIN credit expert, $99 ITIN credit audit">
   <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#x1f6e1;</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1206,10 +1271,10 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
   {
     "@context":"https://schema.org",
     "@type":"Service",
-    "name":"Clean It Up — Basic Plan Credit Repair",
+    "name":"Clean It Up — ITIN Credit Repair Basic Plan",
     "provider":{"@type":"Organization","name":"RJ Business Solutions","url":"https://rickjeffersonsolutions.com","logo":"https://media.rickjeffersonsolutions.com/rj-business-solutions-logo-banner.jpg","address":{"@type":"PostalAddress","streetAddress":"1342 NM 333","addressLocality":"Tijeras","addressRegion":"NM","postalCode":"87059","addressCountry":"US"}},
-    "description":"Precision credit repair targeting 1-5 negative items using federal law (FCRA, CROA). Pay only when progress is verified. 90-day money-back guarantee.",
-    "offers":{"@type":"Offer","price":"99.00","priceCurrency":"USD","description":"One-time forensic 3-bureau credit audit fee"}
+    "description":"ITIN credit repair targeting 1-5 negative items using federal law (FCRA, ECOA, CROA). ITIN holders have the same dispute rights as SSN holders. Pay only when progress is verified. 90-day money-back guarantee.",
+    "offers":{"@type":"Offer","price":"99.00","priceCurrency":"USD","description":"One-time forensic 3-bureau ITIN/SSN credit audit fee"}
   }
   </script>
 </head>
@@ -1225,8 +1290,8 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
 
     <div class="hc">
       <div class="ub"><i data-lucide="alert-triangle"></i><span>Limited Spots Available This Month — Only 12 Remaining</span></div>
-      <h1>You're 1-5 Items Away From<span class="gt">The Credit Score You Deserve</span></h1>
-      <p class="st">A few stubborn negative items shouldn't define your financial future. Our Basic Plan uses federal law to challenge every single one — and you don't pay a cent until something actually gets removed.</p>
+      <h1>Have an ITIN? You Have<span class="gt">Full Credit Repair Rights</span></h1>
+      <p class="st">All three credit bureaus — TransUnion, Equifax, and Experian — accept ITIN numbers. Under the FCRA and ECOA, you have the <strong>exact same dispute rights</strong> as SSN holders. We use federal law to challenge every inaccurate item on your ITIN credit file — and you don't pay a cent until something actually gets removed.</p>
     </div>
 
     <!-- HERO IMAGE -->
@@ -1236,9 +1301,10 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
 
     <div class="hc" style="padding-top:0">
       <div class="vp">
+        <span class="vpi">&#10003; Works With ITIN — No SSN Needed</span>
+        <span class="vpi">&#10003; All 3 Bureaus Accept ITINs</span>
+        <span class="vpi">&#10003; FCRA + ECOA Protected</span>
         <span class="vpi">&#10003; No Pay Until Progress</span>
-        <span class="vpi">&#10003; 3-Bureau Coverage</span>
-        <span class="vpi">&#10003; Federal Law Backed</span>
         <span class="vpi">&#10003; 90-Day Money Back</span>
         <span class="vpi">&#10003; Starts at $99</span>
       </div>
@@ -1267,8 +1333,8 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
   <section class="sp" id="problems">
     <div class="cs">
       <div class="tc ao">
-        <h2 class="stt">Does Any of This Sound Familiar?</h2>
-        <p class="sts">You're not alone. These are the exact problems our Basic Plan was built to solve.</p>
+        <h2 class="stt">Sound Familiar? ITIN Credit Holders Face These Every Day</h2>
+        <p class="sts">Having an ITIN doesn't mean you have fewer rights — but the system makes it feel that way. We fix that.</p>
       </div>
 
       <!-- PAIN POINTS IMAGE -->
@@ -1277,10 +1343,10 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
       </div>
 
       <div class="pg">
-        <div class="pc ao s1"><div class="iw"><i data-lucide="x-circle"></i></div><h3>Paid collection STILL showing on your report</h3><p>Costing you 40-80 points you already earned back</p></div>
-        <div class="pc ao s2"><div class="iw"><i data-lucide="x-circle"></i></div><h3>Old late payment dragging your score down</h3><p>Blocking you from better rates and loan approvals</p></div>
-        <div class="pc ao s3"><div class="iw"><i data-lucide="x-circle"></i></div><h3>DIY disputes keep getting rejected</h3><p>Generic disputes almost always get "verified" — ours don't</p></div>
-        <div class="pc ao s4"><div class="iw"><i data-lucide="x-circle"></i></div><h3>Don't know what's legally removable</h3><p>Without a forensic audit, you're guessing — we don't guess</p></div>
+        <div class="pc ao s1"><div class="iw"><i data-lucide="x-circle"></i></div><h3>Told "we can't help you" because you have an ITIN</h3><p>Wrong. Under ECOA (15 U.S.C. § 1691), creditors cannot discriminate based on national origin. Your ITIN file has the same rights.</p></div>
+        <div class="pc ao s2"><div class="iw"><i data-lucide="x-circle"></i></div><h3>Collections or errors reporting on your ITIN credit file</h3><p>Bureaus accept ITINs — and the FCRA requires them to investigate disputes from ITIN holders the same as SSN holders.</p></div>
+        <div class="pc ao s3"><div class="iw"><i data-lucide="x-circle"></i></div><h3>Can't get approved for a mortgage, auto loan, or credit card</h3><p>Inaccurate negatives on your ITIN file block approvals. ITIN loans exist — but only if your report is clean.</p></div>
+        <div class="pc ao s4"><div class="iw"><i data-lucide="x-circle"></i></div><h3>Don't know how to dispute with an ITIN number</h3><p>Bureaus have different ITIN dispute procedures. We know exactly how to file with TransUnion, Equifax, and Experian using your ITIN.</p></div>
       </div>
     </div>
   </section>
@@ -1289,8 +1355,8 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
   <section class="sf" id="features">
     <div class="ct">
       <div class="tc ao">
-        <h2 class="stt">Everything You Get With The <span style="color:#60a5fa">Basic Plan</span></h2>
-        <p class="sts">Precision credit repair for targeted situations. Not a starter plan — a results plan.</p>
+        <h2 class="stt">Everything You Get With The <span style="color:#60a5fa">ITIN Basic Plan</span></h2>
+        <p class="sts">Credit repair built specifically for ITIN holders. We know the bureau-specific ITIN procedures, the federal laws that protect you, and exactly how to get results.</p>
       </div>
 
       <!-- VALUE STACK IMAGE -->
@@ -1299,12 +1365,12 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
       </div>
 
       <div class="fg">
-        <div class="fc2 ao s1"><div class="fch"><div class="iw"><i data-lucide="file-text"></i></div><span class="fv">$199 Value</span></div><h3>Forensic 3-Bureau Credit Audit</h3><p>Every tradeline, inquiry, and public record across TransUnion, Equifax, and Experian reviewed against FCRA accuracy standards.</p></div>
-        <div class="fc2 ao s2"><div class="fch"><div class="iw"><i data-lucide="bar-chart-2"></i></div><span class="fv">$149 Value</span></div><h3>10-Point Restoration Roadmap</h3><p>Custom strategy document showing exactly what we're targeting, in what order, with 30/60/90-day milestones.</p></div>
-        <div class="fc2 ao s3"><div class="fch"><div class="iw"><i data-lucide="shield"></i></div><span class="fv">$297 Value</span></div><h3>Up to 15 Statute-Specific Disputes/Mo</h3><p>Personalized dispute letters citing FCRA Sections 611, 623, and 605 — tracked through every 30-day response window.</p></div>
-        <div class="fc2 ao s4"><div class="fch"><div class="iw"><i data-lucide="trending-up"></i></div><span class="fv">$99 Value</span></div><h3>Monthly Progress Reports</h3><p>Documentation of every bureau response, deletion, correction, and score change delivered each billing cycle.</p></div>
-        <div class="fc2 ao s5"><div class="fch"><div class="iw"><i data-lucide="mail"></i></div><span class="fv">$79 Value</span></div><h3>Priority Email Support</h3><p>Direct access with guaranteed one-business-day response time for questions and status updates.</p></div>
-        <div class="fc2 ao s6"><div class="fch"><div class="iw"><i data-lucide="book-open"></i></div><span class="fv">$49 Value</span></div><h3>Credit Education Library</h3><p>Scoring mechanics, utilization strategy, payment history optimization, and maintenance protocols.</p></div>
+        <div class="fc2 ao s1"><div class="fch"><div class="iw"><i data-lucide="file-text"></i></div><span class="fv">$199 Value</span></div><h3>Forensic 3-Bureau ITIN Credit Audit</h3><p>Your full ITIN credit file across TransUnion, Equifax, and Experian — every tradeline, inquiry, and public record reviewed against FCRA accuracy standards using your ITIN number.</p></div>
+        <div class="fc2 ao s2"><div class="fch"><div class="iw"><i data-lucide="bar-chart-2"></i></div><span class="fv">$149 Value</span></div><h3>ITIN-Specific Restoration Roadmap</h3><p>Custom strategy built for ITIN credit files. We know which bureaus require mail-in disputes for ITIN holders vs. online, and we map your 30/60/90-day milestones accordingly.</p></div>
+        <div class="fc2 ao s3"><div class="fch"><div class="iw"><i data-lucide="shield"></i></div><span class="fv">$297 Value</span></div><h3>Up to 15 Statute-Specific Disputes/Mo</h3><p>Personalized dispute letters citing FCRA §611, §623, §605 and ECOA protections — filed with each bureau using their ITIN-specific dispute procedures.</p></div>
+        <div class="fc2 ao s4"><div class="fch"><div class="iw"><i data-lucide="trending-up"></i></div><span class="fv">$99 Value</span></div><h3>Monthly ITIN Credit Progress Reports</h3><p>Documentation of every bureau response, deletion, correction, and score change on your ITIN credit file delivered each billing cycle.</p></div>
+        <div class="fc2 ao s5"><div class="fch"><div class="iw"><i data-lucide="mail"></i></div><span class="fv">$79 Value</span></div><h3>Bilingual Support (English &amp; Spanish)</h3><p>Direct access with guaranteed one-business-day response. Our team communicates in both English and Spanish to ensure nothing gets lost in translation.</p></div>
+        <div class="fc2 ao s6"><div class="fch"><div class="iw"><i data-lucide="book-open"></i></div><span class="fv">$49 Value</span></div><h3>ITIN Credit Building Library</h3><p>How to build credit with an ITIN, secured cards that accept ITINs, ITIN mortgage readiness, utilization strategy, and credit maintenance protocols.</p></div>
       </div>
 
       <div class="vs ao asi">
@@ -1321,7 +1387,7 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
   <!-- ===== HOW IT WORKS ===== -->
   <section class="ss" id="how-it-works">
     <div class="cs">
-      <h2 class="stt tc ao" style="margin-bottom:2.5rem">How The Basic Plan Works</h2>
+      <h2 class="stt tc ao" style="margin-bottom:2.5rem">How ITIN Credit Repair Works</h2>
 
       <!-- PROCESS WORKFLOW IMAGE -->
       <div class="sec-img ao s1" style="margin-bottom:3rem">
@@ -1329,11 +1395,11 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
       </div>
 
       <div class="stl">
-        <div class="sc ao asl s1"><div class="sn">01</div><div><h3>Activate MyFreeScoreNow Monitoring ($29.99/mo)</h3><p>This gives us live tri-bureau visibility into your file — real-time intelligence to track every deletion, change, and score movement. Required before any work begins.</p></div></div>
-        <div class="sc ao asl s2"><div class="sn">02</div><div><h3>Pay Your One-Time Audit Fee ($99)</h3><p>Covers your complete forensic 3-bureau credit audit plus personalized 10-Point Restoration Roadmap. Delivered within 24–48 hours.</p></div></div>
-        <div class="sc ao asl s3"><div class="sn">03</div><div><h3>Review Your Audit Report &amp; Roadmap</h3><p>Before a single dispute goes out, you see exactly what we found and what we're targeting. No surprises. No black boxes.</p></div></div>
-        <div class="sc ao asl s4"><div class="sn">04</div><div><h3>We File Statute-Specific Disputes</h3><p>Personalized letters citing specific FCRA violations. We track every 30-day response window and re-dispute with escalated arguments when bureaus push back.</p></div></div>
-        <div class="sc ao asl s5"><div class="sn">05</div><div><h3>You're Only Billed When Things Move</h3><p>Documented deletions, corrections, or verified score improvements = your $99 monthly fee is charged. Nothing moved? Not billed. Simple.</p></div></div>
+        <div class="sc ao asl s1"><div class="sn">01</div><div><h3>Activate MyFreeScoreNow Monitoring ($29.99/mo)</h3><p>Enroll using your ITIN — MyFreeScoreNow accepts ITIN numbers. This gives us live tri-bureau visibility into your ITIN credit file to track every deletion, change, and score movement.</p></div></div>
+        <div class="sc ao asl s2"><div class="sn">02</div><div><h3>Pay Your One-Time Audit Fee ($99)</h3><p>We pull and analyze your complete ITIN credit file across all 3 bureaus. Your forensic audit + ITIN-specific restoration roadmap are delivered within 24–48 hours.</p></div></div>
+        <div class="sc ao asl s3"><div class="sn">03</div><div><h3>Review Your ITIN Credit Audit &amp; Roadmap</h3><p>Before a single dispute goes out, you see exactly what's on your ITIN file, what's challengeable, and our strategy for each bureau's ITIN-specific dispute process.</p></div></div>
+        <div class="sc ao asl s4"><div class="sn">04</div><div><h3>We File ITIN-Specific Bureau Disputes</h3><p>Personalized letters citing FCRA §611, §623, §605 and ECOA §1691 protections. Filed using each bureau's ITIN dispute procedures — some require mail-in, some accept online. We handle it all.</p></div></div>
+        <div class="sc ao asl s5"><div class="sn">05</div><div><h3>You're Only Billed When Things Move</h3><p>Documented deletions, corrections, or verified score improvements on your ITIN credit file = your $99 monthly fee. Nothing moved? Not billed. Period.</p></div></div>
       </div>
     </div>
   </section>
@@ -1341,7 +1407,7 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
   <!-- ===== COMPLIANCE SECTION ===== -->
   <section class="scp" id="compliance">
     <div class="cs">
-      <h3 class="cpt ao">&#128274; 100% Federally Compliant — Your Rights Are Protected</h3>
+      <h3 class="cpt ao">&#128274; ITIN Holders Have Full Federal Protection — Here's the Law</h3>
 
       <!-- COMPLIANCE IMAGE -->
       <div class="sec-img ao s1" style="margin-bottom:2rem">
@@ -1349,12 +1415,12 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
       </div>
 
       <div class="cpg">
-        <div class="cpc ao s1"><h4>CROA Compliant</h4><p>Written contract provided. 3-day cancellation right honored. No advance fees. Full consumer disclosure per 15 U.S.C. &sect; 1679c.</p></div>
-        <div class="cpc ao s2"><h4>FCRA Backed</h4><p>Every dispute cites specific FCRA sections. Section 611, 623, and 604 rights fully enforced. 30-day investigation windows tracked.</p></div>
-        <div class="cpc ao s3"><h4>FDCPA Enforced</h4><p>Collection accounts challenged under FDCPA. Debt validation rights (15 U.S.C. &sect; 1692g) cited when applicable.</p></div>
-        <div class="cpc ao s4"><h4>TSR Compliant</h4><p>No advance fees per 16 C.F.R. &sect; 310.4(a)(2). Required disclosures provided. Records maintained per TSR.</p></div>
-        <div class="cpc ao s5"><h4>FTC &amp; CFPB Aligned</h4><p>Section 5 FTC Act compliant. CFPB dispute standards applied. Regulation V and F procedures followed.</p></div>
-        <div class="cpc ao s6"><h4>State Law Compliant</h4><p>New Mexico Unfair Practices Act compliant. State cancellation rights honored. Applicable bonding maintained.</p></div>
+        <div class="cpc ao s1"><h4>ECOA Protected (15 U.S.C. &sect; 1691)</h4><p>The Equal Credit Opportunity Act prohibits discrimination based on national origin. Creditors and bureaus <strong>cannot</strong> treat your ITIN file differently than an SSN file.</p></div>
+        <div class="cpc ao s2"><h4>FCRA — Same Rights, Same Law</h4><p>Under the FCRA, ITIN holders have the <strong>exact same</strong> dispute rights as SSN holders. §611, §623, §605 — all apply to your ITIN credit file. 30-day investigation windows enforced.</p></div>
+        <div class="cpc ao s3"><h4>CROA Compliant</h4><p>Written contract provided. 3-day cancellation right honored. No advance fees charged until services are performed. Full consumer disclosure per 15 U.S.C. &sect; 1679c.</p></div>
+        <div class="cpc ao s4"><h4>FDCPA Enforced</h4><p>Collection accounts on your ITIN file challenged under FDCPA. Debt validation rights (15 U.S.C. &sect; 1692g) cited. Collectors cannot discriminate based on ITIN status.</p></div>
+        <div class="cpc ao s5"><h4>TSR + FTC + CFPB Aligned</h4><p>No advance fees per TSR. Section 5 FTC Act compliant. CFPB Regulation V and F procedures followed for all ITIN disputes.</p></div>
+        <div class="cpc ao s6"><h4>State Law Compliant</h4><p>New Mexico Unfair Practices Act compliant. State cancellation rights honored. ITIN holders receive all applicable state protections.</p></div>
       </div>
       <p class="ao" style="text-align:center;margin-top:1.5rem;font-size:.8rem;color:#6b7280">Full legal disclosures: <a href="/legal" style="color:#60a5fa">Legal &amp; Compliance</a> &bull; <a href="/consumer-rights" style="color:#60a5fa">Consumer Rights</a> &bull; <a href="/cancellation" style="color:#60a5fa">Cancellation Policy</a></p>
     </div>
@@ -1370,8 +1436,8 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
       </div>
 
       <div class="ao">
-        <h2 class="stt" style="margin-bottom:1.5rem">Ready to Remove Those <span style="color:#60a5fa">1-5 Items</span> For Good?</h2>
-        <p class="sts" style="margin-bottom:2rem">Start with your $99 audit. See exactly what's dragging your score down. Then watch us legally eliminate it — and only pay when we do.</p>
+        <h2 class="stt" style="margin-bottom:1.5rem">Ready to Clean Up Your <span style="color:#60a5fa">ITIN Credit File</span>?</h2>
+        <p class="sts" style="margin-bottom:2rem">Your ITIN gives you credit rights under federal law. Start with your $99 audit — see exactly what's on your ITIN file across all 3 bureaus. Then watch us legally challenge every inaccurate item — and only pay when we get results.</p>
       </div>
 
       <!-- GUARANTEE SEAL IMAGE -->
@@ -1399,14 +1465,14 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
       <p><strong style="color:#d1d5db">RJ Business Solutions</strong><br>1342 NM 333, Tijeras, New Mexico 87059<br><a href="https://rickjeffersonsolutions.com" target="_blank">rickjeffersonsolutions.com</a> &bull; <a href="mailto:rickjefferson@rickjeffersonsolutions.com">rickjefferson@rickjeffersonsolutions.com</a></p>
       <div style="margin:1.25rem auto;max-width:700px;padding:1rem;background:rgba(17,24,39,.8);border:1px solid #1f2937;border-radius:.75rem;text-align:left">
         <p style="color:#9ca3af;font-size:.7rem;line-height:1.7;margin:0">
-          <strong style="color:#d1d5db">Federal Compliance Disclosures:</strong> RJ Business Solutions is a credit repair organization as defined under the Credit Repair Organizations Act (15 U.S.C. &sect; 1679 et seq.). We are not a law firm, we are not attorneys, and we do not provide legal advice. You have the right to dispute inaccurate information on your credit report directly with the credit bureaus at no cost. Neither you nor any credit repair company has the right to have accurate, current, and verifiable information removed from your credit report. Results vary and are not guaranteed. You have the right to cancel your contract within 3 business days of signing without penalty (CROA &sect; 1679e). No fees are charged for credit repair services until such services have been fully performed (CROA &sect; 1679b(b); TSR 16 C.F.R. &sect; 310.4(a)(2)). The $99 audit fee is for a completed, delivered forensic audit product. Monthly service fees are charged only when verifiable progress is documented. All disputes are filed in accordance with the Fair Credit Reporting Act (15 U.S.C. &sect; 1681 et seq.). Our services comply with the Fair Debt Collection Practices Act (15 U.S.C. &sect; 1692 et seq.), the FTC Telemarketing Sales Rule (16 C.F.R. Part 310), the Federal Trade Commission Act (15 U.S.C. &sect; 41 et seq.), and applicable CFPB regulations.
+          <strong style="color:#d1d5db">Federal Compliance Disclosures:</strong> RJ Business Solutions is a credit repair organization as defined under the Credit Repair Organizations Act (15 U.S.C. &sect; 1679 et seq.). We serve both SSN and ITIN holders. We are not a law firm, we are not attorneys, and we do not provide legal advice. You have the right to dispute inaccurate information on your credit report directly with the credit bureaus at no cost — whether identified by SSN or ITIN. Neither you nor any credit repair company has the right to have accurate, current, and verifiable information removed from your credit report. Results vary and are not guaranteed. You have the right to cancel your contract within 3 business days of signing without penalty (CROA &sect; 1679e). No fees are charged for credit repair services until such services have been fully performed (CROA &sect; 1679b(b); TSR 16 C.F.R. &sect; 310.4(a)(2)). The $99 audit fee is for a completed, delivered forensic audit product. Monthly service fees are charged only when verifiable progress is documented. All disputes are filed in accordance with the Fair Credit Reporting Act (15 U.S.C. &sect; 1681 et seq.) and the Equal Credit Opportunity Act (15 U.S.C. &sect; 1691 et seq.). ECOA prohibits discrimination based on national origin — ITIN holders receive identical dispute protections as SSN holders. Our services comply with the Fair Debt Collection Practices Act (15 U.S.C. &sect; 1692 et seq.), the FTC Telemarketing Sales Rule (16 C.F.R. Part 310), the Federal Trade Commission Act (15 U.S.C. &sect; 41 et seq.), and applicable CFPB regulations.
         </p>
         <p style="color:#9ca3af;font-size:.7rem;line-height:1.7;margin:.75rem 0 0">
           <strong style="color:#d1d5db">Regulatory Contacts:</strong> FTC: <a href="https://www.ftc.gov/complaint" target="_blank" style="color:#60a5fa">ftc.gov/complaint</a> | 1-877-FTC-HELP &bull; CFPB: <a href="https://www.consumerfinance.gov/complaint/" target="_blank" style="color:#60a5fa">consumerfinance.gov/complaint</a> | 1-855-411-CFPB &bull; NM Attorney General: <a href="https://www.nmag.gov" target="_blank" style="color:#60a5fa">nmag.gov</a> | 1-844-255-9210
         </p>
       </div>
       <p style="margin-top:.75rem"><a href="/legal">Legal Disclosures</a> &bull; <a href="/consumer-rights">Consumer Rights</a> &bull; <a href="/privacy">Privacy Policy</a> &bull; <a href="/terms">Terms of Service</a> &bull; <a href="/cancellation">Cancellation Policy</a></p>
-      <p style="margin-top:.75rem">&copy; 2026 RJ Business Solutions. All rights reserved.<br>Credit repair services are performed in compliance with CROA, FCRA, FDCPA, TSR, and applicable state regulations.</p>
+      <p style="margin-top:.75rem">&copy; 2026 RJ Business Solutions. All rights reserved.<br>Credit repair services are performed in compliance with CROA, FCRA, ECOA, FDCPA, TSR, and applicable state regulations. ITIN holders have full credit dispute rights under federal law.</p>
     </div>
   </footer>
 
