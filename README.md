@@ -13,75 +13,91 @@
 - **Name**: Clean It Up Funnel
 - **Type**: Conversion-Optimized Credit Repair Funnel (Basic Plan)
 - **Goal**: Convert visitors with 1-5 negative credit items into paying clients through a high-conversion, federally compliant sales funnel
-- **Target Audience**: Consumers with 1-5 negative items on their credit report who want precision credit repair
+- **Target Audience**: Consumers with 1-5 negative items on their credit report
 
 ## Live URLs
 
 - **Production**: [https://clean-it-up-funnel.pages.dev](https://clean-it-up-funnel.pages.dev)
 - **GitHub**: [https://github.com/rjbizsolution23-wq/clean-it-up-funnel](https://github.com/rjbizsolution23-wq/clean-it-up-funnel)
 
-## Features (Completed)
+## Completed Features
 
 ### Funnel Sections
-- **Hero Section**: Animated gradient background with floating particles, urgency banner (12 spots remaining), countdown timer, value proposition pills, primary CTA
-- **Problem Agitation Section**: 4 pain point cards with icons addressing common credit frustrations
-- **What You Get Section**: 6 feature cards with dollar values ($872 total), culminating in a value stack showing $99/mo pricing
-- **How It Works Section**: 5-step numbered process walkthrough from monitoring activation to pay-for-performance billing
-- **Compliance Section**: CROA, FCRA, FTC/CFPB compliance badges with detailed descriptions
-- **Final CTA Section**: 90-day money-back guarantee badge, final conversion button
+- Hero Section with animated particles, countdown timer, urgency banner
+- Problem Agitation Section (4 pain point cards)
+- Value Stack Section (6 features, $872 value for $99/mo)
+- 5-Step Process Walkthrough
+- Federal Compliance Section (CROA, FCRA, FTC/CFPB)
+- Final CTA with 90-Day Money-Back Guarantee
+- Payment Success Page (`/success`)
 
-### Technical Features
-- **Lead Capture API** (`POST /api/leads`) - Captures name, email, phone with validation
-- **Health Check API** (`GET /api/health`) - Service monitoring endpoint
-- **Modal Lead Form** - Overlay form with success state
-- **Mobile Sticky CTA** - Bottom-fixed CTA bar appears after scrolling past hero
-- **Scroll Animations** - Intersection Observer-powered reveal animations with stagger delays
-- **Countdown Timer** - Live countdown creating urgency
-- **Particle Background** - CSS-animated floating particles in hero
-- **Zero Framework Overhead** - Pure HTML/CSS/JS, no React bundle = blazing fast load times
-- **Lucide Icons** - Professional SVG icon set via CDN
+### Backend (Fully Wired)
+- **D1 Database** — Leads, payments, disputes, and activity log tables
+- **Stripe Checkout** — $99 audit fee via Stripe Checkout Sessions API
+- **Stripe Webhooks** — Payment confirmation handler with lead status updates
+- **MyFreeScoreNow API** — Auth token, credit report retrieval integration
+- **Lead Capture** — Persistent storage with duplicate detection and UTM tracking
+- **Admin Dashboard API** — Stats (total leads, paid, revenue, conversion rate)
+- **Activity Logging** — CROA-compliant audit trail for every action
 
-### Conversion Optimization
-- Urgency triggers (countdown timer, limited spots)
-- Social proof through compliance badges
-- Value anchoring ($872 value vs $99 price)
-- Risk reversal (90-day money-back guarantee)
-- Multiple CTA touchpoints throughout the page
-- Exit-intent considerations (modal)
-- Mobile-first responsive design
+### Frontend
+- Modal lead capture form with 2-step post-submit flow (MFSN enrollment + Stripe checkout)
+- Mobile sticky CTA bar
+- Scroll animations (Intersection Observer)
+- Zero framework overhead (pure HTML/CSS/JS)
+- UTM parameter tracking
 
 ## API Endpoints
 
-| Method | Path | Description | Parameters |
-|--------|------|-------------|------------|
-| `GET` | `/` | Main funnel page | - |
-| `GET` | `/basic` | Redirects to `/` | - |
-| `GET` | `/api/health` | Health check | - |
-| `POST` | `/api/leads` | Lead capture | `name*`, `email*`, `phone`, `plan` |
+| Method | Path | Description | Auth |
+|--------|------|-------------|------|
+| `GET` | `/` | Main funnel page | Public |
+| `GET` | `/success` | Post-payment success page | Public |
+| `GET` | `/api/health` | Health check with service status | Public |
+| `GET` | `/api/config` | Public config (Stripe key, MFSN URL) | Public |
+| `POST` | `/api/leads` | Lead capture with D1 persistence | Public |
+| `POST` | `/api/checkout` | Create Stripe Checkout Session | Public |
+| `POST` | `/api/webhooks/stripe` | Stripe webhook handler | Stripe |
+| `GET` | `/api/leads/:email` | Get lead status by email | Internal |
+| `GET` | `/api/admin/leads` | List all leads (most recent 100) | Internal |
+| `GET` | `/api/admin/stats` | Dashboard stats | Internal |
+| `POST` | `/api/mfsn/auth` | Get MFSN API auth token | Internal |
+| `POST` | `/api/mfsn/report` | Fetch 3-bureau credit report | Internal |
 
 ## Tech Stack
 
-- **Backend**: Hono (v4) on Cloudflare Workers
+- **Backend**: Hono v4 on Cloudflare Workers
+- **Database**: Cloudflare D1 (SQLite)
+- **Payments**: Stripe Checkout Sessions API (LIVE keys)
+- **Credit Monitoring**: MyFreeScoreNow API (Affiliate PID: 49914)
 - **Frontend**: Vanilla HTML/CSS/JS (zero framework overhead)
 - **Icons**: Lucide Icons (CDN)
 - **Fonts**: Inter (Google Fonts)
-- **Animations**: CSS Keyframes + Intersection Observer API
-- **Hosting**: Cloudflare Pages (Edge deployment)
+- **Hosting**: Cloudflare Pages (Global Edge)
 - **Build**: Vite
+
+## Data Architecture
+
+### D1 Database Tables
+- **leads** — Name, email, phone, plan, status, Stripe IDs, MFSN status, UTM tracking
+- **payments** — Stripe payment records linked to leads
+- **disputes** — Credit dispute tracking (bureau, FCRA section, status, response dates)
+- **activity_log** — CROA-compliant audit trail for all actions
+
+### Cloudflare Secrets (Production)
+- `STRIPE_SECRET_KEY` / `STRIPE_PUBLISHABLE_KEY`
+- `MFSN_API_BASE` / `MFSN_EMAIL` / `MFSN_PASSWORD` / `MFSN_AID` / `MFSN_PID`
+- `MFSN_AFFILIATE_URL_PRIMARY`
+- `COMPANY_NAME` / `COMPANY_EMAIL`
+- `OPENAI_API_KEY`
 
 ## Pricing Structure
 
 | Item | Cost | Frequency |
 |------|------|-----------|
-| Forensic Credit Audit | $99 | One-time |
-| MyFreeScoreNow Monitoring | $29.99 | Monthly |
+| Forensic Credit Audit | $99 | One-time (via Stripe) |
+| MyFreeScoreNow Monitoring | $29.99 | Monthly (affiliate PID: 49914) |
 | Basic Plan Service Fee | $99 | Monthly (only when progress is made) |
-
-## Compliance
-
-- **CROA**: Written contract, 3-day cancellation right, no advance fees
-- **FCRA**: Disputes cite Sections 611, 623, 604, 605
-- **FTC/CFPB**: Telemarketing Sales Rule compliant, CFPB dispute standards
 
 ## Development
 
@@ -89,14 +105,23 @@
 # Install dependencies
 npm install
 
+# Apply D1 migrations locally
+npx wrangler d1 migrations apply clean-it-up-db --local
+
+# Seed test data
+npx wrangler d1 execute clean-it-up-db --local --file=./seed.sql
+
 # Build
 npm run build
 
-# Local dev with wrangler
-npx wrangler pages dev dist --ip 0.0.0.0 --port 3000
+# Start local dev server with D1
+pm2 start ecosystem.config.cjs
 
-# Deploy to Cloudflare
+# Deploy to production
 npm run build && npx wrangler pages deploy dist --project-name clean-it-up-funnel
+
+# Apply migrations to production
+npx wrangler d1 migrations apply clean-it-up-db --remote
 ```
 
 ## Project Structure
@@ -104,29 +129,27 @@ npm run build && npx wrangler pages deploy dist --project-name clean-it-up-funne
 ```
 clean-it-up-funnel/
   src/
-    index.tsx           # Hono app with API routes + full funnel HTML
-  public/
-    static/             # Static assets directory
-  ecosystem.config.cjs  # PM2 configuration
-  wrangler.jsonc        # Cloudflare Pages config
-  vite.config.ts        # Vite build config
-  tsconfig.json         # TypeScript config
-  package.json          # Dependencies & scripts
-  README.md             # This file
+    index.tsx              # Hono app: all API routes + funnel HTML + success page
+  migrations/
+    0001_initial_schema.sql  # D1 database schema (leads, payments, disputes, activity)
+  seed.sql                 # Test data for local development
+  .dev.vars                # Local environment secrets (NEVER committed)
+  ecosystem.config.cjs     # PM2 configuration with D1
+  wrangler.jsonc           # Cloudflare Pages config with D1 binding
+  vite.config.ts           # Vite build config
+  package.json             # Dependencies & scripts
 ```
 
-## Not Yet Implemented (Recommended Next Steps)
+## Recommended Next Steps
 
-1. **D1 Database Integration** - Persist leads to Cloudflare D1 instead of console.log
-2. **Email Automation** - SendGrid/Mailgun integration for lead follow-up sequences
-3. **MyFreeScoreNow Enrollment Link** - Direct integration with affiliate PID links
-4. **Stripe Payment Integration** - $99 audit fee checkout flow
-5. **A/B Testing** - Headline and CTA variant testing
-6. **Analytics** - Google Analytics 4 / Facebook Pixel / TikTok Pixel integration
-7. **Exit-Intent Popup** - Discount offer on page exit
-8. **Testimonial Section** - Video testimonials with real client results
-9. **Live Chat Widget** - Intercom/Crisp integration for immediate engagement
-10. **SMS Follow-up** - Twilio integration for lead nurturing
+1. **Stripe Webhook Signature Verification** — Set `STRIPE_WEBHOOK_SECRET` with actual signing secret
+2. **Email Automation** — SendGrid/Mailgun for lead follow-up sequences after form submit
+3. **Admin Dashboard UI** — Frontend for `/api/admin/leads` and `/api/admin/stats`
+4. **A/B Testing** — Headline/CTA variant testing
+5. **Analytics Pixels** — GA4, Facebook Pixel, TikTok Pixel
+6. **Exit-Intent Popup** — Discount offer on page exit
+7. **Rate Limiting** — Protect API endpoints from abuse
+8. **Admin Auth** — Protect admin endpoints with API key or JWT
 
 ## Contact
 
@@ -139,8 +162,9 @@ clean-it-up-funnel/
 ---
 
 **Build Date**: February 23, 2026
-**Platform**: Cloudflare Pages
+**Platform**: Cloudflare Pages + D1 + Stripe
 **Status**: LIVE
+**Last Updated**: February 23, 2026
 
 (c) 2025 RJ Business Solutions. All rights reserved.
 Credit repair services performed in compliance with CROA, FCRA, and applicable state regulations.

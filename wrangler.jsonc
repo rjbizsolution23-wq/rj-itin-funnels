@@ -5,5 +5,12 @@
   "pages_build_output_dir": "./dist",
   "compatibility_flags": [
     "nodejs_compat"
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "clean-it-up-db",
+      "database_id": "9ca0ac96-0a7d-4543-bbe0-a5b047e159cd"
+    }
   ]
 }
