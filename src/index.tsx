@@ -1,2110 +1,1392 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 
-// ========== TYPE DEFINITIONS ==========
+// ═══════════════════════════════════════════════════════════════
+// RJ BUSINESS SOLUTIONS — ITIN MULTI-LANGUAGE FUNNEL SYSTEM
+// 5 Languages: EN, ES, PT, FR, HT | 3 Plans: Basic, Pro, Premium
+// ═══════════════════════════════════════════════════════════════
+
 type Bindings = {
-  DB: D1Database
   STRIPE_SECRET_KEY: string
   STRIPE_PUBLISHABLE_KEY: string
-  STRIPE_WEBHOOK_SECRET: string
   MFSN_API_BASE: string
   MFSN_EMAIL: string
   MFSN_PASSWORD: string
   MFSN_AID: string
   MFSN_PID: string
-  OPENAI_API_KEY: string
   COMPANY_NAME: string
   COMPANY_EMAIL: string
   MFSN_AFFILIATE_URL_PRIMARY: string
+  MFSN_AFFILIATE_URL_NO_TRIAL: string
+  MFSN_AFFILIATE_URL_PREMIUM: string
 }
 
 const app = new Hono<{ Bindings: Bindings }>()
-
-// Enable CORS for API routes
 app.use('/api/*', cors())
 
-// ========== HELPER: Get client info ==========
-function getClientInfo(c: any) {
-  return {
-    ip: c.req.header('cf-connecting-ip') || c.req.header('x-forwarded-for') || 'unknown',
-    userAgent: c.req.header('user-agent') || 'unknown'
+// ═══════ SUPPORTED LOCALES ═══════
+const SUPPORTED_LOCALES = ['en', 'es', 'pt', 'fr', 'ht'] as const
+type Locale = typeof SUPPORTED_LOCALES[number]
+const DEFAULT_LOCALE: Locale = 'en'
+
+// ═══════ PLAN CONFIG ═══════
+const PLANS = {
+  basic: { price: 99, stripeCents: 9900, disputes: 15, color: '#3b82f6', mfsnPid: '49914' },
+  professional: { price: 149, stripeCents: 14900, disputes: 25, color: '#8b5cf6', mfsnPid: '75497' },
+  premium: { price: 199, stripeCents: 19900, disputes: 40, color: '#f59e0b', mfsnPid: '30639' }
+} as const
+
+// ═══════ LOCALE DETECTION ═══════
+function detectLocale(c: any): Locale {
+  // 1. Check URL path
+  const path = new URL(c.req.url).pathname
+  const segments = path.split('/').filter(Boolean)
+  if (segments[0] && SUPPORTED_LOCALES.includes(segments[0] as Locale)) {
+    return segments[0] as Locale
+  }
+  // 2. Check Accept-Language header
+  const acceptLang = c.req.header('accept-language') || ''
+  for (const loc of SUPPORTED_LOCALES) {
+    if (acceptLang.toLowerCase().includes(loc)) return loc
+  }
+  return DEFAULT_LOCALE
+}
+
+function getMfsnUrl(c: any, plan: string): string {
+  const pid = PLANS[plan as keyof typeof PLANS]?.mfsnPid || '49914'
+  const aid = c.env?.MFSN_AID || 'RickJeffersonSolutions'
+  return `https://myfreescorenow.com/enroll/?AID=${aid}&PID=${pid}`
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TRANSLATIONS — FULL i18n FOR ALL 5 LOCALES
+// ═══════════════════════════════════════════════════════════════
+const i18n: Record<string, Record<string, string>> = {
+  en: {
+    lang_label: 'Language:',
+    lang_name: 'English',
+    flag: '🇺🇸',
+    site_title: 'ITIN Credit Repair — RJ Business Solutions',
+    nav_home: 'Home',
+    nav_plans: 'Plans',
+    nav_legal: 'Legal',
+    nav_privacy: 'Privacy',
+    nav_terms: 'Terms',
+    // HERO
+    hero_badge: 'Trusted by 10,000+ ITIN Holders Nationwide',
+    hero_title: 'Your ITIN Gives You <span class="gt">Full Credit Repair Rights</span>',
+    hero_sub: 'All 3 bureaus — TransUnion, Equifax & Experian — accept ITIN numbers. Under FCRA & ECOA, you have the <strong>exact same dispute rights</strong> as SSN holders. Choose the plan that fits your situation.',
+    hero_cta: 'Choose Your Plan',
+    // PLANS
+    plans_title: 'Choose Your ITIN Credit Repair Plan',
+    plans_sub: 'Every plan includes FCRA + ECOA protection, bureau-specific ITIN dispute procedures, and our 90-day money-back guarantee.',
+    plan_basic: 'Basic',
+    plan_basic_tag: 'Light Repair',
+    plan_basic_target: '1–5 Negative Items',
+    plan_basic_desc: 'Perfect if you have a few inaccurate items dragging your ITIN credit score down.',
+    plan_pro: 'Professional',
+    plan_pro_tag: 'Most Popular',
+    plan_pro_target: '6–15 Negative Items',
+    plan_pro_desc: 'For ITIN holders with moderate credit damage who need aggressive, multi-front disputes.',
+    plan_premium: 'Premium',
+    plan_premium_tag: 'Full Restoration',
+    plan_premium_target: '16+ Negative Items',
+    plan_premium_desc: 'Complete ITIN credit file overhaul — maximum disputes, dedicated analyst, priority service.',
+    plan_per_month: '/month',
+    plan_audit_fee: 'one-time audit fee',
+    plan_monitoring: '$29.99/mo monitoring',
+    plan_start: 'Start',
+    plan_guarantee: '90-Day Money-Back Guarantee',
+    plan_no_pay: 'Only pay when progress is verified',
+    // FEATURES
+    feat_audit: 'Forensic 3-Bureau ITIN Audit',
+    feat_roadmap: 'ITIN-Specific Restoration Roadmap',
+    feat_disputes: 'Statute-Specific Disputes/Month',
+    feat_reports: 'Monthly Progress Reports',
+    feat_support: 'Bilingual Support',
+    feat_library: 'Credit Building Library',
+    feat_analyst: 'Dedicated Credit Analyst',
+    feat_priority: 'Priority Service & Escalation',
+    feat_creditor: 'Direct Creditor Intervention',
+    feat_goodwill: 'Goodwill Letter Campaigns',
+    // ITIN RIGHTS
+    rights_title: 'ITIN Holders Have Full Federal Protection',
+    rights_sub: 'Under the FCRA, ECOA, CROA, FDCPA — your ITIN gives you the <strong>exact same rights</strong> as SSN holders.',
+    rights_ecoa: 'ECOA prohibits discrimination based on national origin. Your ITIN file has equal rights.',
+    rights_fcra: 'FCRA requires bureaus to investigate ITIN disputes the same as SSN disputes.',
+    rights_croa: 'Written contract, 3-day cancellation, no advance fees until services are performed.',
+    rights_fdcpa: 'Collectors cannot treat ITIN-identified debts differently. Full validation rights apply.',
+    // RICK BIO
+    bio_title: 'Meet Rick Jefferson',
+    bio_role: 'Founder & ITIN Credit Expert',
+    bio_p1: 'Rick Jefferson founded RJ Business Solutions with one mission: ensure every ITIN holder in America knows their credit rights under federal law.',
+    bio_p2: 'With deep expertise in FCRA, ECOA, and bureau-specific ITIN dispute procedures, Rick has helped thousands of ITIN holders challenge inaccurate items and rebuild their credit files.',
+    bio_p3: '"Your ITIN is not a limitation — it\'s your key to the same credit system that SSN holders use. The law is on your side." — Rick Jefferson',
+    // FAQ
+    faq_title: 'Frequently Asked Questions',
+    faq_q1: 'Can I really repair credit with just an ITIN?',
+    faq_a1: 'Yes. All three major credit bureaus — TransUnion, Equifax, and Experian — accept ITIN numbers for credit file identification and dispute filing. Under the FCRA and ECOA, you have the exact same dispute rights as SSN holders.',
+    faq_q2: 'What\'s the difference between the plans?',
+    faq_a2: 'Basic targets 1–5 negative items (15 disputes/mo). Professional targets 6–15 items (25 disputes/mo) with a dedicated analyst. Premium handles 16+ items (40 disputes/mo) with priority service, direct creditor intervention, and goodwill campaigns.',
+    faq_q3: 'When do I get charged?',
+    faq_a3: 'The $99-$199 audit fee is one-time for the completed forensic report. Monthly plan fees are charged ONLY in months where verifiable progress is documented (deletions, corrections, or score improvements). No progress = no charge.',
+    faq_q4: 'What is MyFreeScoreNow and why do I need it?',
+    faq_a4: 'MyFreeScoreNow ($29.99/mo) is a third-party credit monitoring service that provides us live tri-bureau access to your ITIN credit file. It accepts ITIN numbers for enrollment. This is required so we can track every change to your file.',
+    faq_q5: 'What if I don\'t see results?',
+    faq_a5: 'Our 90-day money-back guarantee covers all plan tiers. If we can\'t show a single verified improvement within 90 days, you get every plan fee refunded. No questions, no conditions.',
+    faq_q6: 'Can I cancel anytime?',
+    faq_a6: 'You have a 3-business-day right to cancel under CROA (15 U.S.C. § 1679e) with a full refund. After that, you can still cancel monthly service at any time with no penalty.',
+    // GUARANTEE
+    guarantee_title: '90-Day Money-Back Guarantee',
+    guarantee_desc: 'If we can\'t show a single verified improvement in 90 days — deletions, corrections, or documented score increases — you get every plan fee back. No questions. No conditions. No runaround.',
+    // CTA
+    cta_title: 'Ready to Clean Up Your ITIN Credit File?',
+    cta_sub: 'Choose the plan that fits your situation. Every plan includes the same federal protections — FCRA, ECOA, CROA — just different levels of service.',
+    cta_btn: 'Choose Your Plan Now',
+    // COMMUNITY
+    community_title: 'Trusted by ITIN Holders Across America',
+    community_stat1: '10,000+',
+    community_label1: 'ITIN Holders Served',
+    community_stat2: '67M',
+    community_label2: 'Latinos in US (2025)',
+    community_stat3: '43%',
+    community_label3: 'Latino Households Un/Underbanked',
+    community_stat4: '34%',
+    community_label4: 'Hispanic Biz Growth YoY',
+    // COMPLIANCE FOOTER
+    comp_title: 'Federal Compliance & Legal Disclosures',
+    comp_notice: 'RJ Business Solutions is a credit repair organization under the Credit Repair Organizations Act (15 U.S.C. § 1679). We are not a law firm and do not provide legal advice.',
+    comp_croa: 'CROA: Written contracts, 3-day cancellation, no advance fees for dispute services.',
+    comp_fcra: 'FCRA: Disputes filed under §611, §623, §605 — same protections for ITIN and SSN holders.',
+    comp_ecoa: 'ECOA: National-origin discrimination prohibited — ITIN files treated equally.',
+    comp_fdcpa: 'FDCPA: Debt validation rights enforced, no discrimination based on ITIN status.',
+    comp_tsr: 'TSR: No advance fees per 16 CFR §310.4(a)(2). CFPB Regulation V and F procedures followed.',
+    comp_identity: 'Identity Theft Policy: We do not collect immigration status. ITIN used solely for credit bureau communication.',
+    comp_contact: 'Questions? Contact us:',
+    // MODAL
+    modal_title: 'Start Your',
+    modal_sub: 'Enter your info below. You\'ll be directed to secure payment after submitting.',
+    form_name: 'Full Name *',
+    form_email: 'Email Address *',
+    form_phone: 'Phone Number',
+    form_submit: 'Claim My Spot',
+    form_secure: 'Your information is 100% secure and never shared.',
+    // MISC
+    back_home: 'Back to Home',
+    all_plans: 'See All Plans',
+    up_to: 'Up to',
+    includes: 'Includes:',
+    plus: 'Plus everything in',
+    per_mo: '/mo',
+    spots_left: 'Only 12 spots remaining this month',
+  },
+  es: {
+    lang_label: 'Idioma:',
+    lang_name: 'Español',
+    flag: '🇲🇽',
+    site_title: 'Reparación de Crédito ITIN — RJ Business Solutions',
+    nav_home: 'Inicio',
+    nav_plans: 'Planes',
+    nav_legal: 'Legal',
+    nav_privacy: 'Privacidad',
+    nav_terms: 'Términos',
+    hero_badge: 'Confiado por más de 10,000 titulares de ITIN en todo el país',
+    hero_title: 'Tu ITIN Te Da <span class="gt">Derechos Completos de Reparación de Crédito</span>',
+    hero_sub: 'Las 3 agencias — TransUnion, Equifax y Experian — aceptan números ITIN. Bajo FCRA y ECOA, tienes los <strong>mismos derechos de disputa</strong> que los titulares de SSN. Elige el plan que se ajuste a tu situación.',
+    hero_cta: 'Elige Tu Plan',
+    plans_title: 'Elige Tu Plan de Reparación de Crédito ITIN',
+    plans_sub: 'Cada plan incluye protección FCRA + ECOA, procedimientos de disputa ITIN específicos por agencia, y nuestra garantía de devolución de 90 días.',
+    plan_basic: 'Básico',
+    plan_basic_tag: 'Reparación Ligera',
+    plan_basic_target: '1–5 Elementos Negativos',
+    plan_basic_desc: 'Perfecto si tienes algunos elementos inexactos afectando tu puntaje de crédito ITIN.',
+    plan_pro: 'Profesional',
+    plan_pro_tag: 'Más Popular',
+    plan_pro_target: '6–15 Elementos Negativos',
+    plan_pro_desc: 'Para titulares de ITIN con daño crediticio moderado que necesitan disputas agresivas en múltiples frentes.',
+    plan_premium: 'Premium',
+    plan_premium_tag: 'Restauración Completa',
+    plan_premium_target: '16+ Elementos Negativos',
+    plan_premium_desc: 'Renovación completa de archivo de crédito ITIN — disputas máximas, analista dedicado, servicio prioritario.',
+    plan_per_month: '/mes',
+    plan_audit_fee: 'tarifa única de auditoría',
+    plan_monitoring: '$29.99/mes monitoreo',
+    plan_start: 'Comenzar',
+    plan_guarantee: 'Garantía de Devolución de 90 Días',
+    plan_no_pay: 'Solo paga cuando el progreso es verificado',
+    feat_audit: 'Auditoría Forense ITIN de 3 Agencias',
+    feat_roadmap: 'Hoja de Ruta de Restauración ITIN',
+    feat_disputes: 'Disputas por Estatuto/Mes',
+    feat_reports: 'Reportes Mensuales de Progreso',
+    feat_support: 'Soporte Bilingüe',
+    feat_library: 'Biblioteca de Construcción de Crédito',
+    feat_analyst: 'Analista de Crédito Dedicado',
+    feat_priority: 'Servicio Prioritario y Escalamiento',
+    feat_creditor: 'Intervención Directa con Acreedores',
+    feat_goodwill: 'Campañas de Cartas de Buena Voluntad',
+    rights_title: 'Los Titulares de ITIN Tienen Protección Federal Completa',
+    rights_sub: 'Bajo FCRA, ECOA, CROA, FDCPA — tu ITIN te da los <strong>mismos derechos</strong> que los titulares de SSN.',
+    rights_ecoa: 'ECOA prohíbe discriminación por origen nacional. Tu archivo ITIN tiene igualdad de derechos.',
+    rights_fcra: 'FCRA requiere que las agencias investiguen disputas ITIN igual que las de SSN.',
+    rights_croa: 'Contrato por escrito, cancelación de 3 días, sin cargos anticipados hasta que los servicios se realicen.',
+    rights_fdcpa: 'Los cobradores no pueden tratar deudas ITIN de forma diferente. Se aplican todos los derechos de validación.',
+    bio_title: 'Conoce a Rick Jefferson',
+    bio_role: 'Fundador y Experto en Crédito ITIN',
+    bio_p1: 'Rick Jefferson fundó RJ Business Solutions con una misión: asegurar que cada titular de ITIN en América conozca sus derechos crediticios bajo la ley federal.',
+    bio_p2: 'Con profunda experiencia en FCRA, ECOA y procedimientos de disputa ITIN específicos por agencia, Rick ha ayudado a miles de titulares de ITIN a impugnar elementos inexactos y reconstruir sus archivos de crédito.',
+    bio_p3: '"Tu ITIN no es una limitación — es tu llave al mismo sistema crediticio que usan los titulares de SSN. La ley está de tu lado." — Rick Jefferson',
+    faq_title: 'Preguntas Frecuentes',
+    faq_q1: '¿Realmente puedo reparar crédito solo con un ITIN?',
+    faq_a1: 'Sí. Las tres agencias de crédito — TransUnion, Equifax y Experian — aceptan números ITIN. Bajo FCRA y ECOA, tienes los mismos derechos de disputa que los titulares de SSN.',
+    faq_q2: '¿Cuál es la diferencia entre los planes?',
+    faq_a2: 'Básico maneja 1–5 elementos negativos (15 disputas/mes). Profesional maneja 6–15 elementos (25 disputas/mes) con analista dedicado. Premium maneja 16+ elementos (40 disputas/mes) con servicio prioritario.',
+    faq_q3: '¿Cuándo me cobran?',
+    faq_a3: 'La tarifa de auditoría es única. Las tarifas mensuales se cobran SOLO cuando hay progreso verificable documentado. Sin progreso = sin cargo.',
+    faq_q4: '¿Qué es MyFreeScoreNow?',
+    faq_a4: 'MyFreeScoreNow ($29.99/mes) es un servicio de monitoreo que nos da acceso a tu archivo ITIN en las 3 agencias. Acepta números ITIN para inscripción.',
+    faq_q5: '¿Qué pasa si no veo resultados?',
+    faq_a5: 'Nuestra garantía de 90 días cubre todos los planes. Si no hay mejora verificada en 90 días, te devolvemos todas las tarifas del plan.',
+    faq_q6: '¿Puedo cancelar en cualquier momento?',
+    faq_a6: 'Tienes derecho a cancelar dentro de 3 días hábiles bajo CROA con reembolso completo. Después, puedes cancelar en cualquier momento sin penalidad.',
+    guarantee_title: 'Garantía de Devolución de 90 Días',
+    guarantee_desc: 'Si no podemos mostrar una sola mejora verificada en 90 días, te devolvemos cada tarifa. Sin preguntas. Sin condiciones.',
+    cta_title: '¿Listo Para Limpiar Tu Archivo de Crédito ITIN?',
+    cta_sub: 'Elige el plan que se ajuste a tu situación. Cada plan incluye las mismas protecciones federales.',
+    cta_btn: 'Elige Tu Plan Ahora',
+    community_title: 'Confiado por Titulares de ITIN en Todo América',
+    community_stat1: '10,000+',
+    community_label1: 'Titulares de ITIN Atendidos',
+    community_stat2: '67M',
+    community_label2: 'Latinos en EE.UU. (2025)',
+    community_stat3: '43%',
+    community_label3: 'Hogares Latinos Sub/No Bancarizados',
+    community_stat4: '34%',
+    community_label4: 'Crecimiento Negocios Hispanos Anual',
+    comp_title: 'Cumplimiento Federal y Divulgaciones Legales',
+    comp_notice: 'RJ Business Solutions es una organización de reparación de crédito bajo CROA (15 U.S.C. § 1679). No somos un bufete de abogados.',
+    comp_croa: 'CROA: Contratos por escrito, cancelación de 3 días, sin cargos anticipados.',
+    comp_fcra: 'FCRA: Disputas bajo §611, §623, §605 — mismas protecciones para ITIN y SSN.',
+    comp_ecoa: 'ECOA: Discriminación por origen nacional prohibida — archivos ITIN tratados igualmente.',
+    comp_fdcpa: 'FDCPA: Derechos de validación de deuda aplicados, sin discriminación ITIN.',
+    comp_tsr: 'TSR: Sin cargos anticipados. Procedimientos CFPB seguidos.',
+    comp_identity: 'No recopilamos estatus migratorio. ITIN usado solo para comunicación con agencias de crédito.',
+    comp_contact: '¿Preguntas? Contáctanos:',
+    modal_title: 'Comenzar Tu',
+    modal_sub: 'Ingresa tu información. Serás dirigido al pago seguro después de enviar.',
+    form_name: 'Nombre Completo *',
+    form_email: 'Correo Electrónico *',
+    form_phone: 'Número de Teléfono',
+    form_submit: 'Reclamar Mi Cupo',
+    form_secure: 'Tu información es 100% segura y nunca se comparte.',
+    back_home: 'Volver al Inicio',
+    all_plans: 'Ver Todos los Planes',
+    up_to: 'Hasta',
+    includes: 'Incluye:',
+    plus: 'Más todo en',
+    per_mo: '/mes',
+    spots_left: 'Solo quedan 12 cupos este mes',
+  },
+  pt: {
+    lang_label: 'Idioma:',
+    lang_name: 'Português',
+    flag: '🇧🇷',
+    site_title: 'Reparo de Crédito ITIN — RJ Business Solutions',
+    nav_home: 'Início',
+    nav_plans: 'Planos',
+    nav_legal: 'Legal',
+    nav_privacy: 'Privacidade',
+    nav_terms: 'Termos',
+    hero_badge: 'Confiado por mais de 10.000 portadores de ITIN em todo o país',
+    hero_title: 'Seu ITIN Dá a Você <span class="gt">Direitos Completos de Reparo de Crédito</span>',
+    hero_sub: 'As 3 agências — TransUnion, Equifax e Experian — aceitam números ITIN. Sob FCRA e ECOA, você tem os <strong>mesmos direitos de disputa</strong> que portadores de SSN. Escolha o plano que se encaixa na sua situação.',
+    hero_cta: 'Escolha Seu Plano',
+    plans_title: 'Escolha Seu Plano de Reparo de Crédito ITIN',
+    plans_sub: 'Cada plano inclui proteção FCRA + ECOA, procedimentos de disputa ITIN específicos e nossa garantia de devolução de 90 dias.',
+    plan_basic: 'Básico',
+    plan_basic_tag: 'Reparo Leve',
+    plan_basic_target: '1–5 Itens Negativos',
+    plan_basic_desc: 'Perfeito se você tem alguns itens imprecisos afetando seu score de crédito ITIN.',
+    plan_pro: 'Profissional',
+    plan_pro_tag: 'Mais Popular',
+    plan_pro_target: '6–15 Itens Negativos',
+    plan_pro_desc: 'Para portadores de ITIN com dano de crédito moderado que precisam de disputas agressivas.',
+    plan_premium: 'Premium',
+    plan_premium_tag: 'Restauração Completa',
+    plan_premium_target: '16+ Itens Negativos',
+    plan_premium_desc: 'Renovação completa do arquivo ITIN — disputas máximas, analista dedicado, serviço prioritário.',
+    plan_per_month: '/mês',
+    plan_audit_fee: 'taxa única de auditoria',
+    plan_monitoring: '$29.99/mês monitoramento',
+    plan_start: 'Começar',
+    plan_guarantee: 'Garantia de Devolução de 90 Dias',
+    plan_no_pay: 'Pague apenas quando o progresso for verificado',
+    feat_audit: 'Auditoria Forense ITIN de 3 Agências',
+    feat_roadmap: 'Roteiro de Restauração ITIN',
+    feat_disputes: 'Disputas por Estatuto/Mês',
+    feat_reports: 'Relatórios Mensais de Progresso',
+    feat_support: 'Suporte Bilíngue',
+    feat_library: 'Biblioteca de Construção de Crédito',
+    feat_analyst: 'Analista de Crédito Dedicado',
+    feat_priority: 'Serviço Prioritário',
+    feat_creditor: 'Intervenção Direta com Credores',
+    feat_goodwill: 'Campanhas de Cartas de Boa Vontade',
+    rights_title: 'Portadores de ITIN Têm Proteção Federal Completa',
+    rights_sub: 'Sob FCRA, ECOA, CROA, FDCPA — seu ITIN dá os <strong>mesmos direitos</strong> que portadores de SSN.',
+    rights_ecoa: 'ECOA proíbe discriminação por origem nacional. Seu arquivo ITIN tem direitos iguais.',
+    rights_fcra: 'FCRA exige que agências investiguem disputas ITIN da mesma forma que SSN.',
+    rights_croa: 'Contrato por escrito, cancelamento de 3 dias, sem taxas antecipadas.',
+    rights_fdcpa: 'Cobradores não podem tratar dívidas ITIN de forma diferente.',
+    bio_title: 'Conheça Rick Jefferson',
+    bio_role: 'Fundador e Especialista em Crédito ITIN',
+    bio_p1: 'Rick Jefferson fundou a RJ Business Solutions com uma missão: garantir que cada portador de ITIN na América conheça seus direitos de crédito.',
+    bio_p2: 'Com profunda expertise em FCRA, ECOA e procedimentos de disputa ITIN, Rick ajudou milhares a reconstruir seus créditos.',
+    bio_p3: '"Seu ITIN não é uma limitação — é sua chave para o mesmo sistema de crédito. A lei está do seu lado." — Rick Jefferson',
+    faq_title: 'Perguntas Frequentes',
+    faq_q1: 'Posso realmente reparar crédito apenas com ITIN?',
+    faq_a1: 'Sim. Todas as três agências aceitam ITIN. Sob FCRA e ECOA, você tem os mesmos direitos que portadores de SSN.',
+    faq_q2: 'Qual a diferença entre os planos?',
+    faq_a2: 'Básico: 1–5 itens (15 disputas/mês). Profissional: 6–15 itens (25 disputas/mês). Premium: 16+ itens (40 disputas/mês) com serviço prioritário.',
+    faq_q3: 'Quando sou cobrado?',
+    faq_a3: 'A taxa de auditoria é única. Taxas mensais cobradas APENAS quando progresso verificável é documentado.',
+    faq_q4: 'O que é MyFreeScoreNow?',
+    faq_a4: 'MyFreeScoreNow ($29.99/mês) é monitoramento que nos dá acesso ao seu arquivo ITIN. Aceita ITIN para inscrição.',
+    faq_q5: 'E se eu não vir resultados?',
+    faq_a5: 'Garantia de 90 dias cobre todos os planos. Sem melhoria verificada = reembolso total.',
+    faq_q6: 'Posso cancelar a qualquer momento?',
+    faq_a6: 'Cancelamento em 3 dias úteis sob CROA com reembolso total. Após isso, cancele mensalmente sem penalidade.',
+    guarantee_title: 'Garantia de Devolução de 90 Dias',
+    guarantee_desc: 'Se não pudermos mostrar nenhuma melhoria verificada em 90 dias, devolvemos cada taxa. Sem perguntas.',
+    cta_title: 'Pronto para Limpar Seu Arquivo de Crédito ITIN?',
+    cta_sub: 'Escolha o plano. Cada um inclui as mesmas proteções federais.',
+    cta_btn: 'Escolha Seu Plano Agora',
+    community_title: 'Confiado por Portadores de ITIN em Toda América',
+    community_stat1: '10.000+', community_label1: 'Portadores de ITIN Atendidos',
+    community_stat2: '67M', community_label2: 'Latinos nos EUA (2025)',
+    community_stat3: '43%', community_label3: 'Domicílios Latinos Sub/Não Bancarizados',
+    community_stat4: '34%', community_label4: 'Crescimento Negócios Hispânicos Anual',
+    comp_title: 'Conformidade Federal e Divulgações Legais',
+    comp_notice: 'RJ Business Solutions é uma organização de reparo de crédito sob CROA (15 U.S.C. § 1679). Não somos escritório de advocacia.',
+    comp_croa: 'CROA: Contratos por escrito, cancelamento de 3 dias, sem taxas antecipadas.',
+    comp_fcra: 'FCRA: Disputas sob §611, §623, §605.',
+    comp_ecoa: 'ECOA: Discriminação por origem nacional proibida.',
+    comp_fdcpa: 'FDCPA: Direitos de validação de dívida aplicados.',
+    comp_tsr: 'TSR: Sem taxas antecipadas. Procedimentos CFPB seguidos.',
+    comp_identity: 'Não coletamos status imigratório. ITIN usado apenas para comunicação com agências.',
+    comp_contact: 'Perguntas? Contate-nos:',
+    modal_title: 'Começar Seu',
+    modal_sub: 'Insira suas informações. Você será direcionado ao pagamento seguro.',
+    form_name: 'Nome Completo *',
+    form_email: 'Endereço de Email *',
+    form_phone: 'Número de Telefone',
+    form_submit: 'Garantir Minha Vaga',
+    form_secure: 'Suas informações são 100% seguras.',
+    back_home: 'Voltar ao Início',
+    all_plans: 'Ver Todos os Planos',
+    up_to: 'Até',
+    includes: 'Inclui:',
+    plus: 'Mais tudo em',
+    per_mo: '/mês',
+    spots_left: 'Apenas 12 vagas restantes este mês',
+  },
+  fr: {
+    lang_label: 'Langue:',
+    lang_name: 'Français',
+    flag: '🇫🇷',
+    site_title: 'Réparation de Crédit ITIN — RJ Business Solutions',
+    nav_home: 'Accueil',
+    nav_plans: 'Plans',
+    nav_legal: 'Légal',
+    nav_privacy: 'Confidentialité',
+    nav_terms: 'Conditions',
+    hero_badge: 'Approuvé par plus de 10 000 détenteurs d\'ITIN à travers le pays',
+    hero_title: 'Votre ITIN Vous Donne <span class="gt">Des Droits Complets de Réparation de Crédit</span>',
+    hero_sub: 'Les 3 bureaux — TransUnion, Equifax et Experian — acceptent les numéros ITIN. Sous FCRA et ECOA, vous avez les <strong>mêmes droits de contestation</strong> que les détenteurs de SSN.',
+    hero_cta: 'Choisissez Votre Plan',
+    plans_title: 'Choisissez Votre Plan de Réparation de Crédit ITIN',
+    plans_sub: 'Chaque plan inclut la protection FCRA + ECOA et notre garantie de remboursement de 90 jours.',
+    plan_basic: 'Basique',
+    plan_basic_tag: 'Réparation Légère',
+    plan_basic_target: '1–5 Éléments Négatifs',
+    plan_basic_desc: 'Parfait si vous avez quelques éléments inexacts affectant votre score ITIN.',
+    plan_pro: 'Professionnel',
+    plan_pro_tag: 'Le Plus Populaire',
+    plan_pro_target: '6–15 Éléments Négatifs',
+    plan_pro_desc: 'Pour les détenteurs d\'ITIN avec des dommages de crédit modérés.',
+    plan_premium: 'Premium',
+    plan_premium_tag: 'Restauration Complète',
+    plan_premium_target: '16+ Éléments Négatifs',
+    plan_premium_desc: 'Refonte complète du dossier ITIN — disputes maximales, analyste dédié, service prioritaire.',
+    plan_per_month: '/mois',
+    plan_audit_fee: 'frais d\'audit unique',
+    plan_monitoring: '$29.99/mois surveillance',
+    plan_start: 'Commencer',
+    plan_guarantee: 'Garantie de Remboursement de 90 Jours',
+    plan_no_pay: 'Payez uniquement quand le progrès est vérifié',
+    feat_audit: 'Audit Forensique ITIN 3 Bureaux',
+    feat_roadmap: 'Feuille de Route de Restauration ITIN',
+    feat_disputes: 'Contestations par Statut/Mois',
+    feat_reports: 'Rapports Mensuels de Progrès',
+    feat_support: 'Support Bilingue',
+    feat_library: 'Bibliothèque de Construction de Crédit',
+    feat_analyst: 'Analyste de Crédit Dédié',
+    feat_priority: 'Service Prioritaire',
+    feat_creditor: 'Intervention Directe Créancier',
+    feat_goodwill: 'Campagnes de Lettres de Bonne Volonté',
+    rights_title: 'Les Détenteurs d\'ITIN Ont une Protection Fédérale Complète',
+    rights_sub: 'Sous FCRA, ECOA, CROA, FDCPA — votre ITIN vous donne les <strong>mêmes droits</strong> que les détenteurs de SSN.',
+    rights_ecoa: 'ECOA interdit la discrimination basée sur l\'origine nationale.',
+    rights_fcra: 'FCRA exige que les bureaux enquêtent sur les disputes ITIN de la même manière.',
+    rights_croa: 'Contrat écrit, annulation de 3 jours, pas de frais anticipés.',
+    rights_fdcpa: 'Les collecteurs ne peuvent pas traiter les dettes ITIN différemment.',
+    bio_title: 'Rencontrez Rick Jefferson',
+    bio_role: 'Fondateur et Expert en Crédit ITIN',
+    bio_p1: 'Rick Jefferson a fondé RJ Business Solutions avec une mission: s\'assurer que chaque détenteur d\'ITIN connaisse ses droits de crédit.',
+    bio_p2: 'Avec une expertise approfondie en FCRA, ECOA et procédures de dispute ITIN, Rick a aidé des milliers de personnes.',
+    bio_p3: '"Votre ITIN n\'est pas une limitation — c\'est votre clé vers le même système de crédit. La loi est de votre côté." — Rick Jefferson',
+    faq_title: 'Questions Fréquentes',
+    faq_q1: 'Puis-je vraiment réparer mon crédit avec un ITIN?',
+    faq_a1: 'Oui. Les trois bureaux acceptent les ITIN. Sous FCRA et ECOA, vous avez les mêmes droits.',
+    faq_q2: 'Quelle est la différence entre les plans?',
+    faq_a2: 'Basique: 1–5 éléments. Professionnel: 6–15 éléments. Premium: 16+ éléments avec service prioritaire.',
+    faq_q3: 'Quand suis-je facturé?',
+    faq_a3: 'Les frais d\'audit sont uniques. Les frais mensuels uniquement quand le progrès est vérifié.',
+    faq_q4: 'Qu\'est-ce que MyFreeScoreNow?',
+    faq_a4: 'MyFreeScoreNow ($29.99/mois) est un service de surveillance qui accepte les ITIN.',
+    faq_q5: 'Et si je ne vois pas de résultats?',
+    faq_a5: 'Garantie de 90 jours. Pas d\'amélioration vérifiée = remboursement complet.',
+    faq_q6: 'Puis-je annuler à tout moment?',
+    faq_a6: 'Annulation en 3 jours ouvrables sous CROA. Après, annulez mensuellement sans pénalité.',
+    guarantee_title: 'Garantie de Remboursement de 90 Jours',
+    guarantee_desc: 'Si nous ne pouvons montrer aucune amélioration en 90 jours, remboursement complet.',
+    cta_title: 'Prêt à Nettoyer Votre Dossier de Crédit ITIN?',
+    cta_sub: 'Choisissez le plan qui correspond à votre situation.',
+    cta_btn: 'Choisissez Votre Plan Maintenant',
+    community_title: 'Approuvé par les Détenteurs d\'ITIN à Travers l\'Amérique',
+    community_stat1: '10 000+', community_label1: 'Détenteurs d\'ITIN Servis',
+    community_stat2: '67M', community_label2: 'Latinos aux USA (2025)',
+    community_stat3: '43%', community_label3: 'Ménages Latinos Sous/Non Bancarisés',
+    community_stat4: '34%', community_label4: 'Croissance Entreprises Hispaniques',
+    comp_title: 'Conformité Fédérale et Divulgations Légales',
+    comp_notice: 'RJ Business Solutions est une organisation de réparation de crédit sous CROA.',
+    comp_croa: 'CROA: Contrats écrits, annulation de 3 jours.',
+    comp_fcra: 'FCRA: Disputes sous §611, §623, §605.',
+    comp_ecoa: 'ECOA: Discrimination par origine nationale interdite.',
+    comp_fdcpa: 'FDCPA: Droits de validation de dette appliqués.',
+    comp_tsr: 'TSR: Pas de frais anticipés. Procédures CFPB suivies.',
+    comp_identity: 'Nous ne collectons pas le statut d\'immigration.',
+    comp_contact: 'Questions? Contactez-nous:',
+    modal_title: 'Commencer Votre',
+    modal_sub: 'Entrez vos informations. Vous serez dirigé vers le paiement sécurisé.',
+    form_name: 'Nom Complet *',
+    form_email: 'Adresse Email *',
+    form_phone: 'Numéro de Téléphone',
+    form_submit: 'Réserver Ma Place',
+    form_secure: 'Vos informations sont 100% sécurisées.',
+    back_home: 'Retour à l\'Accueil',
+    all_plans: 'Voir Tous les Plans',
+    up_to: 'Jusqu\'à',
+    includes: 'Comprend:',
+    plus: 'Plus tout dans',
+    per_mo: '/mois',
+    spots_left: 'Seulement 12 places restantes ce mois-ci',
+  },
+  ht: {
+    lang_label: 'Lang:',
+    lang_name: 'Kreyòl',
+    flag: '🇭🇹',
+    site_title: 'Reparasyon Kredi ITIN — RJ Business Solutions',
+    nav_home: 'Akèy',
+    nav_plans: 'Plan yo',
+    nav_legal: 'Legal',
+    nav_privacy: 'Konfidansyalite',
+    nav_terms: 'Tèm yo',
+    hero_badge: 'Plis pase 10,000 moun ki gen ITIN fè konfyans nan nou nan tout peyi a',
+    hero_title: 'ITIN Ou Ba Ou <span class="gt">Dwa Konplè pou Repare Kredi</span>',
+    hero_sub: 'Twa (3) biwo kredi yo — TransUnion, Equifax ak Experian — aksepte nimewo ITIN. Anba FCRA ak ECOA, ou gen <strong>menm dwa kontestasyon</strong> ak moun ki gen SSN. Chwazi plan ki bon pou sitiyasyon ou.',
+    hero_cta: 'Chwazi Plan Ou',
+    plans_title: 'Chwazi Plan Reparasyon Kredi ITIN Ou',
+    plans_sub: 'Chak plan gen ladan pwoteksyon FCRA + ECOA, pwosedi kontestasyon ITIN espesifik pou chak biwo, ak garanti ranbousman 90 jou nou.',
+    plan_basic: 'Debaz',
+    plan_basic_tag: 'Reparasyon Lejè',
+    plan_basic_target: '1–5 Eleman Negatif',
+    plan_basic_desc: 'Pafè si ou gen kèk eleman ki pa kòrèk ki ap bese nòt kredi ITIN ou.',
+    plan_pro: 'Pwofesyonèl',
+    plan_pro_tag: 'Pi Popilè',
+    plan_pro_target: '6–15 Eleman Negatif',
+    plan_pro_desc: 'Pou moun ki gen ITIN ak domaj kredi modere ki bezwen kontestasyon agresif.',
+    plan_premium: 'Premium',
+    plan_premium_tag: 'Restorasyon Konplè',
+    plan_premium_target: '16+ Eleman Negatif',
+    plan_premium_desc: 'Renovasyon konplè dosye ITIN — kontestasyon maksimòm, analis dedye, sèvis priyorite.',
+    plan_per_month: '/mwa',
+    plan_audit_fee: 'frè odit yon fwa',
+    plan_monitoring: '$29.99/mwa siveyans',
+    plan_start: 'Kòmanse',
+    plan_guarantee: 'Garanti Ranbousman 90 Jou',
+    plan_no_pay: 'Peye sèlman lè pwogrè verifye',
+    feat_audit: 'Odit Forènsik ITIN 3 Biwo',
+    feat_roadmap: 'Fèy Wout Restorasyon ITIN',
+    feat_disputes: 'Kontestasyon pa Estati/Mwa',
+    feat_reports: 'Rapò Pwogrè Chak Mwa',
+    feat_support: 'Sipò Bileng',
+    feat_library: 'Bibliyotèk Konstriksyon Kredi',
+    feat_analyst: 'Analis Kredi Dedye',
+    feat_priority: 'Sèvis Priyorite',
+    feat_creditor: 'Entèvansyon Dirèk ak Kreditè',
+    feat_goodwill: 'Kanpay Lèt Bòn Volonte',
+    rights_title: 'Moun ki Gen ITIN Gen Pwoteksyon Federal Konplè',
+    rights_sub: 'Anba FCRA, ECOA, CROA, FDCPA — ITIN ou ba ou <strong>menm dwa</strong> ak moun ki gen SSN.',
+    rights_ecoa: 'ECOA entèdi diskriminasyon ki baze sou orijin nasyonal.',
+    rights_fcra: 'FCRA egzije ke biwo yo envestige kontestasyon ITIN menm jan ak SSN.',
+    rights_croa: 'Kontra alekri, anilasyon 3 jou, pa gen frè davans.',
+    rights_fdcpa: 'Kolektè yo pa kapab trete dèt ITIN diferaman.',
+    bio_title: 'Rankontre Rick Jefferson',
+    bio_role: 'Fondatè ak Ekspè Kredi ITIN',
+    bio_p1: 'Rick Jefferson te fonde RJ Business Solutions ak yon misyon: asire ke chak moun ki gen ITIN nan Amerik konnen dwa kredi yo anba lwa federal.',
+    bio_p2: 'Ak gwo ekspètiz nan FCRA, ECOA ak pwosedi kontestasyon ITIN, Rick te ede dè milye moun rekonstwi kredi yo.',
+    bio_p3: '"ITIN ou pa yon limitasyon — li se kle ou pou menm sistèm kredi a. Lalwa sou bò ou." — Rick Jefferson',
+    faq_title: 'Kesyon yo Poze Souvan',
+    faq_q1: 'Èske mwen ka vrèman repare kredi ak yon ITIN?',
+    faq_a1: 'Wi. Twa (3) gwo biwo kredi yo aksepte ITIN. Anba FCRA ak ECOA, ou gen menm dwa ak moun ki gen SSN.',
+    faq_q2: 'Ki diferans ki genyen ant plan yo?',
+    faq_a2: 'Debaz: 1–5 eleman (15 kontestasyon/mwa). Pwofesyonèl: 6–15 eleman (25 kontestasyon/mwa). Premium: 16+ eleman (40 kontestasyon/mwa).',
+    faq_q3: 'Ki lè yo chaje m?',
+    faq_a3: 'Frè odit la se yon fwa. Frè chak mwa SÈLMAN lè pwogrè verifye.',
+    faq_q4: 'Kisa MyFreeScoreNow ye?',
+    faq_a4: 'MyFreeScoreNow ($29.99/mwa) se yon sèvis siveyans ki aksepte ITIN.',
+    faq_q5: 'E si mwen pa wè rezilta?',
+    faq_a5: 'Garanti 90 jou pou tout plan. Pa gen amelyorasyon = ranbousman konplè.',
+    faq_q6: 'Èske mwen ka anile nenpòt ki lè?',
+    faq_a6: 'Anilasyon nan 3 jou biznis anba CROA ak ranbousman konplè. Apre sa, anile chak mwa san penalite.',
+    guarantee_title: 'Garanti Ranbousman 90 Jou',
+    guarantee_desc: 'Si nou pa ka montre okenn amelyorasyon verifye nan 90 jou, nou ranbouse tout frè. Pa gen kesyon. Pa gen kondisyon.',
+    cta_title: 'Pare pou Netwaye Dosye Kredi ITIN Ou?',
+    cta_sub: 'Chwazi plan ki bon pou ou. Chak plan gen menm pwoteksyon federal yo.',
+    cta_btn: 'Chwazi Plan Ou Kounye a',
+    community_title: 'Moun ki Gen ITIN nan Tout Amerik Fè Konfyans nan Nou',
+    community_stat1: '10,000+', community_label1: 'Moun ki Gen ITIN Sèvi',
+    community_stat2: '67M', community_label2: 'Latino nan USA (2025)',
+    community_stat3: '43%', community_label3: 'Kay Latino Ki Pa Gen Bank',
+    community_stat4: '34%', community_label4: 'Kwasans Biznis Ispanik',
+    comp_title: 'Konfòmite Federal ak Divulgasyon Legal',
+    comp_notice: 'RJ Business Solutions se yon òganizasyon reparasyon kredi anba CROA (15 U.S.C. § 1679).',
+    comp_croa: 'CROA: Kontra alekri, anilasyon 3 jou, pa gen frè davans.',
+    comp_fcra: 'FCRA: Kontestasyon anba §611, §623, §605.',
+    comp_ecoa: 'ECOA: Diskriminasyon pa orijin nasyonal entèdi.',
+    comp_fdcpa: 'FDCPA: Dwa validasyon dèt aplike.',
+    comp_tsr: 'TSR: Pa gen frè davans. Pwosedi CFPB swiv.',
+    comp_identity: 'Nou pa kolekte estati imigrasyon. ITIN itilize sèlman pou kominikasyon ak biwo kredi.',
+    comp_contact: 'Kesyon? Kontakte nou:',
+    modal_title: 'Kòmanse',
+    modal_sub: 'Antre enfòmasyon ou. W ap dirije nan peman sekirize.',
+    form_name: 'Non Konplè *',
+    form_email: 'Adrès Imèl *',
+    form_phone: 'Nimewo Telefòn',
+    form_submit: 'Rezève Plas Mwen',
+    form_secure: 'Enfòmasyon ou 100% sekirize.',
+    back_home: 'Retounen Akèy',
+    all_plans: 'Wè Tout Plan yo',
+    up_to: 'Jiska',
+    includes: 'Gen ladan:',
+    plus: 'Plis tout sa ki nan',
+    per_mo: '/mwa',
+    spots_left: 'Sèlman 12 plas ki rete mwa sa a',
   }
 }
 
-// ========== API: Health Check ==========
-app.get('/api/health', async (c) => {
-  let dbStatus = 'not_configured'
-  try {
-    if (c.env.DB) {
-      await c.env.DB.prepare('SELECT 1').first()
-      dbStatus = 'connected'
-    }
-  } catch { dbStatus = 'error' }
-
-  return c.json({
-    status: 'healthy',
-    timestamp: new Date().toISOString(),
-    services: {
-      database: dbStatus,
-      stripe: c.env.STRIPE_SECRET_KEY ? 'configured' : 'not_configured',
-      mfsn: c.env.MFSN_API_BASE ? 'configured' : 'not_configured'
-    }
-  })
-})
-
-// ========== API: Lead Capture (with D1 persistence) ==========
-app.post('/api/leads', async (c) => {
-  try {
-    const body = await c.req.json()
-    const { name, email, phone, plan, utm_source, utm_medium, utm_campaign } = body
-    const { ip, userAgent } = getClientInfo(c)
-
-    if (!name || !email) {
-      return c.json({ success: false, error: 'Name and email are required' }, 400)
-    }
-
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(email)) {
-      return c.json({ success: false, error: 'Please provide a valid email address' }, 400)
-    }
-
-    let leadId = null
-
-    // Persist to D1 if available
-    if (c.env.DB) {
-      try {
-        // Check for existing lead
-        const existing = await c.env.DB.prepare(
-          'SELECT id, status FROM leads WHERE email = ?'
-        ).bind(email).first()
-
-        if (existing) {
-          // Update existing lead
-          await c.env.DB.prepare(
-            'UPDATE leads SET name = ?, phone = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?'
-          ).bind(name, phone || null, existing.id).run()
-          leadId = existing.id
-        } else {
-          // Insert new lead
-          const result = await c.env.DB.prepare(
-            `INSERT INTO leads (name, email, phone, plan, source, ip_address, user_agent, utm_source, utm_medium, utm_campaign)
-             VALUES (?, ?, ?, ?, 'funnel', ?, ?, ?, ?, ?)`
-          ).bind(
-            name, email, phone || null, plan || 'basic',
-            ip, userAgent,
-            utm_source || null, utm_medium || null, utm_campaign || null
-          ).run()
-          leadId = result.meta.last_row_id
-        }
-
-        // Log activity
-        await c.env.DB.prepare(
-          `INSERT INTO activity_log (lead_id, action, details, ip_address) VALUES (?, ?, ?, ?)`
-        ).bind(leadId, 'lead_captured', JSON.stringify({ name, email, plan: plan || 'basic' }), ip).run()
-
-      } catch (dbErr) {
-        console.error('D1 error:', dbErr)
-        // Continue even if DB fails — we still want to capture the lead
-      }
-    }
-
-    // Build MFSN affiliate enrollment URL
-    const mfsnUrl = c.env.MFSN_AFFILIATE_URL_PRIMARY ||
-      `https://myfreescorenow.com/enroll/?AID=${c.env.MFSN_AID || 'RickJeffersonSolutions'}&PID=${c.env.MFSN_PID || '49914'}`
-
-    return c.json({
-      success: true,
-      message: "You're in! Check your email for next steps.",
-      data: {
-        leadId,
-        name,
-        email,
-        plan: plan || 'basic',
-        nextSteps: {
-          step1: 'Activate MyFreeScoreNow monitoring',
-          step1_url: mfsnUrl,
-          step2: 'Complete your $99 audit fee payment',
-          step2_url: '/api/checkout'
-        }
-      }
-    })
-  } catch (err) {
-    console.error('Lead capture error:', err)
-    return c.json({ success: false, error: 'Something went wrong. Please try again.' }, 500)
-  }
-})
-
-// ========== API: Stripe Checkout Session ==========
-app.post('/api/checkout', async (c) => {
-  try {
-    const body = await c.req.json()
-    const { email, name, leadId } = body
-
-    if (!c.env.STRIPE_SECRET_KEY) {
-      return c.json({ success: false, error: 'Payment system not configured' }, 503)
-    }
-
-    // Create Stripe Checkout Session via API
-    const params = new URLSearchParams()
-    params.append('mode', 'payment')
-    params.append('success_url', `${c.req.header('origin') || 'https://clean-it-up-funnel.pages.dev'}/success?session_id={CHECKOUT_SESSION_ID}`)
-    params.append('cancel_url', `${c.req.header('origin') || 'https://clean-it-up-funnel.pages.dev'}/?canceled=true`)
-    params.append('line_items[0][price_data][currency]', 'usd')
-    params.append('line_items[0][price_data][product_data][name]', 'Forensic 3-Bureau ITIN/SSN Credit Audit')
-    params.append('line_items[0][price_data][product_data][description]', 'Complete forensic audit of your ITIN or SSN credit file across TransUnion, Equifax, and Experian + Personalized 10-Point Restoration Roadmap. ITIN holders accepted. Delivered within 24–48 hours.')
-    params.append('line_items[0][price_data][unit_amount]', '9900') // $99.00
-    params.append('line_items[0][quantity]', '1')
-    params.append('payment_method_types[0]', 'card')
-    if (email) params.append('customer_email', email)
-    if (leadId) params.append('metadata[lead_id]', String(leadId))
-    if (name) params.append('metadata[customer_name]', name)
-    params.append('metadata[plan]', 'basic')
-    params.append('metadata[product]', 'credit_audit')
-
-    const stripeRes = await fetch('https://api.stripe.com/v1/checkout/sessions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${c.env.STRIPE_SECRET_KEY}`,
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: params.toString()
-    })
-
-    const session = await stripeRes.json() as any
-
-    if (session.error) {
-      console.error('Stripe error:', session.error)
-      return c.json({ success: false, error: 'Payment session creation failed' }, 500)
-    }
-
-    // Update lead with checkout session ID
-    if (c.env.DB && leadId) {
-      await c.env.DB.prepare(
-        'UPDATE leads SET stripe_checkout_id = ?, status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?'
-      ).bind(session.id, 'checkout_started', leadId).run()
-
-      await c.env.DB.prepare(
-        `INSERT INTO activity_log (lead_id, action, details) VALUES (?, ?, ?)`
-      ).bind(leadId, 'checkout_created', JSON.stringify({ session_id: session.id, amount: 9900 })).run()
-    }
-
-    return c.json({
-      success: true,
-      checkoutUrl: session.url,
-      sessionId: session.id
-    })
-  } catch (err) {
-    console.error('Checkout error:', err)
-    return c.json({ success: false, error: 'Payment system error' }, 500)
-  }
-})
-
-// ========== API: Stripe Webhook ==========
-app.post('/api/webhooks/stripe', async (c) => {
-  try {
-    const payload = await c.req.text()
-    // In production, verify webhook signature with STRIPE_WEBHOOK_SECRET
-    const event = JSON.parse(payload) as any
-
-    if (event.type === 'checkout.session.completed') {
-      const session = event.data.object
-      const leadId = session.metadata?.lead_id
-
-      if (c.env.DB && leadId) {
-        // Update lead status
-        await c.env.DB.prepare(
-          `UPDATE leads SET status = 'paid', stripe_customer_id = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`
-        ).bind(session.customer || null, leadId).run()
-
-        // Record payment
-        await c.env.DB.prepare(
-          `INSERT INTO payments (lead_id, stripe_payment_id, stripe_checkout_id, amount, description, status, payment_type)
-           VALUES (?, ?, ?, ?, ?, 'completed', 'audit_fee')`
-        ).bind(
-          leadId,
-          session.payment_intent || null,
-          session.id,
-          session.amount_total || 9900,
-          'Forensic 3-Bureau ITIN/SSN Credit Audit Fee'
-        ).run()
-
-        // Log activity
-        await c.env.DB.prepare(
-          `INSERT INTO activity_log (lead_id, action, details) VALUES (?, ?, ?)`
-        ).bind(leadId, 'payment_completed', JSON.stringify({
-          amount: session.amount_total,
-          payment_intent: session.payment_intent
-        })).run()
-      }
-    }
-
-    return c.json({ received: true })
-  } catch (err) {
-    console.error('Webhook error:', err)
-    return c.json({ error: 'Webhook processing failed' }, 400)
-  }
-})
-
-// ========== API: Get Lead Status ==========
-app.get('/api/leads/:email', async (c) => {
-  try {
-    const email = c.req.param('email')
-    if (!c.env.DB) return c.json({ success: false, error: 'Database not available' }, 503)
-
-    const lead = await c.env.DB.prepare(
-      'SELECT id, name, email, plan, status, mfsn_enrolled, audit_status, created_at FROM leads WHERE email = ?'
-    ).bind(email).first()
-
-    if (!lead) return c.json({ success: false, error: 'Lead not found' }, 404)
-
-    return c.json({ success: true, data: lead })
-  } catch (err) {
-    return c.json({ success: false, error: 'Error fetching lead' }, 500)
-  }
-})
-
-// ========== API: Admin — List all leads ==========
-app.get('/api/admin/leads', async (c) => {
-  try {
-    if (!c.env.DB) return c.json({ success: false, error: 'Database not available' }, 503)
-
-    const { results } = await c.env.DB.prepare(
-      'SELECT id, name, email, phone, plan, status, mfsn_enrolled, audit_status, stripe_checkout_id, created_at FROM leads ORDER BY created_at DESC LIMIT 100'
-    ).all()
-
-    return c.json({ success: true, count: results.length, data: results })
-  } catch (err) {
-    return c.json({ success: false, error: 'Error fetching leads' }, 500)
-  }
-})
-
-// ========== API: Admin — Dashboard Stats ==========
-app.get('/api/admin/stats', async (c) => {
-  try {
-    if (!c.env.DB) return c.json({ success: false, error: 'Database not available' }, 503)
-
-    const total = await c.env.DB.prepare('SELECT COUNT(*) as count FROM leads').first() as any
-    const paid = await c.env.DB.prepare("SELECT COUNT(*) as count FROM leads WHERE status = 'paid'").first() as any
-    const newLeads = await c.env.DB.prepare("SELECT COUNT(*) as count FROM leads WHERE status = 'new'").first() as any
-    const today = await c.env.DB.prepare(
-      "SELECT COUNT(*) as count FROM leads WHERE DATE(created_at) = DATE('now')"
-    ).first() as any
-    const revenue = await c.env.DB.prepare(
-      "SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE status = 'completed'"
-    ).first() as any
-
-    return c.json({
-      success: true,
-      data: {
-        totalLeads: total?.count || 0,
-        paidLeads: paid?.count || 0,
-        newLeads: newLeads?.count || 0,
-        todayLeads: today?.count || 0,
-        totalRevenue: (revenue?.total || 0) / 100, // Convert cents to dollars
-        conversionRate: total?.count > 0 ? ((paid?.count || 0) / total.count * 100).toFixed(1) + '%' : '0%'
-      }
-    })
-  } catch (err) {
-    return c.json({ success: false, error: 'Error fetching stats' }, 500)
-  }
-})
-
-// ========== API: MFSN Auth Token ==========
-app.post('/api/mfsn/auth', async (c) => {
-  try {
-    if (!c.env.MFSN_API_BASE || !c.env.MFSN_EMAIL) {
-      return c.json({ success: false, error: 'MFSN not configured' }, 503)
-    }
-
-    const res = await fetch(`${c.env.MFSN_API_BASE}/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email: c.env.MFSN_EMAIL,
-        password: c.env.MFSN_PASSWORD
-      })
-    })
-
-    const data = await res.json() as any
-    if (data.success && data.data?.token) {
-      return c.json({ success: true, token: data.data.token })
-    }
-    return c.json({ success: false, error: 'MFSN authentication failed' }, 401)
-  } catch (err) {
-    console.error('MFSN auth error:', err)
-    return c.json({ success: false, error: 'MFSN connection failed' }, 500)
-  }
-})
-
-// ========== API: MFSN Get Credit Report ==========
-app.post('/api/mfsn/report', async (c) => {
-  try {
-    const { username, password, token } = await c.req.json()
-    if (!token || !username || !password) {
-      return c.json({ success: false, error: 'Missing required fields' }, 400)
-    }
-
-    const res = await fetch(`${c.env.MFSN_API_BASE}/auth/3B/report.json`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({ username, password })
-    })
-
-    const data = await res.json()
-    return c.json({ success: true, data })
-  } catch (err) {
-    console.error('MFSN report error:', err)
-    return c.json({ success: false, error: 'Failed to fetch credit report' }, 500)
-  }
-})
-
-// ========== API: Config (public safe values) ==========
-app.get('/api/config', (c) => {
-  return c.json({
-    stripePublishableKey: c.env.STRIPE_PUBLISHABLE_KEY || null,
-    mfsnEnrollUrl: c.env.MFSN_AFFILIATE_URL_PRIMARY ||
-      `https://myfreescorenow.com/enroll/?AID=${c.env.MFSN_AID || 'RickJeffersonSolutions'}&PID=${c.env.MFSN_PID || '49914'}`,
-    companyName: c.env.COMPANY_NAME || 'RJ Business Solutions',
-    companyEmail: c.env.COMPANY_EMAIL || 'rickjefferson@rickjeffersonsolutions.com'
-  })
-})
-
-// ========== SUCCESS PAGE (after Stripe checkout) ==========
-app.get('/success', (c) => {
-  return c.html(successPageHTML())
-})
-
-// ========== LEGAL PAGES ==========
-app.get('/legal', (c) => c.html(legalPageHTML()))
-app.get('/privacy', (c) => c.html(privacyPageHTML()))
-app.get('/terms', (c) => c.html(termsPageHTML()))
-app.get('/consumer-rights', (c) => c.html(consumerRightsPageHTML()))
-app.get('/cancellation', (c) => c.html(cancellationPageHTML()))
-
-// ========== MAIN FUNNEL PAGE ==========
-app.get('/', (c) => {
-  const stripeKey = c.env.STRIPE_PUBLISHABLE_KEY || ''
-  const mfsnUrl = c.env.MFSN_AFFILIATE_URL_PRIMARY ||
-    `https://myfreescorenow.com/enroll/?AID=${c.env.MFSN_AID || 'RickJeffersonSolutions'}&PID=${c.env.MFSN_PID || '49914'}`
-  return c.html(basicFunnelHTML(stripeKey, mfsnUrl))
-})
-
-app.get('/basic', (c) => c.redirect('/'))
-
-// ========== SUCCESS PAGE HTML ==========
-function successPageHTML(): string {
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Payment Confirmed | Clean It Up ITIN Credit Repair — RJ Business Solutions</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Noto+Sans+SC:wght@400;600;700;900&family=Noto+Sans:wght@400;600;700;900&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'Inter','Noto Sans',-apple-system,BlinkMacSystemFont,sans-serif;background:#030712;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0}
-    /* ===== LANGUAGE SWITCHER ===== */
-    .lang-bar{position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(90deg,#1e1b4b,#172554);border-bottom:1px solid rgba(59,130,246,0.3);padding:.35rem 1rem;display:flex;align-items:center;justify-content:center;gap:.4rem;font-size:.8rem;flex-wrap:wrap}
-    .lang-label{color:#9ca3af;margin-right:.15rem;font-size:.7rem}
-    .lang-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#d1d5db;padding:.25rem .6rem;border-radius:6px;font-size:.72rem;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:.3rem;font-family:inherit;white-space:nowrap}
-    .lang-btn:hover{background:rgba(59,130,246,.3);border-color:rgba(59,130,246,.5);color:#fff}
-    .lang-btn.active{background:linear-gradient(135deg,#3b82f6,#06b6d4);border-color:transparent;color:#fff;font-weight:700}
-    .lang-btn .flag{font-size:.95rem;line-height:1}
-    @media(max-width:600px){.lang-bar{gap:.25rem;padding:.3rem .5rem}.lang-btn{padding:.2rem .45rem;font-size:.65rem}.lang-label{display:none}}
-    /* ===== PAGE CONTENT ===== */
-    .page-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:4rem 2rem 2rem;width:100%}
-    .success-logo{margin-bottom:1.5rem}
-    .success-logo img{height:40px;width:auto;border-radius:6px}
-    .card{max-width:580px;width:100%;background:#111827;border:1px solid rgba(74,222,128,0.3);border-radius:1.5rem;padding:3rem;text-align:center;box-shadow:0 16px 64px rgba(0,0,0,.4)}
-    .icon{width:80px;height:80px;color:#4ade80;margin:0 auto 1.5rem}
-    h1{font-size:2rem;font-weight:900;margin-bottom:0.75rem}
-    .sub{color:#9ca3af;font-size:1.1rem;margin-bottom:2rem;line-height:1.6}
-    .steps{text-align:left;margin-bottom:2rem}
-    .step{display:flex;gap:1rem;padding:1rem;background:rgba(30,58,138,0.2);border:1px solid rgba(59,130,246,0.2);border-radius:0.75rem;margin-bottom:0.75rem;transition:border-color .3s}
-    .step:hover{border-color:rgba(59,130,246,.5)}
-    .step-num{width:32px;height:32px;background:linear-gradient(135deg,#3b82f6,#06b6d4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.85rem;flex-shrink:0}
-    .step h3{font-size:0.95rem;font-weight:700;margin-bottom:0.25rem}
-    .step p{color:#9ca3af;font-size:0.85rem}
-    .btn{display:inline-flex;align-items:center;gap:0.5rem;background:linear-gradient(135deg,#3b82f6,#06b6d4);color:#fff;font-weight:800;font-size:1.1rem;padding:1rem 2rem;border-radius:0.75rem;text-decoration:none;transition:all 0.3s}
-    .btn:hover{opacity:0.9;transform:translateY(-2px)}
-    .home-link{display:inline-flex;align-items:center;gap:.4rem;color:#60a5fa;font-size:.9rem;margin-top:1.5rem;text-decoration:none;transition:color .2s}
-    .home-link:hover{color:#93c5fd}
-    .footer-bar{width:100%;padding:1.5rem;background:#111827;border-top:1px solid #1f2937;text-align:center}
-    .footer-bar p{color:#6b7280;font-size:.78rem;margin:0}
-    .footer-bar a{color:#60a5fa}
-  </style>
-</head>
-<body>
-  <!-- ===== LANGUAGE SWITCHER BAR ===== -->
-  <div class="lang-bar" id="langBar">
-    <span class="lang-label" data-i18n="lang_label">Language:</span>
-    <button class="lang-btn active" onclick="switchLang('en')" data-lang="en"><span class="flag">&#127482;&#127480;</span> English</button>
-    <button class="lang-btn" onclick="switchLang('es')" data-lang="es"><span class="flag">&#127474;&#127485;</span> Español</button>
-    <button class="lang-btn" onclick="switchLang('zh')" data-lang="zh"><span class="flag">&#127464;&#127475;</span> 中文</button>
-    <button class="lang-btn" onclick="switchLang('vi')" data-lang="vi"><span class="flag">&#127483;&#127475;</span> Tiếng Việt</button>
-  </div>
-
-  <div class="page-wrap">
-    <div class="card">
-      <div class="success-logo">
-        <img src="https://media.rickjeffersonsolutions.com/rj-business-solutions-logo-banner.jpg" alt="RJ Business Solutions" height="40">
-      </div>
-      <div class="icon"><i data-lucide="check-circle-2"></i></div>
-      <h1 data-i18n="suc_title">Payment Confirmed!</h1>
-      <p class="sub" data-i18n="suc_subtitle">Your $99 forensic ITIN/SSN credit audit fee has been received. Here's what happens next:</p>
-
-      <div class="steps">
-        <div class="step">
-          <div class="step-num">1</div>
-          <div>
-            <h3 data-i18n="suc_step1_title">Check Your Email</h3>
-            <p data-i18n="suc_step1_desc">You'll receive a confirmation email with your audit timeline and next steps within the hour.</p>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-num">2</div>
-          <div>
-            <h3 data-i18n="suc_step2_title">Activate Credit Monitoring</h3>
-            <p data-i18n="suc_step2_desc">If you haven't already, activate your MyFreeScoreNow monitoring using your ITIN or SSN so we can begin your audit.</p>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-num">3</div>
-          <div>
-            <h3 data-i18n="suc_step3_title">Audit Delivered in 24–48 Hours</h3>
-            <p data-i18n="suc_step3_desc">Your complete forensic 3-bureau audit of your ITIN or SSN credit file + personalized 10-Point Restoration Roadmap will be emailed to you.</p>
-          </div>
-        </div>
-      </div>
-
-      <a href="https://myfreescorenow.com/enroll/?AID=RickJeffersonSolutions&PID=49914" target="_blank" class="btn" data-i18n="suc_btn">
-        Activate Monitoring Now &#8599;
-      </a>
-
-      <a href="/" class="home-link" data-i18n="suc_home">&#8592; Back to Home</a>
-
-      <p style="margin-top:1.5rem;color:#6b7280;font-size:0.8rem" data-i18n="suc_contact">
-        Questions? Email <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa">rickjefferson@rickjeffersonsolutions.com</a>
-      </p>
-    </div>
-  </div>
-
-  <div class="footer-bar">
-    <p>&copy; 2026 <strong style="color:#d1d5db">RJ Business Solutions</strong> &bull; 1342 NM 333, Tijeras, NM 87059 &bull; <a href="https://rickjeffersonsolutions.com">rickjeffersonsolutions.com</a></p>
-  </div>
-
-  <script>
-  lucide.createIcons();
-  var currentLang = 'en';
-  var sucTranslations = {
-    es: {
-      lang_label:'Idioma:',suc_title:'¡Pago Confirmado!',suc_subtitle:'Se ha recibido su tarifa de auditoría forense ITIN/SSN de $99. Esto es lo que sigue:',
-      suc_step1_title:'Revisa Tu Correo',suc_step1_desc:'Recibirás un correo de confirmación con el cronograma de tu auditoría y los próximos pasos dentro de la hora.',
-      suc_step2_title:'Activa el Monitoreo de Crédito',suc_step2_desc:'Si aún no lo has hecho, activa tu monitoreo MyFreeScoreNow usando tu ITIN o SSN para que podamos comenzar tu auditoría.',
-      suc_step3_title:'Auditoría Entregada en 24–48 Horas',suc_step3_desc:'Tu auditoría forense completa de 3 agencias de tu archivo ITIN o SSN + Hoja de Ruta de Restauración personalizada se enviará por correo.',
-      suc_btn:'Activar Monitoreo Ahora &#8599;',suc_home:'&#8592; Volver al Inicio',
-      suc_contact:'¿Preguntas? Email <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa">rickjefferson@rickjeffersonsolutions.com</a>'
-    },
-    zh: {
-      lang_label:'语言：',suc_title:'付款已确认！',suc_subtitle:'您的$99 ITIN/SSN法医信用审计费已收到。接下来将发生以下事项：',
-      suc_step1_title:'检查您的邮箱',suc_step1_desc:'您将在一小时内收到确认邮件，包含审计时间表和后续步骤。',
-      suc_step2_title:'激活信用监控',suc_step2_desc:'如果您还没有激活，请使用您的ITIN或SSN激活MyFreeScoreNow监控，以便我们开始审计。',
-      suc_step3_title:'24-48小时内交付审计',suc_step3_desc:'您的完整三机构ITIN或SSN信用档案法医审计 + 个性化10点修复路线图将通过邮件发送给您。',
-      suc_btn:'立即激活监控 &#8599;',suc_home:'&#8592; 返回首页',
-      suc_contact:'有疑问？发送邮件至 <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa">rickjefferson@rickjeffersonsolutions.com</a>'
-    },
-    vi: {
-      lang_label:'Ngôn ngữ:',suc_title:'Thanh Toán Đã Xác Nhận!',suc_subtitle:'Phí kiểm toán pháp y ITIN/SSN $99 của bạn đã được nhận. Đây là những gì sẽ xảy ra tiếp theo:',
-      suc_step1_title:'Kiểm Tra Email',suc_step1_desc:'Bạn sẽ nhận được email xác nhận với lịch trình kiểm toán và các bước tiếp theo trong vòng một giờ.',
-      suc_step2_title:'Kích Hoạt Giám Sát Tín Dụng',suc_step2_desc:'Nếu chưa kích hoạt, hãy kích hoạt giám sát MyFreeScoreNow bằng ITIN hoặc SSN để chúng tôi bắt đầu kiểm toán.',
-      suc_step3_title:'Kiểm Toán Giao Trong 24–48 Giờ',suc_step3_desc:'Kiểm toán pháp y đầy đủ 3 cơ quan hồ sơ ITIN hoặc SSN + Lộ Trình Phục Hồi 10 Điểm cá nhân hóa sẽ được gửi qua email.',
-      suc_btn:'Kích Hoạt Giám Sát Ngay &#8599;',suc_home:'&#8592; Về Trang Chủ',
-      suc_contact:'Câu hỏi? Email <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa">rickjefferson@rickjeffersonsolutions.com</a>'
-    }
-  };
-  function switchLang(lang) {
-    currentLang = lang;
-    localStorage.setItem('funnel_lang', lang);
-    document.documentElement.lang = lang;
-    document.querySelectorAll('.lang-btn').forEach(function(btn) {
-      btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
-    });
-    if (lang === 'en') {
-      document.querySelectorAll('[data-i18n]').forEach(function(el) {
-        var orig = el.getAttribute('data-i18n-orig');
-        if (orig !== null) el.innerHTML = orig;
-      });
-      return;
-    }
-    var dict = sucTranslations[lang];
-    if (!dict) return;
-    document.querySelectorAll('[data-i18n]').forEach(function(el) {
-      var key = el.getAttribute('data-i18n');
-      if (!el.hasAttribute('data-i18n-orig')) el.setAttribute('data-i18n-orig', el.innerHTML);
-      if (dict[key]) el.innerHTML = dict[key];
-    });
-  }
-  (function() {
-    var saved = localStorage.getItem('funnel_lang');
-    if (saved && sucTranslations[saved]) { switchLang(saved); return; }
-    var bl = (navigator.language || '').toLowerCase();
-    if (bl.startsWith('es')) switchLang('es');
-    else if (bl.startsWith('zh')) switchLang('zh');
-    else if (bl.startsWith('vi')) switchLang('vi');
-  })();
-  </script>
-</body>
-</html>`
+// ═══════ HELPER: Get translation ═══════
+function t(locale: string, key: string): string {
+  return i18n[locale]?.[key] || i18n.en[key] || key
 }
 
-// ========== SHARED LEGAL PAGE LAYOUT ==========
-function legalLayout(title: string, metaDesc: string, content: string): string {
+// ═══════════════════════════════════════════════════════════════
+// SHARED CSS
+// ═══════════════════════════════════════════════════════════════
+const SHARED_CSS = `
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter','Noto Sans',-apple-system,BlinkMacSystemFont,sans-serif;background:#030712;color:#fff;line-height:1.6;overflow-x:hidden}
+a{color:inherit;text-decoration:none}button{cursor:pointer;border:none;font-family:inherit}img{max-width:100%;height:auto;display:block}
+
+/* LANG SWITCHER */
+.lang-bar{position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(90deg,#1e1b4b,#172554);border-bottom:1px solid rgba(59,130,246,.3);padding:.3rem 1rem;display:flex;align-items:center;justify-content:center;gap:.35rem;font-size:.78rem;flex-wrap:wrap}
+.lang-label{color:#9ca3af;font-size:.68rem;margin-right:.1rem}
+.lang-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#d1d5db;padding:.22rem .55rem;border-radius:6px;font-size:.7rem;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:.25rem;white-space:nowrap;text-decoration:none}
+.lang-btn:hover{background:rgba(59,130,246,.3);border-color:rgba(59,130,246,.5);color:#fff}
+.lang-btn.active{background:linear-gradient(135deg,#3b82f6,#06b6d4);border-color:transparent;color:#fff;font-weight:700}
+body{padding-top:34px}
+@media(max-width:600px){.lang-bar{gap:.2rem;padding:.25rem .4rem}.lang-btn{padding:.18rem .4rem;font-size:.62rem}.lang-label{display:none}}
+
+/* NAV */
+.nav{background:rgba(17,24,39,.97);backdrop-filter:blur(12px);border-bottom:1px solid #1f2937;padding:.65rem 0;position:sticky;top:34px;z-index:100}
+.nav-inner{max-width:1100px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between}
+.nav .logo-link{display:flex;align-items:center;gap:.5rem;text-decoration:none}
+.nav .logo-link img{height:32px;width:auto;border-radius:4px}
+.nav .logo-link span{color:#fff;font-weight:700;font-size:.95rem}
+.nav-links{display:flex;gap:.8rem;font-size:.82rem}.nav-links a{color:#93c5fd;transition:color .2s}.nav-links a:hover{color:#fff}
+
+/* ANIMATIONS */
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(236,72,153,.4)}50%{box-shadow:0 0 0 16px rgba(236,72,153,0)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.ao{opacity:0;transform:translateY(30px);transition:opacity .8s ease,transform .8s ease}.ao.v{opacity:1;transform:translateY(0)}
+.s1{transition-delay:.1s}.s2{transition-delay:.2s}.s3{transition-delay:.3s}.s4{transition-delay:.4s}
+
+/* CONTAINERS */
+.ct{max-width:1100px;margin:0 auto;padding:0 1.5rem}
+.cs{max-width:900px;margin:0 auto;padding:0 1.5rem}
+.cx{max-width:720px;margin:0 auto;padding:0 1.5rem}
+.tc{text-align:center}
+
+/* GRADIENT TEXT */
+.gt{display:block;margin-top:.35rem;background:linear-gradient(90deg,#60a5fa,#22d3ee,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* SECTION TITLES */
+.stt{font-size:clamp(2rem,4.5vw,3rem);font-weight:900;margin-bottom:.75rem}
+.sts{font-size:1.05rem;color:#9ca3af;max-width:640px;margin:0 auto 2.5rem}
+
+/* BUTTONS */
+.btn-primary{display:inline-flex;align-items:center;gap:.6rem;background:linear-gradient(135deg,#ec4899,#db2777);color:#fff;font-weight:800;font-size:1.1rem;padding:1rem 2.2rem;border-radius:.75rem;box-shadow:0 8px 32px rgba(236,72,153,.35);transition:all .3s;text-transform:uppercase;letter-spacing:.02em;animation:pulse 2s infinite;text-decoration:none}
+.btn-primary:hover{opacity:.9;transform:translateY(-3px);box-shadow:0 16px 48px rgba(236,72,153,.5)}
+.btn-secondary{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,#3b82f6,#06b6d4);color:#fff;font-weight:700;font-size:.95rem;padding:.8rem 1.5rem;border-radius:.6rem;transition:all .3s;text-decoration:none}
+.btn-secondary:hover{opacity:.9;transform:translateY(-2px)}
+
+/* HERO */
+.hero{position:relative;min-height:85vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0c1445,#1e1b4b 30%,#172554 60%,#0f172a);padding:4rem 0 5rem;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 800px 600px at 20% 50%,rgba(59,130,246,.1),transparent),radial-gradient(ellipse 600px 400px at 80% 30%,rgba(6,182,212,.07),transparent)}
+.hero-logo{margin-bottom:1.5rem;animation:fadeInUp .8s ease forwards}
+.hero-logo img{width:280px;height:auto;margin:0 auto;border-radius:.75rem;filter:drop-shadow(0 8px 32px rgba(59,130,246,.2))}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.4);border-radius:999px;padding:.45rem 1.1rem;margin-bottom:1.25rem;color:#6ee7b7;font-size:.82rem;font-weight:600}
+.hero h1{font-size:clamp(2rem,5vw,3.5rem);font-weight:900;line-height:1.15;margin-bottom:1rem}
+.hero .sub{font-size:clamp(.95rem,2vw,1.15rem);color:#bfdbfe;max-width:700px;margin:0 auto 2rem;line-height:1.7}
+
+/* PLAN CARDS */
+.plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin:3rem 0}
+.plan-card{background:#111827;border:2px solid #1f2937;border-radius:1.25rem;padding:2rem;position:relative;transition:all .4s}
+.plan-card:hover{border-color:rgba(59,130,246,.5);transform:translateY(-6px);box-shadow:0 12px 40px rgba(59,130,246,.1)}
+.plan-card.featured{border-color:rgba(139,92,246,.6);box-shadow:0 0 40px rgba(139,92,246,.15);transform:scale(1.03)}
+.plan-card.featured:hover{transform:scale(1.03) translateY(-6px)}
+.plan-tag{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff;font-size:.72rem;font-weight:700;padding:.3rem .9rem;border-radius:999px;white-space:nowrap;text-transform:uppercase;letter-spacing:.06em}
+.plan-name{font-size:1.6rem;font-weight:900;margin:.75rem 0 .25rem}
+.plan-target{color:#60a5fa;font-size:.85rem;font-weight:600;margin-bottom:.6rem}
+.plan-price{font-size:3rem;font-weight:900;color:#fff;margin:.5rem 0}
+.plan-price span{font-size:1rem;font-weight:600;color:#9ca3af}
+.plan-desc{color:#9ca3af;font-size:.85rem;line-height:1.6;margin-bottom:1.25rem}
+.plan-features{list-style:none;padding:0;margin:0 0 1.5rem}
+.plan-features li{display:flex;align-items:flex-start;gap:.5rem;font-size:.82rem;color:#d1d5db;padding:.4rem 0}
+.plan-features li::before{content:'✓';color:#4ade80;font-weight:700;flex-shrink:0}
+.plan-btn{display:block;width:100%;text-align:center;padding:.9rem;border-radius:.65rem;font-weight:700;font-size:.95rem;color:#fff;transition:all .3s;text-decoration:none}
+.plan-btn:hover{opacity:.9;transform:translateY(-2px)}
+.plan-notes{text-align:center;margin-top:.75rem;font-size:.72rem;color:#6b7280}
+
+/* RIGHTS SECTION */
+.rights{padding:5rem 0;background:linear-gradient(180deg,#0a0f1f,#0f172a)}
+.rights-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.25rem;margin-top:2rem}
+.right-card{background:rgba(17,24,39,.8);border:1px solid rgba(30,58,138,.4);border-radius:1rem;padding:1.5rem;transition:all .3s}
+.right-card:hover{border-color:rgba(59,130,246,.5);transform:translateY(-3px)}
+.right-card h4{color:#60a5fa;font-size:.95rem;font-weight:700;margin-bottom:.4rem}
+.right-card p{color:#9ca3af;font-size:.82rem;line-height:1.6}
+
+/* BIO */
+.bio{padding:5rem 0;background:linear-gradient(180deg,#0f172a,#0a1128)}
+.bio-card{display:flex;gap:2.5rem;background:#111827;border:1px solid rgba(30,58,138,.3);border-radius:1.25rem;padding:2.5rem;align-items:flex-start}
+.bio-img{width:200px;height:200px;border-radius:1rem;background:linear-gradient(135deg,#1e3a5f,#172554);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:5rem}
+.bio-content h3{font-size:1.5rem;font-weight:800;margin-bottom:.25rem}
+.bio-content .role{color:#60a5fa;font-size:.9rem;font-weight:600;margin-bottom:1rem}
+.bio-content p{color:#9ca3af;font-size:.9rem;line-height:1.7;margin-bottom:.75rem}
+.bio-content blockquote{border-left:3px solid #3b82f6;padding:.75rem 1.25rem;background:rgba(30,58,138,.15);border-radius:0 .5rem .5rem 0;color:#bfdbfe;font-style:italic;margin-top:1rem}
+
+/* FAQ */
+.faq{padding:5rem 0;background:linear-gradient(180deg,#030712,#0a0f1f)}
+.faq-item{background:#111827;border:1px solid #1f2937;border-radius:.75rem;margin-bottom:.75rem;overflow:hidden}
+.faq-q{padding:1.25rem 1.5rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:.95rem;transition:background .2s}
+.faq-q:hover{background:rgba(30,58,138,.15)}
+.faq-q::after{content:'+';font-size:1.5rem;color:#60a5fa;transition:transform .3s}
+.faq-item.open .faq-q::after{content:'−';transform:rotate(180deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s;padding:0 1.5rem;color:#9ca3af;font-size:.88rem;line-height:1.7}
+.faq-item.open .faq-a{max-height:300px;padding:0 1.5rem 1.25rem}
+
+/* COMMUNITY */
+.community{padding:4rem 0;background:rgba(23,37,84,.15);border-top:1px solid rgba(30,58,138,.3);border-bottom:1px solid rgba(30,58,138,.3)}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:2rem}
+.stat-card{text-align:center}
+.stat-val{font-size:2.5rem;font-weight:900;background:linear-gradient(135deg,#60a5fa,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stat-label{color:#9ca3af;font-size:.82rem;margin-top:.25rem}
+
+/* GUARANTEE */
+.guarantee{padding:5rem 0;background:linear-gradient(180deg,#0a0f1f,#172554)}
+.guarantee-box{background:#111827;border:2px solid rgba(74,222,128,.3);border-radius:1.25rem;padding:2.5rem;text-align:center;max-width:700px;margin:0 auto}
+.guarantee-box h3{font-size:1.5rem;font-weight:800;color:#4ade80;margin-bottom:1rem}
+.guarantee-box p{color:#9ca3af;font-size:1rem;line-height:1.7}
+
+/* CTA */
+.cta-section{padding:5rem 0;background:linear-gradient(180deg,#172554,#030712);text-align:center}
+
+/* COMPLIANCE FOOTER */
+.comp-footer{padding:3rem 0;background:#030712;border-top:1px solid #1f2937}
+.comp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin:1.5rem 0}
+.comp-item{background:rgba(17,24,39,.6);border:1px solid rgba(30,58,138,.3);border-radius:.75rem;padding:1rem}
+.comp-item h4{color:#60a5fa;font-size:.82rem;font-weight:700;margin-bottom:.3rem}
+.comp-item p{color:#6b7280;font-size:.72rem;line-height:1.6}
+
+/* FOOTER */
+.footer{padding:2.5rem 0;background:#030712;border-top:1px solid #111827;text-align:center}
+.footer-logo img{height:36px;margin:0 auto 1rem;border-radius:4px}
+.footer p{color:#6b7280;font-size:.78rem;line-height:1.8}
+.footer a{color:#60a5fa}
+.footer-links{margin-top:.75rem;display:flex;flex-wrap:wrap;justify-content:center;gap:.75rem;font-size:.75rem}
+.footer-links a{color:#60a5fa}
+
+/* MODAL */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(12px);z-index:1000;align-items:center;justify-content:center;padding:1.5rem}
+.mo.active{display:flex}
+.md{background:#111827;border:1px solid rgba(59,130,246,.4);border-radius:1.5rem;padding:2.5rem;max-width:520px;width:100%;position:relative;animation:fadeInUp .3s ease}
+.mc{position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,.1);color:#9ca3af;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.25rem;cursor:pointer;transition:background .3s}
+.mc:hover{background:rgba(255,255,255,.2);color:#fff}
+.md h2{font-size:1.4rem;font-weight:800;margin-bottom:.4rem}
+.md .ms{color:#9ca3af;font-size:.88rem;margin-bottom:1.5rem}
+.fg2{margin-bottom:1rem}
+.fg2 label{display:block;color:#d1d5db;font-size:.82rem;font-weight:600;margin-bottom:.35rem}
+.fg2 input{width:100%;padding:.8rem 1rem;background:#1f2937;border:1px solid #374151;border-radius:.6rem;color:#fff;font-size:.95rem;transition:border-color .3s;outline:none}
+.fg2 input:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+.fs-btn{width:100%;padding:.9rem;background:linear-gradient(135deg,#ec4899,#db2777);color:#fff;font-weight:800;font-size:1rem;border-radius:.65rem;transition:all .3s;text-transform:uppercase}
+.fs-btn:hover{opacity:.9;transform:translateY(-1px)}
+.fnt{text-align:center;color:#6b7280;font-size:.72rem;margin-top:.75rem}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .plans-grid{grid-template-columns:1fr}
+  .plan-card.featured{transform:none}.plan-card.featured:hover{transform:translateY(-6px)}
+  .rights-grid{grid-template-columns:1fr}
+  .bio-card{flex-direction:column;align-items:center;text-align:center}
+  .bio-img{width:150px;height:150px}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .hero-logo img{width:200px}
+  .btn-primary{width:100%;justify-content:center;font-size:1rem;padding:.9rem 1.5rem}
+}
+`
+
+// ═══════════════════════════════════════════════════════════════
+// LANGUAGE SWITCHER HTML
+// ═══════════════════════════════════════════════════════════════
+function langSwitcherHTML(currentLocale: string): string {
+  return SUPPORTED_LOCALES.map(loc => {
+    const active = loc === currentLocale ? ' active' : ''
+    const name = i18n[loc]?.lang_name || loc
+    const flag = i18n[loc]?.flag || ''
+    return `<a href="/${loc}" class="lang-btn${active}">${flag} ${name}</a>`
+  }).join('')
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SHARED LAYOUT
+// ═══════════════════════════════════════════════════════════════
+function pageLayout(locale: string, title: string, content: string): string {
+  const T = (key: string) => t(locale, key)
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="${locale}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${title} | RJ Business Solutions</title>
-  <meta name="description" content="${metaDesc}">
-  <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#x1f6e1;</text></svg>">
+  <meta name="description" content="${T('hero_sub').replace(/<[^>]*>/g, '').substring(0, 160)}">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;600;700;900&family=Noto+Sans:wght@400;600;700;900&display=swap" rel="stylesheet">
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'Inter','Noto Sans',-apple-system,BlinkMacSystemFont,sans-serif;background:#030712;color:#d1d5db;line-height:1.8;padding:0}
-    a{color:#60a5fa;text-decoration:none}a:hover{text-decoration:underline}
-    /* ===== LANGUAGE SWITCHER (same as main funnel) ===== */
-    .lang-bar{position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(90deg,#1e1b4b,#172554);border-bottom:1px solid rgba(59,130,246,0.3);padding:.35rem 1rem;display:flex;align-items:center;justify-content:center;gap:.4rem;font-size:.8rem;flex-wrap:wrap}
-    .lang-label{color:#9ca3af;margin-right:.15rem;font-size:.7rem}
-    .lang-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#d1d5db;padding:.25rem .6rem;border-radius:6px;font-size:.72rem;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:.3rem;font-family:inherit;white-space:nowrap}
-    .lang-btn:hover{background:rgba(59,130,246,.3);border-color:rgba(59,130,246,.5);color:#fff}
-    .lang-btn.active{background:linear-gradient(135deg,#3b82f6,#06b6d4);border-color:transparent;color:#fff;font-weight:700}
-    .lang-btn .flag{font-size:.95rem;line-height:1}
-    body.has-lang-bar{padding-top:36px}
-    body.has-lang-bar .nav{top:36px}
-    @media(max-width:600px){.lang-bar{gap:.25rem;padding:.3rem .5rem}.lang-btn{padding:.2rem .45rem;font-size:.65rem}.lang-label{display:none}body.has-lang-bar{padding-top:34px}body.has-lang-bar .nav{top:34px}}
-    /* ===== NAV ===== */
-    .nav{background:rgba(17,24,39,.97);backdrop-filter:blur(12px);border-bottom:1px solid #1f2937;padding:.75rem 0;position:sticky;top:0;z-index:100}
-    .nav-inner{max-width:900px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between}
-    .nav .logo-link{display:flex;align-items:center;gap:.5rem;text-decoration:none}
-    .nav .logo-link img{height:32px;width:auto;border-radius:4px}
-    .nav .logo-link span{color:#fff;font-weight:700;font-size:1rem}
-    .nav-links{display:flex;gap:1rem;font-size:.85rem;align-items:center}
-    .nav-links a{color:#93c5fd;transition:color .2s}.nav-links a:hover{color:#fff;text-decoration:none}
-    .container{max-width:900px;margin:0 auto;padding:3rem 1.5rem 4rem}
-    h1{color:#fff;font-size:2.25rem;font-weight:800;margin-bottom:.5rem;line-height:1.3}
-    h2{color:#fff;font-size:1.5rem;font-weight:700;margin:2.5rem 0 1rem;padding-bottom:.5rem;border-bottom:1px solid #1f2937}
-    h3{color:#e5e7eb;font-size:1.15rem;font-weight:600;margin:1.5rem 0 .75rem}
-    p{margin-bottom:1rem}
-    .updated{color:#6b7280;font-size:.85rem;margin-bottom:2rem}
-    .legal-nav{display:flex;flex-wrap:wrap;gap:.75rem;margin-bottom:2.5rem;padding-bottom:1.5rem;border-bottom:1px solid #1f2937}
-    .legal-nav a{background:rgba(30,58,138,.3);border:1px solid rgba(59,130,246,.3);color:#93c5fd;padding:.4rem 1rem;border-radius:999px;font-size:.8rem;font-weight:500;white-space:nowrap;transition:all .2s}
-    .legal-nav a:hover{background:rgba(59,130,246,.2);text-decoration:none}
-    .legal-nav a.active{background:rgba(59,130,246,.4);border-color:#3b82f6;color:#fff}
-    .highlight-box{background:rgba(30,58,138,.2);border:1px solid rgba(59,130,246,.3);border-radius:.75rem;padding:1.5rem;margin:1.5rem 0}
-    .warning-box{background:rgba(127,29,29,.15);border:1px solid rgba(239,68,68,.3);border-radius:.75rem;padding:1.5rem;margin:1.5rem 0}
-    .warning-box strong{color:#fca5a5}
-    .croa-box{background:rgba(6,78,59,.15);border:2px solid rgba(52,211,153,.3);border-radius:.75rem;padding:2rem;margin:1.5rem 0}
-    .croa-box h3{color:#6ee7b7;margin-top:0}
-    ul,ol{margin:0 0 1rem 1.5rem}
-    li{margin-bottom:.5rem}
-    .statute-ref{color:#fbbf24;font-weight:600;font-size:.85rem}
-    .section-badge{display:inline-block;background:rgba(59,130,246,.2);border:1px solid rgba(59,130,246,.3);color:#93c5fd;padding:.15rem .5rem;border-radius:.25rem;font-size:.75rem;font-weight:600;margin-right:.5rem}
-    blockquote{border-left:3px solid #3b82f6;padding:.75rem 1.25rem;margin:1rem 0 1.5rem;background:rgba(30,58,138,.1);border-radius:0 .5rem .5rem 0;font-style:italic;color:#bfdbfe}
-    .back-btn{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,#3b82f6,#06b6d4);color:#fff;font-weight:700;font-size:.9rem;padding:.65rem 1.5rem;border-radius:.5rem;text-decoration:none;transition:all .3s;margin-top:2rem}
-    .back-btn:hover{opacity:.9;transform:translateY(-2px);text-decoration:none}
-    .footer{padding:2.5rem 1.5rem;background:#111827;border-top:1px solid #1f2937;text-align:center;margin-top:3rem}
-    .footer-logo{display:flex;align-items:center;justify-content:center;gap:.5rem;margin-bottom:1rem}
-    .footer-logo img{height:36px;width:auto;border-radius:4px}
-    .footer p{color:#6b7280;font-size:.8rem;line-height:1.8;margin:0}
-    .footer a{color:#60a5fa}
-    .footer-links{margin-top:.75rem;display:flex;flex-wrap:wrap;justify-content:center;gap:.75rem}
-    .footer-links a{font-size:.78rem}
-    @media(max-width:768px){h1{font-size:1.75rem}.legal-nav{gap:.5rem}.legal-nav a{font-size:.75rem;padding:.35rem .75rem}.nav-links{gap:.5rem;font-size:.8rem}}
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>${SHARED_CSS}</style>
 </head>
-<body class="has-lang-bar">
-  <!-- ===== LANGUAGE SWITCHER BAR ===== -->
-  <div class="lang-bar" id="langBar">
-    <span class="lang-label" data-i18n="lang_label">Language:</span>
-    <button class="lang-btn active" onclick="switchLang('en')" data-lang="en"><span class="flag">&#127482;&#127480;</span> English</button>
-    <button class="lang-btn" onclick="switchLang('es')" data-lang="es"><span class="flag">&#127474;&#127485;</span> Español</button>
-    <button class="lang-btn" onclick="switchLang('zh')" data-lang="zh"><span class="flag">&#127464;&#127475;</span> 中文</button>
-    <button class="lang-btn" onclick="switchLang('vi')" data-lang="vi"><span class="flag">&#127483;&#127475;</span> Tiếng Việt</button>
+<body>
+  <!-- LANGUAGE SWITCHER -->
+  <div class="lang-bar">
+    <span class="lang-label">${T('lang_label')}</span>
+    ${langSwitcherHTML(locale)}
   </div>
 
+  <!-- NAV -->
   <nav class="nav">
     <div class="nav-inner">
-      <a href="/" class="logo-link">
+      <a href="/${locale}" class="logo-link">
         <img src="https://media.rickjeffersonsolutions.com/rj-business-solutions-logo-banner.jpg" alt="RJ Business Solutions" height="32">
-        <span data-i18n="nav_brand">Clean It Up</span>
+        <span>ITIN Credit</span>
       </a>
       <div class="nav-links">
-        <a href="/legal" data-i18n="nav_legal">Legal</a>
-        <a href="/privacy" data-i18n="nav_privacy">Privacy</a>
-        <a href="/terms" data-i18n="nav_terms">Terms</a>
-        <a href="/" data-i18n="nav_home">Home</a>
+        <a href="/${locale}">${T('nav_home')}</a>
+        <a href="/${locale}#plans">${T('nav_plans')}</a>
+        <a href="/${locale}/legal">${T('nav_legal')}</a>
       </div>
     </div>
   </nav>
-  <div class="container">
-    <div class="legal-nav">
-      <a href="/legal" data-i18n="lnav_disclosures">Disclosures &amp; Compliance (ECOA, FCRA, CROA)</a>
-      <a href="/consumer-rights" data-i18n="lnav_consumer_rights">Consumer Rights (CROA)</a>
-      <a href="/privacy" data-i18n="lnav_privacy">Privacy Policy</a>
-      <a href="/terms" data-i18n="lnav_terms">Terms of Service</a>
-      <a href="/cancellation" data-i18n="lnav_cancellation">Cancellation Policy</a>
-    </div>
-    ${content}
-    <a href="/" class="back-btn" data-i18n="back_to_home">&#8592; Back to Home</a>
-  </div>
+
+  ${content}
+
+  <!-- FOOTER -->
   <footer class="footer">
-    <div class="footer-logo">
-      <img src="https://media.rickjeffersonsolutions.com/rj-business-solutions-logo-banner.jpg" alt="RJ Business Solutions" height="36">
-    </div>
-    <p><strong style="color:#d1d5db">RJ Business Solutions</strong><br>1342 NM 333, Tijeras, New Mexico 87059<br><a href="https://rickjeffersonsolutions.com">rickjeffersonsolutions.com</a> &bull; <a href="mailto:rickjefferson@rickjeffersonsolutions.com">rickjefferson@rickjeffersonsolutions.com</a></p>
-    <p style="margin-top:.75rem">&copy; 2026 RJ Business Solutions. All rights reserved.</p>
-    <div class="footer-links">
-      <a href="/legal" data-i18n="fl_legal">Legal Disclosures</a> &bull;
-      <a href="/privacy" data-i18n="fl_privacy">Privacy Policy</a> &bull;
-      <a href="/terms" data-i18n="fl_terms">Terms of Service</a> &bull;
-      <a href="/consumer-rights" data-i18n="fl_consumer_rights">Consumer Rights</a> &bull;
-      <a href="/cancellation" data-i18n="fl_cancellation">Cancellation Policy</a>
+    <div class="cx">
+      <img src="https://media.rickjeffersonsolutions.com/rj-business-solutions-logo-banner.jpg" alt="RJ Business Solutions" class="footer-logo" style="height:36px;margin:0 auto 1rem;border-radius:4px">
+      <p><strong style="color:#d1d5db">RJ Business Solutions</strong><br>1342 NM 333, Tijeras, New Mexico 87059<br><a href="https://rickjeffersonsolutions.com">rickjeffersonsolutions.com</a> &bull; <a href="mailto:rickjefferson@rickjeffersonsolutions.com">rickjefferson@rickjeffersonsolutions.com</a></p>
+      <div class="footer-links">
+        <a href="/${locale}/legal">${T('nav_legal')}</a> &bull;
+        <a href="/${locale}/privacy">${T('nav_privacy')}</a> &bull;
+        <a href="/${locale}/terms">${T('nav_terms')}</a>
+      </div>
+      <p style="margin-top:.5rem">&copy; 2026 RJ Business Solutions. All rights reserved.</p>
     </div>
   </footer>
 
   <script>
-  var currentLang = 'en';
-  var legalTranslations = {
-    es: {
-      lang_label:'Idioma:',nav_brand:'Limpia Tu Crédito',nav_legal:'Legal',nav_privacy:'Privacidad',nav_terms:'Términos',nav_home:'Inicio',
-      lnav_disclosures:'Divulgaciones y Cumplimiento (ECOA, FCRA, CROA)',lnav_consumer_rights:'Derechos del Consumidor (CROA)',lnav_privacy:'Política de Privacidad',lnav_terms:'Términos de Servicio',lnav_cancellation:'Política de Cancelación',
-      back_to_home:'&#8592; Volver al Inicio',
-      fl_legal:'Divulgaciones Legales',fl_privacy:'Política de Privacidad',fl_terms:'Términos de Servicio',fl_consumer_rights:'Derechos del Consumidor',fl_cancellation:'Política de Cancelación'
-    },
-    zh: {
-      lang_label:'语言：',nav_brand:'信用修复',nav_legal:'法律',nav_privacy:'隐私',nav_terms:'条款',nav_home:'首页',
-      lnav_disclosures:'披露与合规（ECOA、FCRA、CROA）',lnav_consumer_rights:'消费者权利（CROA）',lnav_privacy:'隐私政策',lnav_terms:'服务条款',lnav_cancellation:'取消政策',
-      back_to_home:'&#8592; 返回首页',
-      fl_legal:'法律披露',fl_privacy:'隐私政策',fl_terms:'服务条款',fl_consumer_rights:'消费者权利',fl_cancellation:'取消政策'
-    },
-    vi: {
-      lang_label:'Ngôn ngữ:',nav_brand:'Sửa Chữa Tín Dụng',nav_legal:'Pháp Lý',nav_privacy:'Riêng Tư',nav_terms:'Điều Khoản',nav_home:'Trang Chủ',
-      lnav_disclosures:'Công Bố & Tuân Thủ (ECOA, FCRA, CROA)',lnav_consumer_rights:'Quyền Người Tiêu Dùng (CROA)',lnav_privacy:'Chính Sách Bảo Mật',lnav_terms:'Điều Khoản Dịch Vụ',lnav_cancellation:'Chính Sách Hủy Bỏ',
-      back_to_home:'&#8592; Về Trang Chủ',
-      fl_legal:'Công Bố Pháp Lý',fl_privacy:'Chính Sách Bảo Mật',fl_terms:'Điều Khoản Dịch Vụ',fl_consumer_rights:'Quyền Người Tiêu Dùng',fl_cancellation:'Chính Sách Hủy Bỏ'
-    }
-  };
-  function switchLang(lang) {
-    currentLang = lang;
-    localStorage.setItem('funnel_lang', lang);
-    document.documentElement.lang = lang;
-    document.querySelectorAll('.lang-btn').forEach(function(btn) {
-      btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
-    });
-    if (lang === 'en') {
-      document.querySelectorAll('[data-i18n]').forEach(function(el) {
-        var orig = el.getAttribute('data-i18n-orig');
-        if (orig !== null) el.innerHTML = orig;
-      });
-      return;
-    }
-    var dict = legalTranslations[lang];
-    if (!dict) return;
-    document.querySelectorAll('[data-i18n]').forEach(function(el) {
-      var key = el.getAttribute('data-i18n');
-      if (!el.hasAttribute('data-i18n-orig')) el.setAttribute('data-i18n-orig', el.innerHTML);
-      if (dict[key]) el.innerHTML = dict[key];
-    });
-  }
-  (function() {
-    var saved = localStorage.getItem('funnel_lang');
-    if (saved && legalTranslations[saved]) { switchLang(saved); return; }
-    var bl = (navigator.language || '').toLowerCase();
-    if (bl.startsWith('es')) switchLang('es');
-    else if (bl.startsWith('zh')) switchLang('zh');
-    else if (bl.startsWith('vi')) switchLang('vi');
-  })();
+  // FAQ toggle
+  document.querySelectorAll('.faq-q').forEach(q=>{q.addEventListener('click',()=>{q.parentElement.classList.toggle('open')})});
+  // Scroll animation
+  const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('v');obs.unobserve(e.target)}})},{threshold:.1});
+  document.querySelectorAll('.ao').forEach(el=>obs.observe(el));
   </script>
 </body>
 </html>`
 }
 
-// ========== /legal — FULL COMPLIANCE DISCLOSURES PAGE ==========
-function legalPageHTML(): string {
-  return legalLayout(
-    'Legal Disclosures &amp; Federal Compliance — ITIN Credit Repair',
-    'Complete federal legal disclosures for RJ Business Solutions ITIN credit repair services. CROA, FCRA, ECOA, FDCPA, TSR, FTC, CFPB compliance. ITIN holders have full credit dispute rights under federal law.',
-    `<h1>Legal Disclosures &amp; Federal Compliance</h1>
-    <p class="updated">Last Updated: February 23, 2026 &bull; Effective for all ITIN and SSN credit repair services provided by RJ Business Solutions</p>
-
-    <div class="warning-box">
-      <strong>Important Notice:</strong> RJ Business Solutions is a credit repair organization as defined under the Credit Repair Organizations Act (15 U.S.C. &sect; 1679 et seq.). We are not a law firm, we are not attorneys, and we do not provide legal advice. The information on this page is provided for transparency and compliance purposes only.
-    </div>
-
-    <div class="highlight-box">
-      <strong>&#127919; ITIN Credit Repair Clients:</strong> If you hold an Individual Taxpayer Identification Number (ITIN), you have the <strong>exact same credit dispute rights</strong> as Social Security Number (SSN) holders under the Fair Credit Reporting Act (FCRA) and Equal Credit Opportunity Act (ECOA). All three major credit bureaus — TransUnion, Equifax, and Experian — accept and maintain ITIN-based credit files. Our services are fully available to ITIN holders, and we use the same federal statutes to challenge inaccurate information on your ITIN credit file as we do for SSN-based files.
-    </div>
-
-    <!-- ═══════ CROA ═══════ -->
-    <h2 id="croa"><span class="section-badge">CROA</span> Credit Repair Organizations Act (15 U.S.C. &sect; 1679)</h2>
-
-    <p>RJ Business Solutions operates in full compliance with the Credit Repair Organizations Act, enacted September 30, 1996 (Pub. L. 104-208). CROA provides important protections for consumers who use credit repair services.</p>
-
-    <div class="croa-box">
-      <h3>&#9989; Required CROA Consumer Disclosure Statement</h3>
-      <p><em>Pursuant to 15 U.S.C. &sect; 1679c, the following disclosure is provided to all consumers before any contract or agreement is executed:</em></p>
-
-      <blockquote>
-        <strong>"Consumer Credit File Rights Under State and Federal Law</strong><br><br>
-        You have a right to dispute inaccurate information in your credit report by contacting the credit bureau directly. However, neither you nor any 'credit repair' company or credit repair organization has the right to have accurate, current, and verifiable information removed from your credit report. The credit bureau must remove accurate, negative information from your report only if it is over 7 years old. Bankruptcy information can be reported for 10 years.<br><br>
-        You have a right to obtain a copy of your credit report from a credit bureau. You may be charged a reasonable fee. There is no fee, however, if you have been turned down for credit, employment, insurance, or a rental dwelling because of information in your credit report within the preceding 60 days. The credit bureau must provide someone to help you interpret the information in your credit file. You are entitled to receive a free copy of your credit report if you are unemployed and intend to apply for employment in the next 60 days, if you are a recipient of public welfare assistance, or if you have reason to believe that there is inaccurate information in your credit report due to fraud.<br><br>
-        You have a right to sue a credit repair organization that violates the Credit Repair Organization Act. This law prohibits deceptive practices by credit repair organizations.<br><br>
-        You have the right to cancel your contract with any credit repair organization for any reason within 3 business days from the date you signed it.<br><br>
-        Credit bureaus are required to follow reasonable procedures to ensure that the information they report is accurate. However, mistakes may occur.<br><br>
-        You may, on your own, notify a credit bureau in writing that you dispute the accuracy of information in your credit file. The credit bureau must then reinvestigate and modify or remove inaccurate or incomplete information. The credit bureau may not charge any fee for this service. Any pertinent information and copies of all documents you have concerning an error should be given to the credit bureau.<br><br>
-        If the credit bureau's reinvestigation does not resolve the dispute to your satisfaction, you may send a brief statement to the credit bureau, to be kept in your file, explaining why you think the record is inaccurate. The credit bureau must include a summary of your statement about disputed information with any report it issues about you.<br><br>
-        The Federal Trade Commission regulates credit bureaus and credit repair organizations. For more information contact:<br><br>
-        <strong>The Public Reference Branch<br>
-        Federal Trade Commission<br>
-        Washington, D.C. 20580"</strong>
-      </blockquote>
-    </div>
-
-    <h3>CROA Compliance Practices</h3>
-    <ul>
-      <li><strong>No Advance Fees (15 U.S.C. &sect; 1679b(b)):</strong> We do not charge or receive payment for credit repair services until such services have been fully performed. The $99 audit fee covers a completed forensic audit product delivered to you — it is not an advance fee for future dispute work.</li>
-      <li><strong>Written Contracts (15 U.S.C. &sect; 1679d):</strong> All services require a signed, written contract that details the services to be performed, total costs, payment terms, estimated timelines, and your cancellation rights.</li>
-      <li><strong>3-Business-Day Cancellation Right (15 U.S.C. &sect; 1679e):</strong> You may cancel your contract for any reason within 3 business days of signing, without penalty or obligation. A Notice of Cancellation form is provided with every contract.</li>
-      <li><strong>No Misleading Claims (15 U.S.C. &sect; 1679b(a)):</strong> We do not guarantee specific credit score increases or claim we can remove accurate, current, and verifiable information from your credit report.</li>
-      <li><strong>Disclosure Before Contract (15 U.S.C. &sect; 1679c):</strong> The Consumer Credit File Rights statement above is provided to every consumer before any contract is executed, as a separate document.</li>
-      <li><strong>Consumer Waivers Void (15 U.S.C. &sect; 1679f):</strong> Any waiver of your rights under CROA is void and unenforceable.</li>
-    </ul>
-
-    <!-- ═══════ ECOA ═══════ -->
-    <h2 id="ecoa"><span class="section-badge">ECOA</span> Equal Credit Opportunity Act (15 U.S.C. &sect; 1691)</h2>
-
-    <p>The Equal Credit Opportunity Act is <strong>critically important for ITIN holders</strong>. ECOA prohibits discrimination in any aspect of a credit transaction based on race, color, religion, national origin, sex, marital status, age, receipt of public assistance, or good-faith exercise of consumer rights.</p>
-
-    <h3>Why ECOA Matters for ITIN Credit Repair</h3>
-    <ul>
-      <li><strong>National Origin Protection (15 U.S.C. &sect; 1691(a)(1)):</strong> Creditors, lenders, and credit bureaus <strong>cannot</strong> treat your ITIN credit file differently than an SSN-based file based on your national origin. Any creditor who refuses to report, investigate, or correct information because you use an ITIN may be violating ECOA.</li>
-      <li><strong>Regulation B (12 C.F.R. Part 1002):</strong> The CFPB's Regulation B implements ECOA. It explicitly prohibits creditors from using immigration status or national origin as a factor in credit decisions when the applicant is otherwise creditworthy.</li>
-      <li><strong>Bureau Compliance:</strong> All three major credit bureaus (TransUnion, Equifax, and Experian) accept ITINs as valid identifiers for creating and maintaining credit files. They are required to investigate disputes from ITIN holders under the same FCRA procedures as SSN holders.</li>
-      <li><strong>Right to Sue (15 U.S.C. &sect; 1691e):</strong> If a creditor or bureau discriminates against you because of your ITIN status, you may sue for actual damages, punitive damages up to $10,000 (individual action), and attorney's fees.</li>
-    </ul>
-
-    <div class="croa-box">
-      <h3>&#128161; 2026 ECOA Update — DOJ &amp; CFPB Guidance</h3>
-      <p>In January 2026, the DOJ and CFPB withdrew their previous joint statement on creditor immigration-status considerations. However, the <strong>underlying ECOA statutory protections remain fully in effect</strong>. National-origin discrimination remains illegal under 15 U.S.C. &sect; 1691 regardless of any regulatory guidance changes. RJ Business Solutions will cite ECOA in any dispute where an ITIN holder's credit file appears to have been treated differently than an SSN holder's file.</p>
-    </div>
-
-    <!-- ═══════ FCRA ═══════ -->
-    <h2 id="fcra"><span class="section-badge">FCRA</span> Fair Credit Reporting Act (15 U.S.C. &sect; 1681)</h2>
-
-    <p>All dispute activities performed by RJ Business Solutions are conducted in accordance with the Fair Credit Reporting Act. We invoke specific FCRA provisions on your behalf to challenge inaccurate, incomplete, unverifiable, or obsolete information on your credit reports — <strong>whether your file is identified by SSN or ITIN</strong>.</p>
-
-    <h3>Your Rights Under the FCRA</h3>
-    <ul>
-      <li><strong>Right to Dispute (Section 611, 15 U.S.C. &sect; 1681i):</strong> You have the right to dispute any information in your credit file that you believe is inaccurate or incomplete. Credit reporting agencies (CRAs) must investigate within 30 days (extendable to 45 days if you provide additional information).</li>
-      <li><strong>Duty to Correct (Section 623, 15 U.S.C. &sect; 1681s-2):</strong> Furnishers of information (creditors, lenders, collection agencies) must investigate disputes forwarded by CRAs and correct or delete inaccurate information.</li>
-      <li><strong>Permissible Purpose (Section 604, 15 U.S.C. &sect; 1681b):</strong> Your credit report may only be accessed by parties with a legally permissible purpose, such as credit applications, insurance underwriting, or employment screening (with your consent).</li>
-      <li><strong>Obsolescence Protections (Section 605, 15 U.S.C. &sect; 1681c):</strong> Most negative information must be removed after 7 years. Bankruptcy filings under Chapter 7 may be reported for 10 years; Chapter 13 for 7 years.</li>
-      <li><strong>Free Annual Reports (Section 612, 15 U.S.C. &sect; 1681j):</strong> You are entitled to one free credit report per year from each of the three major bureaus (TransUnion, Equifax, Experian) via <a href="https://www.annualcreditreport.com" target="_blank" rel="noopener">AnnualCreditReport.com</a>.</li>
-      <li><strong>Right to Sue (Section 616-617, 15 U.S.C. &sect; 1681n-o):</strong> You may sue CRAs or furnishers for willful or negligent noncompliance with the FCRA.</li>
-      <li><strong>Fraud Alerts &amp; Credit Freezes (Section 605A-B):</strong> You have the right to place fraud alerts or security freezes on your credit file at no cost.</li>
-    </ul>
-
-    <div class="highlight-box">
-      <strong>How We Use the FCRA for ITIN Credit Files:</strong> Our disputes cite specific FCRA sections (primarily 611, 623, and 605) when challenging information with the credit bureaus. For ITIN holders, we file disputes using each bureau's ITIN-specific procedures — TransUnion and Equifax accept online ITIN disputes; Experian may require mail-in disputes for ITIN-identified files. We do not file frivolous disputes or misrepresent information on your behalf. Every dispute is substantive, statute-specific, and tracked through the full 30-day investigation window. ITIN holders receive identical FCRA protections as SSN holders — there is no legal distinction.
-    </div>
-
-    <!-- ═══════ ITIN-SPECIFIC BUREAU PROCEDURES ═══════ -->
-    <h2 id="itin-bureaus"><span class="section-badge">ITIN</span> ITIN-Specific Bureau Dispute Procedures (2026)</h2>
-
-    <p>Each credit bureau has specific procedures for ITIN-identified credit files. RJ Business Solutions is experienced with all three bureau systems and files disputes using the correct channel for each:</p>
-
-    <ul>
-      <li><strong>TransUnion &amp; ITIN:</strong> TransUnion accepts ITIN numbers for credit file identification. Disputes can be filed online, by phone (1-800-916-8800), or by mail. TransUnion's online dispute portal accepts ITINs in the identification field.</li>
-      <li><strong>Equifax &amp; ITIN:</strong> Equifax creates and maintains ITIN credit files. Disputes can be filed online at <a href="https://www.equifax.com/personal/disputes" target="_blank" rel="noopener">equifax.com/personal/disputes</a>, by phone (1-866-349-5191), or by mail. ITIN holders should use their ITIN where SSN is requested.</li>
-      <li><strong>Experian &amp; ITIN:</strong> Experian accepts ITINs for credit file identification. Some ITIN dispute procedures may require mail-in submissions with copies of your ITIN documentation (IRS Letter CP565 or ITIN card). We handle the appropriate filing method for each case.</li>
-    </ul>
-
-    <div class="highlight-box">
-      <strong>ITIN Credit File Building:</strong> If you hold an ITIN and do not yet have a credit file, you can establish one by applying for credit products that accept ITINs (certain secured credit cards, credit-builder loans, and ITIN mortgage programs). Once a creditor reports your account to the bureaus using your ITIN, your credit file is created. Our service includes guidance on ITIN-friendly credit-building products.
-    </div>
-
-    <!-- ═══════ FDCPA ═══════ -->
-    <h2 id="fdcpa"><span class="section-badge">FDCPA</span> Fair Debt Collection Practices Act (15 U.S.C. &sect; 1692)</h2>
-
-    <p>While RJ Business Solutions is not a debt collector, we educate our clients on their rights under the Fair Debt Collection Practices Act and may reference FDCPA violations when challenging collection accounts on your credit report.</p>
-
-    <h3>Your Rights Under the FDCPA</h3>
-    <ul>
-      <li><strong>Debt Validation (Section 809, 15 U.S.C. &sect; 1692g):</strong> Within 5 days of initial contact, a debt collector must provide you with written notice of the amount of debt, name of the creditor, and your right to dispute the debt within 30 days.</li>
-      <li><strong>Cease Communication (Section 805(c), 15 U.S.C. &sect; 1692c(c)):</strong> You may demand in writing that a debt collector stop contacting you.</li>
-      <li><strong>Prohibited Practices (Section 806-808):</strong> Debt collectors cannot harass, threaten, or use abusive language; cannot call before 8am or after 9pm; cannot make false or misleading representations; cannot use unfair collection practices.</li>
-      <li><strong>Third-Party Disclosure (Section 805(b)):</strong> Debt collectors cannot discuss your debt with third parties (with limited exceptions for your attorney, spouse, or parents if you are a minor).</li>
-      <li><strong>Right to Sue (Section 813, 15 U.S.C. &sect; 1692k):</strong> You may sue a debt collector for FDCPA violations and recover actual damages, statutory damages up to $1,000 per case, and attorney's fees.</li>
-    </ul>
-
-    <div class="highlight-box">
-      <strong>How We Use the FDCPA for ITIN Holders:</strong> When a collection account on your ITIN credit report is found to be unverifiable or improperly reported, we may reference FDCPA &sect; 1692g debt validation requirements in our dispute strategy. If a collector has failed to validate a debt, reporting it to a CRA may violate both the FDCPA and the FCRA. <strong>Important:</strong> Debt collectors cannot discriminate against ITIN holders or treat ITIN-identified debts differently than SSN-identified debts. ECOA protections apply to all collection activities.
-    </div>
-
-    <!-- ═══════ TSR ═══════ -->
-    <h2 id="tsr"><span class="section-badge">TSR</span> FTC Telemarketing Sales Rule (16 C.F.R. Part 310)</h2>
-
-    <p>The Telemarketing Sales Rule (TSR), enforced by the Federal Trade Commission, imposes specific requirements on credit repair services marketed via telemarketing.</p>
-
-    <h3>Our TSR Compliance</h3>
-    <ul>
-      <li><strong>Advance Fee Ban (16 C.F.R. &sect; 310.4(a)(2)):</strong> We do not charge fees for credit repair services until the promised service has been fully performed and the results have been documented. This applies to all services, whether marketed by telephone, internet, or other means.</li>
-      <li><strong>No Misrepresentations (16 C.F.R. &sect; 310.3(a)):</strong> We do not make false or misleading claims about the nature, results, or efficacy of our credit repair services during telemarketing or in any marketing materials.</li>
-      <li><strong>Required Disclosures (16 C.F.R. &sect; 310.4(d)):</strong> Before a customer pays, we disclose the total cost of services, any material restrictions or conditions, and our refund or cancellation policy.</li>
-      <li><strong>Recordkeeping (16 C.F.R. &sect; 310.5):</strong> We maintain records of all telemarketing transactions, advertising, and customer communications for a minimum of 24 months (extended to 5 years under the 2024 TSR amendments).</li>
-    </ul>
-
-    <div class="warning-box">
-      <strong>TSR Advance Fee Ban Clarification:</strong> Under both CROA and the TSR, it is illegal to charge advance fees for credit repair services. Our $99 forensic audit fee is payment for a <em>completed, delivered product</em> (your forensic audit report and personalized roadmap), not an advance fee for future dispute work. Monthly service fees are billed only after verifiable results have been achieved in that billing period.
-    </div>
-
-    <!-- ═══════ FTC ACT ═══════ -->
-    <h2 id="ftc"><span class="section-badge">FTC</span> Federal Trade Commission Act (15 U.S.C. &sect; 41 et seq.)</h2>
-
-    <p>Section 5 of the FTC Act prohibits unfair or deceptive acts or practices in or affecting commerce. Under 15 U.S.C. &sect; 1679h, violations of CROA are treated as violations of the FTC Act.</p>
-
-    <h3>Our FTC Act Compliance</h3>
-    <ul>
-      <li><strong>No Deceptive Practices:</strong> All marketing materials, website content, and client communications are truthful, non-misleading, and substantiated.</li>
-      <li><strong>No Unfair Practices:</strong> We do not impose unreasonable terms, hidden fees, or conditions that cause substantial consumer injury.</li>
-      <li><strong>Substantiation:</strong> All claims about our services, success rates, or potential outcomes are based on documented evidence and presented with appropriate qualifications.</li>
-      <li><strong>Clear Disclosures:</strong> Material terms, costs, and conditions are disclosed clearly and conspicuously before a consumer makes a purchasing decision.</li>
-    </ul>
-
-    <!-- ═══════ CFPB ═══════ -->
-    <h2 id="cfpb"><span class="section-badge">CFPB</span> Consumer Financial Protection Bureau</h2>
-
-    <p>The Consumer Financial Protection Bureau (CFPB) shares enforcement authority with the FTC over credit repair organizations. RJ Business Solutions adheres to all CFPB guidance and regulatory standards applicable to credit repair services.</p>
-
-    <h3>CFPB Regulatory Compliance</h3>
-    <ul>
-      <li><strong>Regulation V (12 C.F.R. Part 1022):</strong> Implements the FCRA. We ensure all disputes are filed in accordance with Regulation V procedures.</li>
-      <li><strong>Regulation F (12 C.F.R. Part 1006):</strong> Implements the FDCPA. We educate clients on their rights and reference Regulation F when challenging improperly reported collection accounts.</li>
-      <li><strong>Supervision Authority:</strong> We acknowledge the CFPB's supervisory and enforcement authority over credit repair organizations and maintain our practices in accordance with CFPB guidance.</li>
-      <li><strong>Consumer Complaint Process:</strong> If you are dissatisfied with our services, you have the right to file a complaint with the CFPB at <a href="https://www.consumerfinance.gov/complaint/" target="_blank" rel="noopener">consumerfinance.gov/complaint</a>.</li>
-    </ul>
-
-    <!-- ═══════ STATE LAW ═══════ -->
-    <h2 id="state"><span class="section-badge">STATE</span> State Law Compliance</h2>
-
-    <p>In addition to federal law, credit repair organizations may be subject to state-specific regulations. RJ Business Solutions complies with all applicable state laws, including but not limited to:</p>
-    <ul>
-      <li><strong>New Mexico:</strong> As our principal place of business is in Tijeras, New Mexico, we comply with all New Mexico consumer protection statutes, including the Unfair Practices Act (NMSA 57-12-1 et seq.). New Mexico law does not distinguish between ITIN and SSN holders for consumer protection purposes.</li>
-      <li><strong>State Bonding/Registration:</strong> Where required by state law, we maintain appropriate bonds and registrations.</li>
-      <li><strong>State Cancellation Rights:</strong> Some states provide cancellation rights that exceed the federal 3-business-day period. Where applicable, the longer cancellation period applies.</li>
-      <li><strong>State-Specific Disclosures:</strong> Additional disclosures required by your state of residence will be provided as part of your service contract.</li>
-      <li><strong>State ITIN Protections:</strong> Many states, including California (SB 1159), New York, Illinois, and others, have enacted additional protections prohibiting discrimination based on immigration status in credit and lending. We comply with all applicable state ITIN protection laws regardless of where our ITIN clients reside.</li>
-    </ul>
-
-    <!-- ═══════ RESULTS DISCLAIMER ═══════ -->
-    <h2 id="results"><span class="section-badge">DISCLAIMER</span> Results &amp; Earnings Disclaimer</h2>
-
-    <div class="warning-box">
-      <strong>No Guarantee of Results:</strong> Credit repair results vary based on individual circumstances. RJ Business Solutions does not guarantee any specific credit score increase, removal of any specific item, or any particular outcome. Past results achieved for other clients do not guarantee or predict future results for you.<br><br>
-      <strong>Factors Affecting Results:</strong> The outcome of credit repair depends on many factors including but not limited to: the accuracy and completeness of information currently reported, the willingness of furnishers to investigate and correct errors, the specific items on your credit report, your payment history during the repair process, and changes in credit reporting regulations.<br><br>
-      <strong>Not a Guarantee:</strong> Any examples of results, testimonials, or case studies shared on this website or in our marketing materials are for illustrative purposes only and should not be construed as a guarantee of similar results. Individual results may be better or worse than those described.
-    </div>
-
-    <!-- ═══════ CONTACT & REGULATORY ═══════ -->
-    <h2 id="regulatory">Regulatory Contacts</h2>
-
-    <p>If you believe your consumer rights have been violated, you may contact the following regulatory agencies:</p>
-
-    <ul>
-      <li><strong>Federal Trade Commission (FTC):</strong> <a href="https://www.ftc.gov/complaint" target="_blank" rel="noopener">ftc.gov/complaint</a> | 1-877-FTC-HELP (1-877-382-4357) | 600 Pennsylvania Avenue NW, Washington, DC 20580</li>
-      <li><strong>Consumer Financial Protection Bureau (CFPB):</strong> <a href="https://www.consumerfinance.gov/complaint/" target="_blank" rel="noopener">consumerfinance.gov/complaint</a> | 1-855-411-CFPB (1-855-411-2372)</li>
-      <li><strong>Department of Justice — Civil Rights Division:</strong> <a href="https://www.justice.gov/crt" target="_blank" rel="noopener">justice.gov/crt</a> (for ECOA national-origin discrimination complaints)</li>
-      <li><strong>New Mexico Attorney General:</strong> <a href="https://www.nmag.gov/consumer-protection.aspx" target="_blank" rel="noopener">nmag.gov</a> | 1-844-255-9210 | P.O. Box 1508, Santa Fe, NM 87504</li>
-      <li><strong>TransUnion:</strong> <a href="https://www.transunion.com/dispute" target="_blank" rel="noopener">transunion.com/dispute</a> | 1-800-916-8800 (accepts ITIN disputes)</li>
-      <li><strong>Equifax:</strong> <a href="https://www.equifax.com/personal/disputes" target="_blank" rel="noopener">equifax.com/personal/disputes</a> | 1-866-349-5191 (accepts ITIN disputes)</li>
-      <li><strong>Experian:</strong> <a href="https://www.experian.com/disputes" target="_blank" rel="noopener">experian.com/disputes</a> | 1-888-397-3742 (accepts ITIN disputes — may require mail-in for ITIN files)</li>
-    </ul>
-
-    <h2 id="contact">Contact Us</h2>
-    <p><strong>RJ Business Solutions</strong><br>
-    1342 NM 333, Tijeras, New Mexico 87059<br>
-    Email: <a href="mailto:rickjefferson@rickjeffersonsolutions.com">rickjefferson@rickjeffersonsolutions.com</a><br>
-    Website: <a href="https://rickjeffersonsolutions.com" target="_blank" rel="noopener">rickjeffersonsolutions.com</a></p>`
-  )
-}
-
-// ========== /consumer-rights — CROA CONSUMER RIGHTS (STANDALONE) ==========
-function consumerRightsPageHTML(): string {
-  return legalLayout(
-    'Consumer Credit File Rights — ITIN &amp; SSN Holders',
-    'Your consumer credit file rights under CROA, FCRA, ECOA, and applicable state and federal law. ITIN holders have full credit dispute rights. Required disclosure from RJ Business Solutions.',
-    `<h1>Consumer Credit File Rights Under State and Federal Law</h1>
-    <p class="updated">Required Disclosure Pursuant to 15 U.S.C. &sect; 1679c (Credit Repair Organizations Act)</p>
-
-    <div class="highlight-box">
-      <strong>&#127919; ITIN Holders:</strong> Everything on this page applies equally to you. Under the FCRA and ECOA, ITIN holders have the <strong>exact same credit dispute rights</strong> as SSN holders. All three major credit bureaus accept ITINs for credit file identification and dispute filing.
-    </div>
-
-    <div class="croa-box">
-      <p>You have a right to dispute inaccurate information in your credit report by contacting the credit bureau directly. However, neither you nor any "credit repair" company or credit repair organization has the right to have accurate, current, and verifiable information removed from your credit report. The credit bureau must remove accurate, negative information from your report only if it is over 7 years old. Bankruptcy information can be reported for 10 years.</p>
-
-      <p>You have a right to obtain a copy of your credit report from a credit bureau. You may be charged a reasonable fee. There is no fee, however, if you have been turned down for credit, employment, insurance, or a rental dwelling because of information in your credit report within the preceding 60 days. The credit bureau must provide someone to help you interpret the information in your credit file. You are entitled to receive a free copy of your credit report if you are unemployed and intend to apply for employment in the next 60 days, if you are a recipient of public welfare assistance, or if you have reason to believe that there is inaccurate information in your credit report due to fraud.</p>
-
-      <p>You have a right to sue a credit repair organization that violates the Credit Repair Organization Act. This law prohibits deceptive practices by credit repair organizations.</p>
-
-      <p>You have the right to cancel your contract with any credit repair organization for any reason within 3 business days from the date you signed it.</p>
-
-      <p>Credit bureaus are required to follow reasonable procedures to ensure that the information they report is accurate. However, mistakes may occur.</p>
-
-      <p>You may, on your own, notify a credit bureau in writing that you dispute the accuracy of information in your credit file. The credit bureau must then reinvestigate and modify or remove inaccurate or incomplete information. The credit bureau may not charge any fee for this service. Any pertinent information and copies of all documents you have concerning an error should be given to the credit bureau.</p>
-
-      <p>If the credit bureau's reinvestigation does not resolve the dispute to your satisfaction, you may send a brief statement to the credit bureau, to be kept in your file, explaining why you think the record is inaccurate. The credit bureau must include a summary of your statement about disputed information with any report it issues about you.</p>
-
-      <p>The Federal Trade Commission regulates credit bureaus and credit repair organizations. For more information contact:</p>
-
-      <p><strong>The Public Reference Branch<br>Federal Trade Commission<br>Washington, D.C. 20580</strong></p>
-    </div>
-
-    <h2>Additional Resources for Consumers</h2>
-    <ul>
-      <li><a href="https://www.annualcreditreport.com" target="_blank" rel="noopener">AnnualCreditReport.com</a> — Free annual credit reports from all three bureaus (ITIN accepted)</li>
-      <li><a href="https://www.consumerfinance.gov/consumer-tools/credit-reports-and-scores/" target="_blank" rel="noopener">CFPB Credit Reports &amp; Scores</a> — Consumer tools and educational resources</li>
-      <li><a href="https://www.ftc.gov/legal-library/browse/statutes/credit-repair-organizations-act" target="_blank" rel="noopener">FTC — Credit Repair Organizations Act (Full Text)</a></li>
-      <li><a href="https://www.ftc.gov/legal-library/browse/statutes/fair-credit-reporting-act" target="_blank" rel="noopener">FTC — Fair Credit Reporting Act (Full Text)</a></li>
-      <li><a href="https://www.ftc.gov/legal-library/browse/rules/fair-debt-collection-practices-act-text" target="_blank" rel="noopener">FTC — Fair Debt Collection Practices Act (Full Text)</a></li>
-      <li><a href="https://www.ftc.gov/legal-library/browse/statutes/equal-credit-opportunity-act" target="_blank" rel="noopener">FTC — Equal Credit Opportunity Act (Full Text)</a></li>
-    </ul>
-
-    <h2>Your ECOA Rights as an ITIN Holder</h2>
-    <div class="croa-box">
-      <h3>&#9989; Equal Credit Opportunity Act (15 U.S.C. &sect; 1691)</h3>
-      <p>The ECOA prohibits discrimination in credit transactions based on national origin. This means:</p>
-      <ul>
-        <li>Creditors <strong>cannot</strong> refuse to report your account to credit bureaus because you use an ITIN instead of an SSN</li>
-        <li>Credit bureaus <strong>cannot</strong> refuse to investigate your disputes because your file is ITIN-identified</li>
-        <li>Lenders <strong>cannot</strong> deny you credit solely because you use an ITIN</li>
-        <li>Collection agencies <strong>cannot</strong> treat your ITIN-identified debt differently than an SSN-identified debt</li>
-        <li>You have the right to sue for ECOA violations and recover actual damages, punitive damages, and attorney's fees</li>
-      </ul>
-    </div>
-
-    <h2>Your Right to Self-Dispute</h2>
-    <p>You have the right to dispute inaccurate information on your credit report directly with the credit bureaus at no cost — <strong>whether you have an SSN or an ITIN</strong>. You do not need to hire a credit repair organization to exercise this right. The credit bureaus' dispute processes are available at:</p>
-    <ul>
-      <li><strong>TransUnion:</strong> <a href="https://www.transunion.com/dispute" target="_blank" rel="noopener">transunion.com/dispute</a> | 1-800-916-8800 (accepts ITIN for identification)</li>
-      <li><strong>Equifax:</strong> <a href="https://www.equifax.com/personal/disputes" target="_blank" rel="noopener">equifax.com/personal/disputes</a> | 1-866-349-5191 (accepts ITIN for identification)</li>
-      <li><strong>Experian:</strong> <a href="https://www.experian.com/disputes" target="_blank" rel="noopener">experian.com/disputes</a> | 1-888-397-3742 (accepts ITIN — may require mail-in for ITIN files)</li>
-    </ul>`
-  )
-}
-
-// ========== /cancellation — CANCELLATION POLICY ==========
-function cancellationPageHTML(): string {
-  return legalLayout(
-    'Cancellation Policy &amp; Notice of Right to Cancel — ITIN Credit Repair',
-    'Your right to cancel ITIN credit repair services from RJ Business Solutions within 3 business days under CROA. Same rights for ITIN and SSN holders.',
-    `<h1>Cancellation Policy &amp; Notice of Right to Cancel</h1>
-    <p class="updated">Effective February 23, 2026 &bull; In accordance with 15 U.S.C. &sect; 1679e</p>
-
-    <div class="croa-box">
-      <h3>&#128221; Notice of Cancellation</h3>
-      <p><strong>You may cancel this contract, without any penalty or obligation, at any time before midnight of the 3rd business day which begins after the date the contract is signed by you.</strong></p>
-      <p>To cancel this contract, mail or deliver a signed, dated copy of this cancellation notice, or any other written notice, to:</p>
-      <p><strong>RJ Business Solutions</strong><br>
-      1342 NM 333<br>
-      Tijeras, New Mexico 87059<br>
-      Email: <a href="mailto:rickjefferson@rickjeffersonsolutions.com">rickjefferson@rickjeffersonsolutions.com</a></p>
-      <p><em>I hereby cancel this transaction.</em></p>
-      <p>[Date] ____________________</p>
-      <p>[Signature] ____________________</p>
-    </div>
-
-    <h2>Cancellation Details</h2>
-    <h3>3-Business-Day Right to Cancel (CROA &sect; 1679e)</h3>
-    <p>Under the Credit Repair Organizations Act, you have the absolute right to cancel your contract with RJ Business Solutions for <strong>any reason</strong> within 3 business days of signing, without penalty or obligation of any kind.</p>
-
-    <h3>How to Cancel</h3>
-    <ul>
-      <li><strong>Email:</strong> Send a written cancellation notice to <a href="mailto:rickjefferson@rickjeffersonsolutions.com">rickjefferson@rickjeffersonsolutions.com</a></li>
-      <li><strong>Mail:</strong> Send a signed, dated cancellation notice to: RJ Business Solutions, 1342 NM 333, Tijeras, NM 87059</li>
-    </ul>
-
-    <h3>After the 3-Day Period</h3>
-    <p>After the 3-business-day cancellation window, you may still cancel your service at any time. However, fees for services already fully performed are non-refundable, consistent with CROA provisions. Any fees collected for services not yet performed will be refunded within 10 business days.</p>
-
-    <h3>Refund Policy</h3>
-    <ul>
-      <li><strong>Cancellation within 3 business days:</strong> Full refund of all fees paid, no questions asked.</li>
-      <li><strong>90-Day Money-Back Guarantee:</strong> If we cannot demonstrate a single verified improvement within 90 days of active service, all monthly service fees (not the audit fee for completed audit) will be refunded.</li>
-      <li><strong>Monitoring fees ($29.99/mo):</strong> MyFreeScoreNow monitoring is a third-party service. Cancellation of monitoring must be handled directly with MyFreeScoreNow.</li>
-    </ul>
-
-    <h3>No Work Before Contract</h3>
-    <p>Pursuant to 15 U.S.C. &sect; 1679d(a)(2), no credit repair services will be provided before the end of the 3-business-day cancellation period following the date the contract is signed. This protects your right to cancel without having received services you would then be obligated to pay for.</p>`
-  )
-}
-
-// ========== /privacy — PRIVACY POLICY ==========
-function privacyPageHTML(): string {
-  return legalLayout(
-    'Privacy Policy — ITIN Credit Repair',
-    'Privacy policy for RJ Business Solutions ITIN credit repair services. How we collect, use, and protect your personal information including ITIN data.',
-    `<h1>Privacy Policy</h1>
-    <p class="updated">Last Updated: February 23, 2026 &bull; Effective Date: February 23, 2026</p>
-
-    <p>RJ Business Solutions ("we," "us," or "our") respects your privacy and is committed to protecting the personal information you share with us. This Privacy Policy describes how we collect, use, disclose, and safeguard your information when you visit our website, use our ITIN or SSN credit repair services, or interact with us in any way.</p>
-
-    <h2>1. Information We Collect</h2>
-    <h3>1.1 Personal Information You Provide</h3>
-    <ul>
-      <li><strong>Contact Information:</strong> Full name, email address, phone number, mailing address</li>
-      <li><strong>Identification:</strong> Individual Taxpayer Identification Number (ITIN) <strong>or</strong> Social Security Number (SSN) — used exclusively for credit bureau communication and dispute filing. We accept either identifier and do <strong>not</strong> require an SSN.</li>
-      <li><strong>Financial Information:</strong> Credit report data (accessed through MyFreeScoreNow with your authorization), credit scores, account information relevant to credit repair</li>
-      <li><strong>Payment Information:</strong> Credit/debit card details processed through Stripe (we do not store your full card number)</li>
-      <li><strong>Identity Verification:</strong> Date of birth, ITIN or last four digits of SSN (only when required for credit bureau communication)</li>
-    </ul>
-    <h3>1.2 Automatically Collected Information</h3>
-    <ul>
-      <li>IP address and approximate geolocation</li>
-      <li>Browser type and version</li>
-      <li>Device information</li>
-      <li>Pages visited and time spent on our site</li>
-      <li>Referring URL and UTM parameters</li>
-    </ul>
-
-    <h2>2. How We Use Your Information</h2>
-    <ul>
-      <li>To provide credit repair services as described in your service agreement (for ITIN or SSN credit files)</li>
-      <li>To communicate with credit bureaus and furnishers on your behalf using your ITIN or SSN as the identifying number</li>
-      <li>To process payments securely through Stripe</li>
-      <li>To send service-related communications (reports, updates, billing)</li>
-      <li>To respond to your inquiries and provide customer support</li>
-      <li>To comply with legal obligations and regulatory requirements</li>
-      <li>To improve our services and website functionality</li>
-    </ul>
-
-    <h2>3. How We Share Your Information</h2>
-    <p>We do <strong>not</strong> sell, rent, or trade your personal information — including your ITIN number. We share your information only in the following circumstances:</p>
-    <ul>
-      <li><strong>Credit Bureaus:</strong> TransUnion, Equifax, and Experian — as necessary to file disputes on your behalf with your written authorization. Your ITIN or SSN is transmitted to bureaus only for dispute filing and identity verification.</li>
-      <li><strong>Creditors/Furnishers:</strong> As necessary to challenge inaccurate reporting on your behalf</li>
-      <li><strong>Payment Processor:</strong> Stripe, Inc. — to process secure payments (<a href="https://stripe.com/privacy" target="_blank" rel="noopener">Stripe Privacy Policy</a>)</li>
-      <li><strong>Credit Monitoring:</strong> MyFreeScoreNow — you enroll directly with them using your ITIN or SSN; we access your reports with your authorization</li>
-      <li><strong>Immigration Status:</strong> We do <strong>not</strong> collect, store, or share immigration or citizenship status information. Your ITIN is used solely for credit bureau identification and dispute filing.</li>
-      <li><strong>Legal Requirements:</strong> When required by law, regulation, legal process, or enforceable governmental request</li>
-    </ul>
-
-    <h2>4. Data Security</h2>
-    <p>We implement industry-standard security measures to protect your personal information, including:</p>
-    <ul>
-      <li>TLS/SSL encryption for all data transmitted to and from our website</li>
-      <li>Encrypted storage of sensitive data</li>
-      <li>Limited access to personal information on a need-to-know basis</li>
-      <li>Regular security reviews and updates</li>
-      <li>Stripe PCI-DSS compliant payment processing (we never store full card numbers)</li>
-    </ul>
-
-    <h2>5. Data Retention</h2>
-    <ul>
-      <li><strong>Service Records:</strong> Maintained for 2 years after service completion (CROA record retention requirement under 15 U.S.C. &sect; 1679c(c))</li>
-      <li><strong>Payment Records:</strong> Maintained for 7 years for tax and legal compliance</li>
-      <li><strong>Marketing Data:</strong> Until you opt out or request deletion</li>
-      <li><strong>Telemarketing Records:</strong> Maintained for 5 years (TSR recordkeeping requirement under 16 C.F.R. &sect; 310.5)</li>
-    </ul>
-
-    <h2>6. Your Rights</h2>
-    <h3>All Consumers</h3>
-    <ul>
-      <li><strong>Access:</strong> Request a copy of the personal information we hold about you</li>
-      <li><strong>Correction:</strong> Request correction of inaccurate personal information</li>
-      <li><strong>Deletion:</strong> Request deletion of your personal information (subject to legal retention requirements)</li>
-      <li><strong>Opt-Out:</strong> Opt out of marketing communications at any time</li>
-    </ul>
-    <h3>California Residents (CCPA/CPRA)</h3>
-    <p>If you are a California resident, you have additional rights under the California Consumer Privacy Act (CCPA) and the California Privacy Rights Act (CPRA):</p>
-    <ul>
-      <li>Right to know what personal information we collect, use, and disclose</li>
-      <li>Right to delete your personal information</li>
-      <li>Right to opt out of the sale of your personal information (we do not sell your data)</li>
-      <li>Right to non-discrimination for exercising your privacy rights</li>
-      <li>Right to correct inaccurate personal information</li>
-      <li>Right to limit use of sensitive personal information</li>
-    </ul>
-
-    <h2>7. Cookies and Tracking</h2>
-    <p>Our website may use cookies and similar tracking technologies to improve your experience. You can control cookie settings through your browser. We do not use cookies to collect personal financial information.</p>
-
-    <h2>8. Children's Privacy</h2>
-    <p>Our services are not directed to individuals under the age of 18. We do not knowingly collect personal information from children under 18. If you are a parent or guardian and believe we have collected information from your child, please contact us immediately.</p>
-
-    <h2>9. Changes to This Policy</h2>
-    <p>We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated "Last Updated" date. Your continued use of our services after changes constitutes acceptance of the updated policy.</p>
-
-    <h2>10. Contact Us</h2>
-    <p>For privacy-related inquiries or to exercise your rights:<br>
-    <strong>RJ Business Solutions</strong><br>
-    1342 NM 333, Tijeras, New Mexico 87059<br>
-    Email: <a href="mailto:rickjefferson@rickjeffersonsolutions.com">rickjefferson@rickjeffersonsolutions.com</a><br>
-    Website: <a href="https://rickjeffersonsolutions.com" target="_blank" rel="noopener">rickjeffersonsolutions.com</a></p>`
-  )
-}
-
-// ========== /terms — TERMS OF SERVICE ==========
-function termsPageHTML(): string {
-  return legalLayout(
-    'Terms of Service — ITIN Credit Repair',
-    'Terms of Service for RJ Business Solutions ITIN credit repair services. Service agreement for ITIN and SSN holders, billing, cancellation, and dispute resolution.',
-    `<h1>Terms of Service</h1>
-    <p class="updated">Last Updated: February 23, 2026 &bull; Effective Date: February 23, 2026</p>
-
-    <p>These Terms of Service ("Terms") govern your use of the credit repair services provided by RJ Business Solutions ("Company," "we," "us," or "our"). By engaging our services, you agree to these Terms in their entirety.</p>
-
-    <h2>1. Services Provided</h2>
-    <p>RJ Business Solutions provides credit repair services for individuals identified by either a Social Security Number (SSN) or Individual Taxpayer Identification Number (ITIN), including but not limited to:</p>
-    <ul>
-      <li>Forensic 3-bureau ITIN or SSN credit audits (TransUnion, Equifax, Experian)</li>
-      <li>Personalized ITIN-specific or SSN-specific credit restoration roadmaps</li>
-      <li>Filing statute-specific disputes with credit bureaus and furnishers under the FCRA and ECOA</li>
-      <li>Using bureau-specific ITIN dispute procedures (online, mail-in, or phone as required by each bureau)</li>
-      <li>Monitoring dispute responses and filing follow-up disputes</li>
-      <li>Monthly progress reports</li>
-      <li>ITIN credit-building education and bilingual support (English &amp; Spanish)</li>
-    </ul>
-    <p>We are a credit repair organization as defined under the Credit Repair Organizations Act (15 U.S.C. &sect; 1679 et seq.). We are <strong>not</strong> a law firm, we do <strong>not</strong> provide legal advice, and we do <strong>not</strong> guarantee any specific results.</p>
-
-    <h2>2. Eligibility</h2>
-    <p>You must be at least 18 years old to use our services. You must hold either a valid Social Security Number (SSN) <strong>or</strong> a valid Individual Taxpayer Identification Number (ITIN) issued by the IRS. ITIN holders have the same eligibility and the same rights under federal law (FCRA, ECOA, CROA) as SSN holders. You must provide accurate and truthful information throughout the engagement.</p>
-
-    <div class="highlight-box">
-      <strong>ITIN Clients:</strong> Under the Equal Credit Opportunity Act (15 U.S.C. &sect; 1691), it is illegal to discriminate based on national origin. All three major credit bureaus accept ITINs. Our services, fees, and protections are identical for ITIN and SSN holders.
-    </div>
-
-    <h2>3. Required Credit Monitoring</h2>
-    <p>Before we can begin any credit repair work, you must enroll in and maintain an active MyFreeScoreNow monitoring subscription ($29.99/month). MyFreeScoreNow accepts ITIN numbers for enrollment. This is a third-party service required for us to access your tri-bureau credit data. The monitoring fee is paid directly to MyFreeScoreNow and is separate from our service fees.</p>
-
-    <h2>4. Fees and Billing</h2>
-    <h3>4.1 Audit Fee</h3>
-    <p>A one-time fee of $99.00 is charged for your forensic 3-bureau credit audit (SSN or ITIN) and personalized 10-Point Restoration Roadmap. This fee is for a <strong>completed, delivered product</strong> and is charged at the time of purchase via Stripe secure checkout. The completed audit and roadmap are delivered within 24–48 hours. ITIN audits use ITIN-specific bureau access procedures.</p>
-    <h3>4.2 Monthly Service Fee</h3>
-    <p>A monthly service fee of $99.00 covers dispute filing, tracking, follow-up, and progress reporting. <strong>This fee is charged only in months where verifiable progress has been documented</strong> (deletions, corrections, or verified score improvements). If no progress is made in a given month, no service fee is charged for that month.</p>
-    <h3>4.3 No Advance Fees for Disputes</h3>
-    <p>In compliance with CROA (15 U.S.C. &sect; 1679b(b)) and the TSR (16 C.F.R. &sect; 310.4(a)(2)), we do not charge fees for dispute services until those services have been fully performed and results documented.</p>
-
-    <h2>5. Right to Cancel</h2>
-    <div class="croa-box">
-      <h3>&#128221; Your 3-Day Cancellation Right</h3>
-      <p>Pursuant to 15 U.S.C. &sect; 1679e, you may cancel your contract with us <strong>for any reason, without penalty or obligation, within 3 business days</strong> of signing. See our <a href="/cancellation">Cancellation Policy</a> for full details and the Notice of Cancellation form.</p>
-    </div>
-
-    <h2>6. Client Responsibilities</h2>
-    <ul>
-      <li>Provide accurate and truthful information at all times, including your correct SSN or ITIN</li>
-      <li>Maintain active MyFreeScoreNow credit monitoring throughout the engagement (ITIN accepted for enrollment)</li>
-      <li>Respond promptly to requests for information or documentation</li>
-      <li>Review all dispute letters and reports provided to you</li>
-      <li>Not file additional disputes independently while we are actively working on your file (to avoid conflicting dispute processes)</li>
-      <li>Notify us of any changes to your contact information</li>
-    </ul>
-
-    <h2>7. What We Do NOT Do</h2>
-    <ul>
-      <li>We do <strong>not</strong> guarantee specific credit score increases or removal of specific items</li>
-      <li>We do <strong>not</strong> advise you to misrepresent your identity, use someone else's SSN, or create a "new" credit file — this includes never advising ITIN holders to use a fabricated SSN</li>
-      <li>We do <strong>not</strong> advise you to dispute accurate, current, and verifiable information</li>
-      <li>We do <strong>not</strong> engage in "credit profile number" (CPN) schemes — CPNs are illegal and often constitute identity fraud</li>
-      <li>We do <strong>not</strong> provide legal advice or legal representation</li>
-      <li>We do <strong>not</strong> charge for services before they are performed</li>
-    </ul>
-
-    <h2>8. 90-Day Money-Back Guarantee</h2>
-    <p>If we are unable to show a single verified improvement (deletion, correction, or documented score increase) within 90 days of active service, we will refund all monthly service fees collected during that period. This guarantee does not apply to the initial audit fee (for the completed audit product) or to third-party monitoring fees.</p>
-
-    <h2>9. Limitation of Liability</h2>
-    <p>To the maximum extent permitted by law, RJ Business Solutions' total liability for any claim arising from or related to our services shall not exceed the total fees you have paid to us during the 12 months preceding the claim. We are not liable for actions taken by credit bureaus, creditors, or third-party service providers.</p>
-
-    <h2>10. Dispute Resolution</h2>
-    <p>Any dispute arising from these Terms or our services will first be addressed through good-faith negotiation. If negotiation is unsuccessful, disputes will be resolved through binding arbitration in Bernalillo County, New Mexico, in accordance with the rules of the American Arbitration Association. Nothing in this section limits your rights under CROA, the FCRA, or other applicable federal or state consumer protection laws.</p>
-
-    <h2>11. Governing Law</h2>
-    <p>These Terms are governed by and construed in accordance with federal law (including CROA, FCRA, FDCPA, and the FTC Act) and the laws of the State of New Mexico, without regard to conflict of law principles.</p>
-
-    <h2>12. Severability</h2>
-    <p>If any provision of these Terms is found to be unenforceable, the remaining provisions will continue in full force and effect.</p>
-
-    <h2>13. Changes to Terms</h2>
-    <p>We reserve the right to modify these Terms at any time. Changes will be posted on this page. Your continued use of our services after changes constitutes acceptance of the modified Terms.</p>
-
-    <h2>14. Contact</h2>
-    <p><strong>RJ Business Solutions</strong><br>
-    1342 NM 333, Tijeras, New Mexico 87059<br>
-    Email: <a href="mailto:rickjefferson@rickjeffersonsolutions.com">rickjefferson@rickjeffersonsolutions.com</a><br>
-    Website: <a href="https://rickjeffersonsolutions.com" target="_blank" rel="noopener">rickjeffersonsolutions.com</a></p>`
-  )
-}
-
-// ========== FUNNEL PAGE HTML ==========
-function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clean It Up | ITIN Credit Repair — Fix Your Credit With an ITIN Number | RJ Business Solutions</title>
-  <meta name="description" content="ITIN credit repair for individuals without an SSN. Remove negative items from your ITIN credit file using FCRA, ECOA &amp; federal law. All 3 bureaus accept ITINs. 90-day money-back guarantee. $99 forensic audit.">
-  <meta property="og:title" content="Clean It Up — ITIN Credit Repair | No SSN Required">
-  <meta property="og:description" content="Have an ITIN? You have the SAME credit dispute rights as SSN holders under federal law. We fix ITIN credit files across all 3 bureaus. $99 to start.">
-  <meta property="og:image" content="https://media.rickjeffersonsolutions.com/basic%20%20ITIN/Professional_ITIN_credit_repair_hero_banner_featur-1771876741852.png">
-  <meta property="og:type" content="website">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Clean It Up — ITIN Credit Repair | No SSN Required">
-  <meta name="twitter:description" content="ITIN holders have FULL credit dispute rights under FCRA &amp; ECOA. We repair ITIN credit files across TransUnion, Equifax &amp; Experian. 90-day guarantee.">
-  <meta name="twitter:image" content="https://media.rickjeffersonsolutions.com/basic%20%20ITIN/Professional_ITIN_credit_repair_hero_banner_featur-1771876741852.png">
-  <meta name="keywords" content="ITIN credit repair, credit repair with ITIN number, ITIN credit score, fix credit without SSN, ITIN credit file disputes, ITIN TransUnion Equifax Experian, FCRA ITIN rights, ECOA credit protection, credit repair for immigrants, ITIN credit bureau disputes, Rick Jefferson ITIN credit expert, $99 ITIN credit audit">
-  <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#x1f6e1;</text></svg>">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;600;700;900&family=Noto+Sans:wght@400;600;700;900&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-  <style>
-    /* ===== LANGUAGE SWITCHER ===== */
-    .lang-bar{position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(90deg,#1e1b4b,#172554);border-bottom:1px solid rgba(59,130,246,0.3);padding:.35rem 1rem;display:flex;align-items:center;justify-content:center;gap:.4rem;font-size:.8rem;flex-wrap:wrap}
-    .lang-label{color:#9ca3af;margin-right:.15rem;font-size:.7rem}
-    .lang-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#d1d5db;padding:.25rem .6rem;border-radius:6px;font-size:.72rem;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:.3rem;font-family:inherit;white-space:nowrap}
-    .lang-btn:hover{background:rgba(59,130,246,.3);border-color:rgba(59,130,246,.5);color:#fff}
-    .lang-btn.active{background:linear-gradient(135deg,#3b82f6,#06b6d4);border-color:transparent;color:#fff;font-weight:700}
-    .lang-btn .flag{font-size:.95rem;line-height:1}
-    body.has-lang-bar{padding-top:36px}
-    @media(max-width:600px){.lang-bar{gap:.25rem;padding:.3rem .5rem}.lang-btn{padding:.2rem .45rem;font-size:.65rem}.lang-label{display:none}body.has-lang-bar{padding-top:34px}}
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    html{scroll-behavior:smooth}
-    body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:#030712;color:#fff;line-height:1.6;overflow-x:hidden}
-    a{color:inherit;text-decoration:none}button{cursor:pointer;border:none;font-family:inherit}img{max-width:100%;height:auto;display:block}
-    @keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-    @keyframes fadeInLeft{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:translateX(0)}}
-    @keyframes fadeInRight{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
-    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-    @keyframes bounceY{0%,100%{transform:translateY(0)}50%{transform:translateY(10px)}}
-    @keyframes particleMove{0%{transform:translate(0,0);opacity:.15}50%{opacity:.6}100%{transform:translate(var(--tx),var(--ty));opacity:.15}}
-    @keyframes scaleIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
-    @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(236,72,153,.4)}50%{box-shadow:0 0 0 16px rgba(236,72,153,0)}}
-    @keyframes glow{0%,100%{filter:drop-shadow(0 0 8px rgba(59,130,246,.3))}50%{filter:drop-shadow(0 0 20px rgba(59,130,246,.6))}}
-    @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
-    @keyframes slideInStagger{from{opacity:0;transform:translateY(20px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
-    .ao{opacity:0;transform:translateY(30px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)}
-    .ao.v{opacity:1;transform:translateY(0)}
-    .ao.asl{transform:translateX(-40px)}.ao.asl.v{transform:translateX(0)}
-    .ao.asr{transform:translateX(40px)}.ao.asr.v{transform:translateX(0)}
-    .ao.asi{transform:scale(.85)}.ao.asi.v{transform:scale(1)}
-    .s1{transition-delay:.1s}.s2{transition-delay:.2s}.s3{transition-delay:.25s}.s4{transition-delay:.35s}.s5{transition-delay:.45s}.s6{transition-delay:.55s}
-    .ct{max-width:1200px;margin:0 auto;padding:0 1.5rem}
-    .cs{max-width:960px;margin:0 auto;padding:0 1.5rem}
-    .cx{max-width:720px;margin:0 auto;padding:0 1.5rem}
-    .tc{text-align:center}
-    /* ===== HERO ===== */
-    .hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:linear-gradient(135deg,#0c1445 0%,#1e1b4b 30%,#172554 60%,#0f172a 100%);padding:2rem 0 3rem;z-index:1}
-    .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 800px 600px at 20% 50%,rgba(59,130,246,.12),transparent),radial-gradient(ellipse 600px 400px at 80% 30%,rgba(6,182,212,.08),transparent);z-index:0}
-    .hp{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
-    .hpd{position:absolute;width:3px;height:3px;background:rgba(96,165,250,.5);border-radius:50%;animation:particleMove var(--duration) linear infinite}
-    .hero-logo{position:relative;z-index:2;margin-bottom:1.5rem;animation:fadeInUp .8s ease forwards}
-    .hero-logo img{width:280px;height:auto;margin:0 auto;border-radius:.75rem;filter:drop-shadow(0 8px 32px rgba(59,130,246,.25))}
-    .hc{position:relative;z-index:2;max-width:960px;margin:0 auto;text-align:center;padding:0 1.5rem}
-    .ub{display:inline-flex;align-items:center;gap:.5rem;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.4);border-radius:999px;padding:.5rem 1.25rem;margin-bottom:1.5rem;animation:fadeInUp .8s ease .1s forwards;opacity:0}
-    .ub i{color:#fbbf24;width:16px;height:16px}.ub span{color:#fca5a5;font-size:.875rem;font-weight:600}
-    .hero h1{font-size:clamp(2.25rem,5.5vw,4rem);font-weight:900;line-height:1.1;margin-bottom:1.25rem;animation:fadeInUp .8s ease .2s forwards;opacity:0}
-    .gt{display:block;margin-top:.5rem;background:linear-gradient(90deg,#60a5fa,#22d3ee,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    .hero .st{font-size:clamp(1rem,2.2vw,1.25rem);color:#bfdbfe;max-width:680px;margin:0 auto 1.5rem;animation:fadeInUp .8s ease .35s forwards;opacity:0;line-height:1.7}
-    .hero-img{width:100%;max-width:900px;margin:0 auto 2rem;border-radius:1rem;overflow:hidden;animation:fadeInUp .8s ease .25s forwards;opacity:0;box-shadow:0 16px 64px rgba(0,0,0,.5),0 0 0 1px rgba(59,130,246,.2)}
-    .hero-img img{width:100%;height:auto}
-    .vp{display:flex;flex-wrap:wrap;justify-content:center;gap:.6rem;margin-bottom:2rem;animation:fadeInUp .8s ease .45s forwards;opacity:0}
-    .vpi{background:rgba(30,58,138,.5);border:1px solid rgba(59,130,246,.3);color:#bfdbfe;padding:.45rem .9rem;border-radius:999px;font-size:.8rem;font-weight:600;white-space:nowrap;transition:all .3s}
-    .vpi:hover{background:rgba(59,130,246,.3);border-color:rgba(96,165,250,.5);transform:translateY(-2px)}
-    .cdw{background:rgba(30,58,138,.35);border:1px solid rgba(59,130,246,.35);border-radius:1.25rem;padding:1.25rem;max-width:360px;margin:0 auto 2rem;animation:fadeInUp .8s ease .5s forwards;opacity:0}
-    .cdl{color:#93c5fd;font-size:.75rem;text-transform:uppercase;letter-spacing:.15em;margin-bottom:.6rem}
-    .cdt{display:flex;justify-content:center;gap:.75rem}
-    .cdb{text-align:center}
-    .cdv{font-size:2.25rem;font-weight:900;color:#fff;width:3.75rem;height:3.75rem;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(220,38,38,.7),rgba(190,18,60,.5));border-radius:.75rem;margin-bottom:.25rem;border:1px solid rgba(239,68,68,.4)}
-    .cdu{color:#fca5a5;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;font-weight:600}
-    .cw{animation:fadeInUp .8s ease .6s forwards;opacity:0}
-    .cb{display:inline-flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#ec4899,#db2777);color:#fff;font-weight:800;font-size:1.2rem;padding:1.2rem 2.5rem;border-radius:.875rem;box-shadow:0 8px 32px rgba(236,72,153,.35);transition:all .3s;position:relative;overflow:hidden;animation:pulse 2s infinite;text-transform:uppercase;letter-spacing:.03em}
-    .cb::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,#db2777,#be185d);opacity:0;transition:opacity .3s}
-    .cb:hover::before{opacity:1}.cb:hover{transform:translateY(-3px);box-shadow:0 16px 48px rgba(236,72,153,.5)}
-    .cb span,.cb i{position:relative;z-index:1}.cb i{transition:transform .3s;width:20px;height:20px}.cb:hover i{transform:translateX(5px)}
-    .cts{color:#93c5fd;font-size:.8rem;margin-top:1rem;opacity:.7}
-    .sci{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);animation:bounceY 1.5s infinite;z-index:3}
-    .sm{width:24px;height:40px;border:2px solid rgba(255,255,255,.3);border-radius:12px;display:flex;justify-content:center;padding-top:8px}
-    .sd{width:4px;height:12px;background:rgba(255,255,255,.5);border-radius:2px}
-    /* ===== SECTION IMAGE BLOCKS ===== */
-    .sec-img{width:100%;max-width:900px;margin:0 auto;border-radius:1rem;overflow:hidden;box-shadow:0 12px 48px rgba(0,0,0,.4),0 0 0 1px rgba(59,130,246,.15);transition:transform .5s cubic-bezier(.16,1,.3,1),box-shadow .5s}
-    .sec-img:hover{transform:translateY(-4px) scale(1.005);box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 0 1px rgba(59,130,246,.3)}
-    .sec-img img{width:100%;height:auto}
-    /* ===== PAIN POINTS ===== */
-    .sp{position:relative;z-index:2;padding:6rem 0;background:linear-gradient(180deg,#030712 0%,#0a0f1f 100%)}
-    .stt{font-size:clamp(2rem,4.5vw,3rem);font-weight:900;margin-bottom:1rem}
-    .sts{font-size:1.1rem;color:#9ca3af;max-width:640px;margin:0 auto 3rem}
-    .pg{display:grid;grid-template-columns:repeat(2,1fr);gap:1.25rem;margin-top:3rem}
-    .pc{background:#111827;border:1px solid rgba(127,29,29,.3);border-radius:1.25rem;padding:1.75rem;transition:all .4s cubic-bezier(.16,1,.3,1)}
-    .pc:hover{border-color:rgba(239,68,68,.5);transform:translateY(-6px);box-shadow:0 12px 40px rgba(239,68,68,.1)}
-    .pc .iw{width:44px;height:44px;color:#ef4444;margin-bottom:.75rem}
-    .pc h3{font-size:1rem;font-weight:700;color:#fff;margin-bottom:.4rem;line-height:1.4}
-    .pc p{color:#9ca3af;font-size:.85rem}
-    /* ===== FEATURES / VALUE ===== */
-    .sf{position:relative;z-index:2;padding:6rem 0;background:linear-gradient(180deg,#0a0f1f 0%,#0a1128 50%,#0f172a 100%)}
-    .fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.25rem;margin-bottom:3rem}
-    .fc2{background:#111827;border:1px solid rgba(30,58,138,.4);border-radius:1.25rem;padding:1.5rem;transition:all .4s cubic-bezier(.16,1,.3,1)}
-    .fc2:hover{border-color:rgba(59,130,246,.5);transform:translateY(-6px);box-shadow:0 12px 40px rgba(59,130,246,.1)}
-    .fch{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.75rem}
-    .fc2 .iw{width:36px;height:36px;color:#60a5fa}
-    .fv{color:#60a5fa;font-size:.75rem;font-weight:700;background:rgba(30,58,138,.4);padding:.2rem .65rem;border-radius:999px;white-space:nowrap}
-    .fc2 h3{font-size:1rem;font-weight:700;color:#fff;margin-bottom:.4rem}
-    .fc2 p{color:#9ca3af;font-size:.85rem;line-height:1.6}
-    .vs{position:relative;z-index:2;background:linear-gradient(135deg,rgba(30,58,138,.4),rgba(6,78,59,.2));border:2px solid rgba(59,130,246,.35);border-radius:1.5rem;padding:2.5rem;text-align:center;margin-top:2rem}
-    .vs .lb{color:#9ca3af;font-size:1.1rem;margin-bottom:.5rem}
-    .vs .op{font-size:3rem;font-weight:900;color:#4b5563;text-decoration:line-through;margin-bottom:.35rem}
-    .vs .nl{color:#d1d5db;margin-bottom:.35rem;font-size:1.1rem}
-    .vs .ap{font-size:3.75rem;font-weight:900;color:#60a5fa;margin-bottom:.25rem}
-    .vs .ap .pr{font-size:1.15rem;font-weight:600}
-    .vs .pn{color:#9ca3af;font-size:.85rem;line-height:1.6}.vs .pn strong{color:#93c5fd}
-    /* ===== HOW IT WORKS ===== */
-    .ss{position:relative;z-index:2;padding:6rem 0;background:linear-gradient(180deg,#0f172a 0%,#030712 100%)}
-    .stl{display:flex;flex-direction:column;gap:1.25rem}
-    .sc{display:flex;gap:1.5rem;background:#111827;border:1px solid #1f2937;border-radius:1.25rem;padding:1.5rem;transition:all .4s cubic-bezier(.16,1,.3,1)}
-    .sc:hover{border-color:rgba(59,130,246,.4);transform:translateX(6px);box-shadow:0 8px 32px rgba(59,130,246,.08)}
-    .sn{font-size:2.25rem;font-weight:900;background:linear-gradient(135deg,#3b82f6,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;min-width:3.5rem;flex-shrink:0;line-height:1;padding-top:.2rem}
-    .sc h3{font-size:1rem;font-weight:700;color:#fff;margin-bottom:.4rem}
-    .sc p{color:#9ca3af;font-size:.85rem;line-height:1.7}
-    /* ===== COMPLIANCE ===== */
-    .scp{position:relative;z-index:2;padding:5rem 0;background:rgba(23,37,84,.15);border-top:1px solid rgba(30,58,138,.3);border-bottom:1px solid rgba(30,58,138,.3)}
-    .cpt{font-size:1.5rem;font-weight:700;text-align:center;margin-bottom:2rem}
-    .cpg{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
-    .cpc{background:rgba(17,24,39,.6);border:1px solid rgba(30,58,138,.35);border-radius:.875rem;padding:1.25rem;transition:all .3s}
-    .cpc:hover{border-color:rgba(59,130,246,.4);transform:translateY(-3px)}
-    .cpc h4{color:#60a5fa;font-weight:700;margin-bottom:.4rem;font-size:.95rem}
-    .cpc p{color:#9ca3af;font-size:.8rem;line-height:1.6}
-    /* ===== FINAL CTA ===== */
-    .sfc{position:relative;z-index:2;padding:6rem 0;background:linear-gradient(180deg,#030712 0%,#172554 100%);overflow:hidden}
-    .sfc::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 600px 400px at 50% 60%,rgba(236,72,153,.08),transparent)}
-    .fci{width:64px;height:64px;color:#60a5fa;margin:0 auto 1.5rem;animation:float 3s ease-in-out infinite}
-    .gb{background:#111827;border:1px solid rgba(59,130,246,.35);border-radius:1.25rem;padding:2rem;margin-bottom:2.5rem}
-    .gb .shi{width:48px;height:48px;color:#4ade80;margin:0 auto .75rem}
-    .gb h3{font-size:1.25rem;font-weight:800;margin-bottom:.6rem}
-    .gb p{color:#9ca3af;font-size:.9rem;line-height:1.6}
-    .fn{color:#6b7280;font-size:.8rem;margin-top:1rem;line-height:1.6}
-    .guarantee-img{max-width:320px;margin:0 auto 2rem;border-radius:1rem;overflow:hidden;animation:glow 3s ease-in-out infinite}
-    .guarantee-img img{width:100%;height:auto;border-radius:1rem}
-    .cta-banner-img{width:100%;max-width:880px;margin:0 auto 2.5rem;border-radius:1rem;overflow:hidden;box-shadow:0 16px 64px rgba(236,72,153,.2),0 0 0 1px rgba(236,72,153,.2)}
-    .cta-banner-img img{width:100%;height:auto}
-    /* ===== MODAL ===== */
-    .mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(12px);z-index:1000;align-items:center;justify-content:center;padding:1.5rem}
-    .mo.active{display:flex}
-    .md{background:#111827;border:1px solid rgba(59,130,246,.4);border-radius:1.5rem;padding:2.5rem;max-width:520px;width:100%;position:relative;animation:scaleIn .3s ease;box-shadow:0 32px 80px rgba(0,0,0,.6)}
-    .mc{position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,.1);color:#9ca3af;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.25rem;transition:background .3s}
-    .mc:hover{background:rgba(255,255,255,.2);color:#fff}
-    .md h2{font-size:1.5rem;font-weight:800;margin-bottom:.5rem}
-    .md .ms{color:#9ca3af;font-size:.9rem;margin-bottom:1.5rem}
-    .fg2{margin-bottom:1.25rem}
-    .fg2 label{display:block;color:#d1d5db;font-size:.85rem;font-weight:600;margin-bottom:.4rem}
-    .fg2 input{width:100%;padding:.875rem 1rem;background:#1f2937;border:1px solid #374151;border-radius:.75rem;color:#fff;font-size:1rem;transition:border-color .3s;outline:none}
-    .fg2 input:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.15)}
-    .fg2 input::placeholder{color:#6b7280}
-    .fs{width:100%;padding:1rem;background:linear-gradient(135deg,#ec4899,#db2777);color:#fff;font-weight:800;font-size:1.1rem;border-radius:.75rem;transition:all .3s;text-transform:uppercase;letter-spacing:.02em}
-    .fs:hover{opacity:.9;transform:translateY(-1px)}.fs:disabled{opacity:.5;cursor:not-allowed;transform:none}
-    .fnt{text-align:center;color:#6b7280;font-size:.75rem;margin-top:1rem}
-    .fsu{text-align:center;padding:2rem 0}
-    .fsu .ci{width:64px;height:64px;color:#4ade80;margin:0 auto 1rem}
-    .fsu h3{font-size:1.25rem;font-weight:700;margin-bottom:.5rem}
-    .fsu p{color:#9ca3af;font-size:.9rem;line-height:1.6}
-    .fsu .nsa{margin-top:1.5rem;display:flex;flex-direction:column;gap:.75rem;text-align:left}
-    .fsu .nsi{display:flex;gap:.75rem;padding:.75rem;background:rgba(30,58,138,.15);border:1px solid rgba(59,130,246,.2);border-radius:.75rem}
-    .fsu .nsn{width:28px;height:28px;background:linear-gradient(135deg,#3b82f6,#06b6d4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.75rem;flex-shrink:0}
-    .fsu .nsi a{color:#60a5fa;font-weight:600;font-size:.9rem}
-    .fsu .nsi span{color:#9ca3af;font-size:.85rem}
-    /* ===== STICKY BAR ===== */
-    .sb{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(17,24,39,.97);backdrop-filter:blur(16px);border-top:1px solid rgba(236,72,153,.3);padding:.75rem 1.5rem;z-index:900;justify-content:center;transform:translateY(100%);transition:transform .3s ease}
-    .sb.v{transform:translateY(0)}.sb .cb{font-size:.95rem;padding:.8rem 1.75rem;width:100%;justify-content:center;animation:none}
-    /* ===== FOOTER ===== */
-    .ft{padding:3rem 0;background:#030712;border-top:1px solid #1f2937;text-align:center}
-    .fl{width:240px;height:auto;margin:0 auto 1.5rem;border-radius:.75rem;filter:drop-shadow(0 4px 16px rgba(59,130,246,.15))}
-    .ft p{color:#6b7280;font-size:.8rem;line-height:1.8}
-    .ft a{color:#60a5fa}.ft a:hover{text-decoration:underline}
-    /* ===== PROGRESS BAR ===== */
-    .spots-bar{max-width:320px;margin:1rem auto 0;animation:fadeInUp .8s ease .55s forwards;opacity:0}
-    .spots-text{font-size:.85rem;color:#fca5a5;font-weight:600;margin-bottom:.4rem}
-    .spots-text em{color:#ef4444;font-style:normal;font-weight:800}
-    .bar-track{height:10px;background:rgba(239,68,68,.15);border-radius:5px;overflow:hidden}
-    .bar-fill{height:100%;width:50%;background:linear-gradient(90deg,#ef4444,#ec4899);border-radius:5px;transition:width 1s ease}
-    .bar-label{font-size:.7rem;color:#6b7280;text-align:right;margin-top:.2rem}
-    /* ===== RESPONSIVE ===== */
-    @media(max-width:768px){
-      .hero{padding:1.5rem 0 5rem}
-      .hero-logo img{width:200px}
-      .hero h1{font-size:2rem}
-      .hero .st{font-size:.95rem}
-      .hero-img{margin:0 auto 1.5rem}
-      .vp{gap:.4rem}.vpi{font-size:.7rem;padding:.35rem .65rem}
-      .cdv{font-size:1.75rem;width:3rem;height:3rem}
-      .cb{font-size:1rem;padding:1rem 1.75rem;width:100%;justify-content:center}
-      .sc{flex-direction:column;gap:.75rem}.sn{font-size:1.75rem}
-      .fg{grid-template-columns:1fr}
-      .pg{grid-template-columns:1fr}
-      .vs .op{font-size:2.25rem}.vs .ap{font-size:2.75rem}
-      .sb{display:flex}
-      .sp,.sf,.ss,.sfc,.scp{padding:3.5rem 0}
-      .sec-img{border-radius:.75rem}
-      .guarantee-img{max-width:240px}
-      .fl{width:180px}
-    }
-  </style>
-
-  <!-- JSON-LD Structured Data -->
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"Service",
-    "name":"Clean It Up — ITIN Credit Repair Basic Plan",
-    "provider":{"@type":"Organization","name":"RJ Business Solutions","url":"https://rickjeffersonsolutions.com","logo":"https://media.rickjeffersonsolutions.com/rj-business-solutions-logo-banner.jpg","address":{"@type":"PostalAddress","streetAddress":"1342 NM 333","addressLocality":"Tijeras","addressRegion":"NM","postalCode":"87059","addressCountry":"US"}},
-    "description":"ITIN credit repair targeting 1-5 negative items using federal law (FCRA, ECOA, CROA). ITIN holders have the same dispute rights as SSN holders. Pay only when progress is verified. 90-day money-back guarantee.",
-    "offers":{"@type":"Offer","price":"99.00","priceCurrency":"USD","description":"One-time forensic 3-bureau ITIN/SSN credit audit fee"}
-  }
-  </script>
-</head>
-<body class="has-lang-bar">
-
-  <!-- ===== LANGUAGE SWITCHER BAR ===== -->
-  <div class="lang-bar" id="langBar">
-    <span class="lang-label" data-i18n="lang_label">Language:</span>
-    <button class="lang-btn active" onclick="switchLang('en')" data-lang="en"><span class="flag">&#127482;&#127480;</span> English</button>
-    <button class="lang-btn" onclick="switchLang('es')" data-lang="es"><span class="flag">&#127474;&#127485;</span> Español</button>
-    <button class="lang-btn" onclick="switchLang('zh')" data-lang="zh"><span class="flag">&#127464;&#127475;</span> 中文</button>
-    <button class="lang-btn" onclick="switchLang('vi')" data-lang="vi"><span class="flag">&#127483;&#127475;</span> Tiếng Việt</button>
-  </div>
-
-  <!-- ===== HERO SECTION ===== -->
-  <section class="hero" id="hero">
-    <div class="hp" id="particles"></div>
-
-    <div class="hero-logo">
-      <img src="https://media.rickjeffersonsolutions.com/rj-business-solutions-logo-banner.jpg" alt="RJ Business Solutions - Professional Credit Repair Services" title="RJ Business Solutions" width="280" height="auto" fetchpriority="high">
-    </div>
-
-    <div class="hc">
-      <div class="ub"><i data-lucide="alert-triangle"></i><span data-i18n="hero_urgency">Limited Spots Available This Month — Only 12 Remaining</span></div>
-      <h1 data-i18n="hero_title" data-i18n-html="1">Have an ITIN? You Have<span class="gt">Full Credit Repair Rights</span></h1>
-      <p class="st" data-i18n="hero_subtitle">All three credit bureaus — TransUnion, Equifax, and Experian — accept ITIN numbers. Under the FCRA and ECOA, you have the <strong>exact same dispute rights</strong> as SSN holders. We use federal law to challenge every inaccurate item on your ITIN credit file — and you don't pay a cent until something actually gets removed.</p>
-    </div>
-
-    <!-- HERO IMAGE -->
-    <div class="hero-img">
-      <img src="https://media.rickjeffersonsolutions.com/basic%20%20ITIN/Professional_ITIN_credit_repair_hero_banner_featur-1771876741852.png" alt="ITIN credit repair hero banner featuring Rick Jefferson - fix your credit with an ITIN number, all 3 bureaus accept ITINs, FCRA and ECOA protected, $99 basic plan" title="ITIN Credit Repair by Rick Jefferson - No SSN Required, Full Federal Protection" width="1365" height="768" fetchpriority="high" loading="eager">
-    </div>
-
-    <div class="hc" style="padding-top:0">
-      <div class="vp">
-        <span class="vpi" data-i18n="vp_itin">&#10003; Works With ITIN — No SSN Needed</span>
-        <span class="vpi" data-i18n="vp_bureaus">&#10003; All 3 Bureaus Accept ITINs</span>
-        <span class="vpi" data-i18n="vp_fcra">&#10003; FCRA + ECOA Protected</span>
-        <span class="vpi" data-i18n="vp_nopay">&#10003; No Pay Until Progress</span>
-        <span class="vpi" data-i18n="vp_guarantee">&#10003; 90-Day Money Back</span>
-        <span class="vpi" data-i18n="vp_price">&#10003; Starts at $99</span>
+// ═══════════════════════════════════════════════════════════════
+// MAIN FUNNEL PAGE (with plans)
+// ═══════════════════════════════════════════════════════════════
+function mainFunnelHTML(locale: string): string {
+  const T = (key: string) => t(locale, key)
+  const planNames: Record<string, string> = { basic: T('plan_basic'), professional: T('plan_pro'), premium: T('plan_premium') }
+
+  return pageLayout(locale, T('site_title'), `
+  <!-- HERO -->
+  <section class="hero">
+    <div class="cx tc" style="position:relative;z-index:2">
+      <div class="hero-logo">
+        <img src="https://media.rickjeffersonsolutions.com/rj-business-solutions-logo-banner.jpg" alt="RJ Business Solutions" width="280">
       </div>
-      <div class="cdw">
-        <p class="cdl" data-i18n="countdown_label">&#9889; Enrollment Closes In</p>
-        <div class="cdt">
-          <div class="cdb"><div class="cdv" id="cd-h">23</div><div class="cdu" data-i18n="cd_hours">Hours</div></div>
-          <div class="cdb"><div class="cdv" id="cd-m">59</div><div class="cdu" data-i18n="cd_minutes">Minutes</div></div>
-          <div class="cdb"><div class="cdv" id="cd-s">59</div><div class="cdu" data-i18n="cd_seconds">Seconds</div></div>
+      <div class="hero-badge">⭐ ${T('hero_badge')}</div>
+      <h1>${T('hero_title')}</h1>
+      <p class="sub">${T('hero_sub')}</p>
+      <a href="#plans" class="btn-primary">${T('hero_cta')} →</a>
+      <p style="color:#6b7280;font-size:.78rem;margin-top:1rem">${T('spots_left')}</p>
+    </div>
+  </section>
+
+  <!-- COMMUNITY PROOF -->
+  <section class="community">
+    <div class="ct tc">
+      <h2 class="stt ao">${T('community_title')}</h2>
+      <div class="stats-grid">
+        <div class="stat-card ao s1"><div class="stat-val">${T('community_stat1')}</div><div class="stat-label">${T('community_label1')}</div></div>
+        <div class="stat-card ao s2"><div class="stat-val">${T('community_stat2')}</div><div class="stat-label">${T('community_label2')}</div></div>
+        <div class="stat-card ao s3"><div class="stat-val">${T('community_stat3')}</div><div class="stat-label">${T('community_label3')}</div></div>
+        <div class="stat-card ao s4"><div class="stat-val">${T('community_stat4')}</div><div class="stat-label">${T('community_label4')}</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLAN CARDS -->
+  <section id="plans" style="padding:5rem 0;background:linear-gradient(180deg,#0a0f1f,#0f172a)">
+    <div class="ct tc">
+      <h2 class="stt ao">${T('plans_title')}</h2>
+      <p class="sts ao">${T('plans_sub')}</p>
+
+      <div class="plans-grid">
+        <!-- BASIC -->
+        <div class="plan-card ao s1">
+          <div class="plan-name" style="color:#3b82f6">${T('plan_basic')}</div>
+          <div class="plan-target">${T('plan_basic_target')}</div>
+          <div class="plan-price">$99<span>${T('plan_per_month')}</span></div>
+          <p class="plan-desc">${T('plan_basic_desc')}</p>
+          <ul class="plan-features">
+            <li>${T('feat_audit')}</li>
+            <li>${T('feat_roadmap')}</li>
+            <li>${T('up_to')} 15 ${T('feat_disputes')}</li>
+            <li>${T('feat_reports')}</li>
+            <li>${T('feat_support')}</li>
+            <li>${T('feat_library')}</li>
+          </ul>
+          <a href="/${locale}/basic" class="plan-btn" style="background:linear-gradient(135deg,#3b82f6,#2563eb)">${T('plan_start')} ${T('plan_basic')} →</a>
+          <p class="plan-notes">$99 ${T('plan_audit_fee')} + ${T('plan_monitoring')}</p>
+        </div>
+
+        <!-- PROFESSIONAL (Featured) -->
+        <div class="plan-card featured ao s2">
+          <div class="plan-tag">${T('plan_pro_tag')}</div>
+          <div class="plan-name" style="color:#8b5cf6">${T('plan_pro')}</div>
+          <div class="plan-target">${T('plan_pro_target')}</div>
+          <div class="plan-price">$149<span>${T('plan_per_month')}</span></div>
+          <p class="plan-desc">${T('plan_pro_desc')}</p>
+          <ul class="plan-features">
+            <li>${T('feat_audit')}</li>
+            <li>${T('feat_roadmap')}</li>
+            <li>${T('up_to')} 25 ${T('feat_disputes')}</li>
+            <li>${T('feat_reports')}</li>
+            <li>${T('feat_support')}</li>
+            <li>${T('feat_library')}</li>
+            <li>${T('feat_analyst')}</li>
+            <li>${T('feat_creditor')}</li>
+          </ul>
+          <a href="/${locale}/professional" class="plan-btn" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9)">${T('plan_start')} ${T('plan_pro')} →</a>
+          <p class="plan-notes">$149 ${T('plan_audit_fee')} + ${T('plan_monitoring')}</p>
+        </div>
+
+        <!-- PREMIUM -->
+        <div class="plan-card ao s3">
+          <div class="plan-name" style="color:#f59e0b">${T('plan_premium')}</div>
+          <div class="plan-target">${T('plan_premium_target')}</div>
+          <div class="plan-price">$199<span>${T('plan_per_month')}</span></div>
+          <p class="plan-desc">${T('plan_premium_desc')}</p>
+          <ul class="plan-features">
+            <li>${T('feat_audit')}</li>
+            <li>${T('feat_roadmap')}</li>
+            <li>${T('up_to')} 40 ${T('feat_disputes')}</li>
+            <li>${T('feat_reports')}</li>
+            <li>${T('feat_support')}</li>
+            <li>${T('feat_library')}</li>
+            <li>${T('feat_analyst')}</li>
+            <li>${T('feat_priority')}</li>
+            <li>${T('feat_creditor')}</li>
+            <li>${T('feat_goodwill')}</li>
+          </ul>
+          <a href="/${locale}/premium" class="plan-btn" style="background:linear-gradient(135deg,#f59e0b,#d97706)">${T('plan_start')} ${T('plan_premium')} →</a>
+          <p class="plan-notes">$199 ${T('plan_audit_fee')} + ${T('plan_monitoring')}</p>
         </div>
       </div>
-      <div class="cw">
-        <button class="cb" onclick="openModal()"><span data-i18n="hero_cta">&#9654; Start My Basic Plan Now &#9654;</span><i data-lucide="arrow-right"></i></button>
-      </div>
-      <p class="cts" data-i18n="hero_price_note">+ $29.99/mo credit monitoring required &bull; One-time $99 audit fee &bull; Only billed when progress is made</p>
-      <div class="spots-bar">
-        <p class="spots-text" data-i18n="spots_text">Limited Spots Available This Month - <em>Only 12 Remaining</em></p>
-        <div class="bar-track"><div class="bar-fill"></div></div>
-        <p class="bar-label">12 of 24</p>
-      </div>
+      <p class="ao" style="color:#4ade80;font-weight:700;margin-top:1.5rem;font-size:.95rem">✓ ${T('plan_guarantee')} &bull; ✓ ${T('plan_no_pay')}</p>
     </div>
-    <div class="sci"><div class="sm"><div class="sd"></div></div></div>
   </section>
 
-  <!-- ===== PAIN POINTS SECTION ===== -->
-  <section class="sp" id="problems">
+  <!-- ITIN RIGHTS -->
+  <section class="rights">
+    <div class="cs tc">
+      <h2 class="stt ao">${T('rights_title')}</h2>
+      <p class="sts ao">${T('rights_sub')}</p>
+      <div class="rights-grid">
+        <div class="right-card ao s1"><h4>ECOA (15 U.S.C. § 1691)</h4><p>${T('rights_ecoa')}</p></div>
+        <div class="right-card ao s2"><h4>FCRA (15 U.S.C. § 1681)</h4><p>${T('rights_fcra')}</p></div>
+        <div class="right-card ao s3"><h4>CROA (15 U.S.C. § 1679)</h4><p>${T('rights_croa')}</p></div>
+        <div class="right-card ao s4"><h4>FDCPA (15 U.S.C. § 1692)</h4><p>${T('rights_fdcpa')}</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RICK BIO -->
+  <section class="bio">
     <div class="cs">
-      <div class="tc ao">
-        <h2 class="stt" data-i18n="pain_title">Sound Familiar? ITIN Credit Holders Face These Every Day</h2>
-        <p class="sts" data-i18n="pain_subtitle">Having an ITIN doesn't mean you have fewer rights — but the system makes it feel that way. We fix that.</p>
-      </div>
-
-      <!-- PAIN POINTS IMAGE — Bilingual Support -->
-      <div class="sec-img ao s1">
-        <img src="https://media.rickjeffersonsolutions.com/basic%20%20ITIN/Bilingual_support_split-screen_English_leftSpanis-1771876500803.png" alt="Bilingual ITIN credit repair support split-screen showing English and Spanish service - RJ Business Solutions helps ITIN holders in both languages" title="Bilingual ITIN Credit Repair - Full English and Spanish Support" width="1024" height="1024" loading="lazy">
-      </div>
-
-      <div class="pg">
-        <div class="pc ao s1"><div class="iw"><i data-lucide="x-circle"></i></div><h3 data-i18n="pain1_title">Told "we can't help you" because you have an ITIN</h3><p data-i18n="pain1_desc">Wrong. Under ECOA (15 U.S.C. § 1691), creditors cannot discriminate based on national origin. Your ITIN file has the same rights.</p></div>
-        <div class="pc ao s2"><div class="iw"><i data-lucide="x-circle"></i></div><h3 data-i18n="pain2_title">Collections or errors reporting on your ITIN credit file</h3><p data-i18n="pain2_desc">Bureaus accept ITINs — and the FCRA requires them to investigate disputes from ITIN holders the same as SSN holders.</p></div>
-        <div class="pc ao s3"><div class="iw"><i data-lucide="x-circle"></i></div><h3 data-i18n="pain3_title">Can't get approved for a mortgage, auto loan, or credit card</h3><p data-i18n="pain3_desc">Inaccurate negatives on your ITIN file block approvals. ITIN loans exist — but only if your report is clean.</p></div>
-        <div class="pc ao s4"><div class="iw"><i data-lucide="x-circle"></i></div><h3 data-i18n="pain4_title">Don't know how to dispute with an ITIN number</h3><p data-i18n="pain4_desc">Bureaus have different ITIN dispute procedures. We know exactly how to file with TransUnion, Equifax, and Experian using your ITIN.</p></div>
+      <div class="bio-card ao">
+        <div class="bio-img">👨‍💼</div>
+        <div class="bio-content">
+          <h3>${T('bio_title')}</h3>
+          <div class="role">${T('bio_role')}</div>
+          <p>${T('bio_p1')}</p>
+          <p>${T('bio_p2')}</p>
+          <blockquote>${T('bio_p3')}</blockquote>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- ===== VALUE STACK / FEATURES ===== -->
-  <section class="sf" id="features">
-    <div class="ct">
-      <div class="tc ao">
-        <h2 class="stt" data-i18n="feat_title" data-i18n-html="1">Everything You Get With The <span style="color:#60a5fa">ITIN Basic Plan</span></h2>
-        <p class="sts" data-i18n="feat_subtitle">Credit repair built specifically for ITIN holders. We know the bureau-specific ITIN procedures, the federal laws that protect you, and exactly how to get results.</p>
-      </div>
-
-      <!-- VALUE STACK IMAGE -->
-      <div class="sec-img ao s1" style="margin-bottom:3rem">
-        <img src="https://media.rickjeffersonsolutions.com/basic%20%20ITIN/ITIN_Basic_Plan_value_stack_2x3_grid_on_dark_backg-1771876762102.png" alt="ITIN Basic Plan value stack 2x3 grid" title="ITIN Credit Repair Basic Plan - $872 Value for $99/Month" width="1024" height="1024" loading="lazy">
-      </div>
-
-      <div class="fg">
-        <div class="fc2 ao s1"><div class="fch"><div class="iw"><i data-lucide="file-text"></i></div><span class="fv">$199 Value</span></div><h3 data-i18n="f1_title">Forensic 3-Bureau ITIN Credit Audit</h3><p data-i18n="f1_desc">Your full ITIN credit file across TransUnion, Equifax, and Experian — every tradeline, inquiry, and public record reviewed against FCRA accuracy standards using your ITIN number.</p></div>
-        <div class="fc2 ao s2"><div class="fch"><div class="iw"><i data-lucide="bar-chart-2"></i></div><span class="fv">$149 Value</span></div><h3 data-i18n="f2_title">ITIN-Specific Restoration Roadmap</h3><p data-i18n="f2_desc">Custom strategy built for ITIN credit files. We know which bureaus require mail-in disputes for ITIN holders vs. online, and we map your 30/60/90-day milestones accordingly.</p></div>
-        <div class="fc2 ao s3"><div class="fch"><div class="iw"><i data-lucide="shield"></i></div><span class="fv">$297 Value</span></div><h3 data-i18n="f3_title">Up to 15 Statute-Specific Disputes/Mo</h3><p data-i18n="f3_desc">Personalized dispute letters citing FCRA §611, §623, §605 and ECOA protections — filed with each bureau using their ITIN-specific dispute procedures.</p></div>
-        <div class="fc2 ao s4"><div class="fch"><div class="iw"><i data-lucide="trending-up"></i></div><span class="fv">$99 Value</span></div><h3 data-i18n="f4_title">Monthly ITIN Credit Progress Reports</h3><p data-i18n="f4_desc">Documentation of every bureau response, deletion, correction, and score change on your ITIN credit file delivered each billing cycle.</p></div>
-        <div class="fc2 ao s5"><div class="fch"><div class="iw"><i data-lucide="mail"></i></div><span class="fv">$79 Value</span></div><h3 data-i18n="f5_title">Bilingual Support (English &amp; Spanish)</h3><p data-i18n="f5_desc">Direct access with guaranteed one-business-day response. Our team communicates in both English and Spanish to ensure nothing gets lost in translation.</p></div>
-        <div class="fc2 ao s6"><div class="fch"><div class="iw"><i data-lucide="book-open"></i></div><span class="fv">$49 Value</span></div><h3 data-i18n="f6_title">ITIN Credit Building Library</h3><p data-i18n="f6_desc">How to build credit with an ITIN, secured cards that accept ITINs, ITIN mortgage readiness, utilization strategy, and credit maintenance protocols.</p></div>
-      </div>
-
-      <div class="vs ao asi">
-        <p class="lb" data-i18n="vs_total_label">Total Value of Everything Above</p>
-        <p class="op">$872</p>
-        <p class="nl" data-i18n="vs_pay_label">You Pay Just</p>
-        <p class="ap">$99<span class="pr" data-i18n="vs_per_month">/month</span></p>
-        <p class="pn" data-i18n="vs_price_note">+ $99 one-time audit fee + $29.99/mo monitoring<br><strong>Billed only when verifiable progress is made</strong></p>
-        <div style="margin-top:1.5rem"><button class="cb" onclick="openModal()" style="font-size:1.1rem"><span data-i18n="vs_cta">&#9654; Claim This Deal Now</span><i data-lucide="arrow-right"></i></button></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== HOW IT WORKS ===== -->
-  <section class="ss" id="how-it-works">
+  <!-- FAQ -->
+  <section class="faq">
     <div class="cs">
-      <h2 class="stt tc ao" style="margin-bottom:2.5rem" data-i18n="how_title">How ITIN Credit Repair Works</h2>
-
-      <!-- PROCESS WORKFLOW IMAGE -->
-      <div class="sec-img ao s1" style="margin-bottom:3rem">
-        <img src="https://media.rickjeffersonsolutions.com/basic%20%20ITIN/5-step_ITIN_credit_repair_workflow_horizontal_time-1771876767740.png" alt="5-step ITIN credit repair workflow" title="How ITIN Credit Repair Works - 5-Step Process Using FCRA and ECOA" width="1365" height="768" loading="lazy">
-      </div>
-
-      <div class="stl">
-        <div class="sc ao asl s1"><div class="sn">01</div><div><h3 data-i18n="step1_title">Activate MyFreeScoreNow Monitoring ($29.99/mo)</h3><p data-i18n="step1_desc">Enroll using your ITIN — MyFreeScoreNow accepts ITIN numbers. This gives us live tri-bureau visibility into your ITIN credit file to track every deletion, change, and score movement.</p></div></div>
-        <div class="sc ao asl s2"><div class="sn">02</div><div><h3 data-i18n="step2_title">Pay Your One-Time Audit Fee ($99)</h3><p data-i18n="step2_desc">We pull and analyze your complete ITIN credit file across all 3 bureaus. Your forensic audit + ITIN-specific restoration roadmap are delivered within 24–48 hours.</p></div></div>
-        <div class="sc ao asl s3"><div class="sn">03</div><div><h3 data-i18n="step3_title">Review Your ITIN Credit Audit &amp; Roadmap</h3><p data-i18n="step3_desc">Before a single dispute goes out, you see exactly what's on your ITIN file, what's challengeable, and our strategy for each bureau's ITIN-specific dispute process.</p></div></div>
-        <div class="sc ao asl s4"><div class="sn">04</div><div><h3 data-i18n="step4_title">We File ITIN-Specific Bureau Disputes</h3><p data-i18n="step4_desc">Personalized letters citing FCRA §611, §623, §605 and ECOA §1691 protections. Filed using each bureau's ITIN dispute procedures — some require mail-in, some accept online. We handle it all.</p></div></div>
-        <div class="sc ao asl s5"><div class="sn">05</div><div><h3 data-i18n="step5_title">You're Only Billed When Things Move</h3><p data-i18n="step5_desc">Documented deletions, corrections, or verified score improvements on your ITIN credit file = your $99 monthly fee. Nothing moved? Not billed. Period.</p></div></div>
+      <h2 class="stt tc ao">${T('faq_title')}</h2>
+      <div style="margin-top:2rem">
+        ${[1,2,3,4,5,6].map(n => `
+        <div class="faq-item ao">
+          <div class="faq-q">${T(`faq_q${n}`)}</div>
+          <div class="faq-a">${T(`faq_a${n}`)}</div>
+        </div>`).join('')}
       </div>
     </div>
   </section>
 
-  <!-- ===== COMPLIANCE SECTION ===== -->
-  <section class="scp" id="compliance">
-    <div class="cs">
-      <h3 class="cpt ao" data-i18n="comp_title">&#128274; ITIN Holders Have Full Federal Protection — Here's the Law</h3>
-
-      <!-- COMPLIANCE IMAGE -->
-      <div class="sec-img ao s1" style="margin-bottom:2rem">
-        <img src="https://media.rickjeffersonsolutions.com/basic%20%20ITIN/Federal_law_protection_badges_2x3_grid_for_ITIN_B-1771876776233.png" alt="Federal law protection badges for ITIN credit repair" title="ITIN Holders Have Full Federal Protection" width="1024" height="768" loading="lazy">
-      </div>
-
-      <div class="cpg">
-        <div class="cpc ao s1"><h4 data-i18n="comp1_title">ECOA Protected (15 U.S.C. &sect; 1691)</h4><p data-i18n="comp1_desc">The Equal Credit Opportunity Act prohibits discrimination based on national origin. Creditors and bureaus <strong>cannot</strong> treat your ITIN file differently than an SSN file.</p></div>
-        <div class="cpc ao s2"><h4 data-i18n="comp2_title">FCRA — Same Rights, Same Law</h4><p data-i18n="comp2_desc">Under the FCRA, ITIN holders have the <strong>exact same</strong> dispute rights as SSN holders. §611, §623, §605 — all apply to your ITIN credit file. 30-day investigation windows enforced.</p></div>
-        <div class="cpc ao s3"><h4 data-i18n="comp3_title">CROA Compliant</h4><p data-i18n="comp3_desc">Written contract provided. 3-day cancellation right honored. No advance fees charged until services are performed. Full consumer disclosure per 15 U.S.C. &sect; 1679c.</p></div>
-        <div class="cpc ao s4"><h4 data-i18n="comp4_title">FDCPA Enforced</h4><p data-i18n="comp4_desc">Collection accounts on your ITIN file challenged under FDCPA. Debt validation rights (15 U.S.C. &sect; 1692g) cited. Collectors cannot discriminate based on ITIN status.</p></div>
-        <div class="cpc ao s5"><h4 data-i18n="comp5_title">TSR + FTC + CFPB Aligned</h4><p data-i18n="comp5_desc">No advance fees per TSR. Section 5 FTC Act compliant. CFPB Regulation V and F procedures followed for all ITIN disputes.</p></div>
-        <div class="cpc ao s6"><h4 data-i18n="comp6_title">State Law Compliant</h4><p data-i18n="comp6_desc">New Mexico Unfair Practices Act compliant. State cancellation rights honored. ITIN holders receive all applicable state protections.</p></div>
-      </div>
-      <p class="ao" style="text-align:center;margin-top:1.5rem;font-size:.8rem;color:#6b7280">Full legal disclosures: <a href="/legal" style="color:#60a5fa">Legal &amp; Compliance</a> &bull; <a href="/consumer-rights" style="color:#60a5fa">Consumer Rights</a> &bull; <a href="/cancellation" style="color:#60a5fa">Cancellation Policy</a></p>
-    </div>
-  </section>
-
-  <!-- ===== FINAL CTA SECTION ===== -->
-  <section class="sfc" id="final-cta">
-    <div class="cx tc">
-
-      <!-- CTA URGENCY BANNER IMAGE -->
-      <div class="cta-banner-img ao">
-        <img src="https://media.rickjeffersonsolutions.com/basic%20%20ITIN/Final_CTA_urgency_banner_full-width_Ocean_Drive_Pi-1771876505174.png" alt="ITIN credit repair enrollment CTA banner - ready to clean up your ITIN credit file, limited spots, $99 audit, 90-day money-back guarantee, start now" title="Start Your ITIN Credit Repair Now - Limited Spots Available" width="1365" height="768" loading="lazy">
-      </div>
-
-      <div class="ao">
-        <h2 class="stt" style="margin-bottom:1.5rem" data-i18n="cta_title" data-i18n-html="1">Ready to Clean Up Your <span style="color:#60a5fa">ITIN Credit File</span>?</h2>
-        <p class="sts" style="margin-bottom:2rem" data-i18n="cta_subtitle">Your ITIN gives you credit rights under federal law. Start with your $99 audit — see exactly what's on your ITIN file across all 3 bureaus. Then watch us legally challenge every inaccurate item — and only pay when we get results.</p>
-      </div>
-
-      <!-- GUARANTEE SEAL IMAGE -->
-      <div class="guarantee-img ao">
-        <img src="https://media.rickjeffersonsolutions.com/basic/Professional_90-day_money-back_guarantee_seal_feat-1771867713569.png" alt="90-day money-back guarantee seal for credit repair services - no verified improvement equals full refund, no questions, no conditions - Rick Jefferson commitment" title="90-Day Money-Back Guarantee - Risk-Free Credit Repair Services" width="1024" height="1024" loading="lazy">
-      </div>
-
-      <div class="gb ao">
-        <div class="shi"><i data-lucide="shield-check"></i></div>
-        <h3 data-i18n="guarantee_title">90-Day Money-Back Guarantee</h3>
-        <p data-i18n="guarantee_desc">If we can't show a single verified improvement in 90 days, you get every package fee back. No questions. No conditions. No runaround.</p>
-      </div>
-
-      <div class="ao">
-        <button class="cb" onclick="openModal()" style="margin:0 auto;font-size:1.3rem;padding:1.4rem 3rem"><span data-i18n="final_cta">&#9654; START MY BASIC PLAN NOW &#9654;</span><i data-lucide="arrow-right"></i></button>
-        <p class="fn" style="margin-top:1.25rem" data-i18n="final_price_note">$99 audit fee + $29.99/mo monitoring to start. Monthly $99 fee only charged when progress is verified.<br>Cancel anytime within 3 business days per CROA rights.</p>
+  <!-- GUARANTEE -->
+  <section class="guarantee">
+    <div class="cs tc">
+      <div class="guarantee-box ao">
+        <div style="font-size:3rem;margin-bottom:.75rem">🛡️</div>
+        <h3>${T('guarantee_title')}</h3>
+        <p>${T('guarantee_desc')}</p>
       </div>
     </div>
   </section>
 
-  <!-- ===== FOOTER ===== -->
-  <footer class="ft">
+  <!-- CTA -->
+  <section class="cta-section">
     <div class="cx">
-      <img src="https://media.rickjeffersonsolutions.com/rj-business-solutions-logo-banner.jpg" alt="RJ Business Solutions" class="fl">
-      <p><strong style="color:#d1d5db">RJ Business Solutions</strong><br>1342 NM 333, Tijeras, New Mexico 87059<br><a href="https://rickjeffersonsolutions.com" target="_blank">rickjeffersonsolutions.com</a> &bull; <a href="mailto:rickjefferson@rickjeffersonsolutions.com">rickjefferson@rickjeffersonsolutions.com</a></p>
-      <div style="margin:1.25rem auto;max-width:700px;padding:1rem;background:rgba(17,24,39,.8);border:1px solid #1f2937;border-radius:.75rem;text-align:left">
-        <p style="color:#9ca3af;font-size:.7rem;line-height:1.7;margin:0">
-          <strong style="color:#d1d5db">Federal Compliance Disclosures:</strong> RJ Business Solutions is a credit repair organization as defined under the Credit Repair Organizations Act (15 U.S.C. &sect; 1679 et seq.). We serve both SSN and ITIN holders. We are not a law firm, we are not attorneys, and we do not provide legal advice. You have the right to dispute inaccurate information on your credit report directly with the credit bureaus at no cost — whether identified by SSN or ITIN. Neither you nor any credit repair company has the right to have accurate, current, and verifiable information removed from your credit report. Results vary and are not guaranteed. You have the right to cancel your contract within 3 business days of signing without penalty (CROA &sect; 1679e). No fees are charged for credit repair services until such services have been fully performed (CROA &sect; 1679b(b); TSR 16 C.F.R. &sect; 310.4(a)(2)). The $99 audit fee is for a completed, delivered forensic audit product. Monthly service fees are charged only when verifiable progress is documented. All disputes are filed in accordance with the Fair Credit Reporting Act (15 U.S.C. &sect; 1681 et seq.) and the Equal Credit Opportunity Act (15 U.S.C. &sect; 1691 et seq.). ECOA prohibits discrimination based on national origin — ITIN holders receive identical dispute protections as SSN holders. Our services comply with the Fair Debt Collection Practices Act (15 U.S.C. &sect; 1692 et seq.), the FTC Telemarketing Sales Rule (16 C.F.R. Part 310), the Federal Trade Commission Act (15 U.S.C. &sect; 41 et seq.), and applicable CFPB regulations.
-        </p>
-        <p style="color:#9ca3af;font-size:.7rem;line-height:1.7;margin:.75rem 0 0">
-          <strong style="color:#d1d5db">Regulatory Contacts:</strong> FTC: <a href="https://www.ftc.gov/complaint" target="_blank" style="color:#60a5fa">ftc.gov/complaint</a> | 1-877-FTC-HELP &bull; CFPB: <a href="https://www.consumerfinance.gov/complaint/" target="_blank" style="color:#60a5fa">consumerfinance.gov/complaint</a> | 1-855-411-CFPB &bull; NM Attorney General: <a href="https://www.nmag.gov" target="_blank" style="color:#60a5fa">nmag.gov</a> | 1-844-255-9210
-        </p>
-      </div>
-      <p style="margin-top:.75rem"><a href="/legal">Legal Disclosures</a> &bull; <a href="/consumer-rights">Consumer Rights</a> &bull; <a href="/privacy">Privacy Policy</a> &bull; <a href="/terms">Terms of Service</a> &bull; <a href="/cancellation">Cancellation Policy</a></p>
-      <p style="margin-top:.75rem">&copy; 2026 RJ Business Solutions. All rights reserved.<br>Credit repair services are performed in compliance with CROA, FCRA, ECOA, FDCPA, TSR, and applicable state regulations. ITIN holders have full credit dispute rights under federal law.</p>
+      <h2 class="stt ao">${T('cta_title')}</h2>
+      <p class="sts ao">${T('cta_sub')}</p>
+      <a href="#plans" class="btn-primary ao">${T('cta_btn')} →</a>
     </div>
-  </footer>
+  </section>
 
-  <!-- ===== LEAD CAPTURE + STRIPE CHECKOUT MODAL ===== -->
+  <!-- COMPLIANCE FOOTER -->
+  <section class="comp-footer">
+    <div class="ct">
+      <h3 style="text-align:center;font-size:1.1rem;font-weight:700;color:#9ca3af;margin-bottom:1rem">${T('comp_title')}</h3>
+      <p style="text-align:center;color:#6b7280;font-size:.78rem;margin-bottom:1.5rem">${T('comp_notice')}</p>
+      <div class="comp-grid">
+        <div class="comp-item"><h4>CROA</h4><p>${T('comp_croa')}</p></div>
+        <div class="comp-item"><h4>FCRA</h4><p>${T('comp_fcra')}</p></div>
+        <div class="comp-item"><h4>ECOA</h4><p>${T('comp_ecoa')}</p></div>
+        <div class="comp-item"><h4>FDCPA</h4><p>${T('comp_fdcpa')}</p></div>
+        <div class="comp-item"><h4>TSR / FTC / CFPB</h4><p>${T('comp_tsr')}</p></div>
+        <div class="comp-item"><h4>Identity Policy</h4><p>${T('comp_identity')}</p></div>
+      </div>
+      <p style="text-align:center;color:#6b7280;font-size:.75rem;margin-top:1rem">${T('comp_contact')} <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa">rickjefferson@rickjeffersonsolutions.com</a></p>
+    </div>
+  </section>
+  `)
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INDIVIDUAL PLAN PAGE
+// ═══════════════════════════════════════════════════════════════
+function planPageHTML(locale: string, plan: 'basic' | 'professional' | 'premium', mfsnUrl: string): string {
+  const T = (key: string) => t(locale, key)
+  const cfg = PLANS[plan]
+  const planNameKey = plan === 'basic' ? 'plan_basic' : plan === 'professional' ? 'plan_pro' : 'plan_premium'
+  const planName = T(planNameKey)
+  const targetKey = plan === 'basic' ? 'plan_basic_target' : plan === 'professional' ? 'plan_pro_target' : 'plan_premium_target'
+  const descKey = plan === 'basic' ? 'plan_basic_desc' : plan === 'professional' ? 'plan_pro_desc' : 'plan_premium_desc'
+
+  const features = [
+    T('feat_audit'),
+    T('feat_roadmap'),
+    `${T('up_to')} ${cfg.disputes} ${T('feat_disputes')}`,
+    T('feat_reports'),
+    T('feat_support'),
+    T('feat_library'),
+  ]
+  if (plan === 'professional' || plan === 'premium') {
+    features.push(T('feat_analyst'), T('feat_creditor'))
+  }
+  if (plan === 'premium') {
+    features.push(T('feat_priority'), T('feat_goodwill'))
+  }
+
+  return pageLayout(locale, `${planName} Plan — ${T('site_title')}`, `
+  <!-- PLAN HERO -->
+  <section class="hero" style="min-height:auto;padding:4rem 0">
+    <div class="cx tc" style="position:relative;z-index:2">
+      <div class="hero-logo">
+        <img src="https://media.rickjeffersonsolutions.com/rj-business-solutions-logo-banner.jpg" alt="RJ Business Solutions" width="240">
+      </div>
+      <div style="display:inline-block;background:${cfg.color}22;border:1px solid ${cfg.color}66;padding:.35rem 1rem;border-radius:999px;margin-bottom:1rem">
+        <span style="color:${cfg.color};font-weight:700;font-size:.85rem">${T(targetKey)}</span>
+      </div>
+      <h1 style="font-size:clamp(1.75rem,4vw,3rem)">${planName} <span class="gt">ITIN Credit Repair</span></h1>
+      <p class="sub">${T(descKey)}</p>
+      <div style="font-size:3.5rem;font-weight:900;margin:1rem 0">$${cfg.price}<span style="font-size:1rem;color:#9ca3af">${T('plan_per_month')}</span></div>
+      <button class="btn-primary" onclick="document.getElementById('leadModal').classList.add('active')">${T('plan_start')} ${planName} →</button>
+      <p style="color:#6b7280;font-size:.78rem;margin-top:1rem">$${cfg.price} ${T('plan_audit_fee')} + ${T('plan_monitoring')} &bull; ${T('plan_no_pay')}</p>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section style="padding:4rem 0;background:linear-gradient(180deg,#0a0f1f,#0f172a)">
+    <div class="cs">
+      <h2 class="stt tc ao">${T('includes')}</h2>
+      <div style="margin-top:2rem">
+        ${features.map((f, i) => `
+        <div class="ao s${Math.min(i+1,4)}" style="display:flex;align-items:center;gap:1rem;background:#111827;border:1px solid #1f2937;border-radius:.75rem;padding:1rem 1.5rem;margin-bottom:.75rem">
+          <span style="color:#4ade80;font-weight:700;font-size:1.25rem">✓</span>
+          <span style="font-size:.95rem;font-weight:600">${f}</span>
+        </div>`).join('')}
+      </div>
+    </div>
+  </section>
+
+  <!-- ITIN RIGHTS -->
+  <section class="rights">
+    <div class="cs tc">
+      <h2 class="stt ao">${T('rights_title')}</h2>
+      <p class="sts ao">${T('rights_sub')}</p>
+      <div class="rights-grid">
+        <div class="right-card ao s1"><h4>ECOA</h4><p>${T('rights_ecoa')}</p></div>
+        <div class="right-card ao s2"><h4>FCRA</h4><p>${T('rights_fcra')}</p></div>
+        <div class="right-card ao s3"><h4>CROA</h4><p>${T('rights_croa')}</p></div>
+        <div class="right-card ao s4"><h4>FDCPA</h4><p>${T('rights_fdcpa')}</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RICK BIO -->
+  <section class="bio">
+    <div class="cs">
+      <div class="bio-card ao">
+        <div class="bio-img">👨‍💼</div>
+        <div class="bio-content">
+          <h3>${T('bio_title')}</h3>
+          <div class="role">${T('bio_role')}</div>
+          <p>${T('bio_p1')}</p>
+          <blockquote>${T('bio_p3')}</blockquote>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq">
+    <div class="cs">
+      <h2 class="stt tc ao">${T('faq_title')}</h2>
+      <div style="margin-top:2rem">
+        ${[1,2,3,5,6].map(n => `
+        <div class="faq-item ao">
+          <div class="faq-q">${T(`faq_q${n}`)}</div>
+          <div class="faq-a">${T(`faq_a${n}`)}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+  </section>
+
+  <!-- GUARANTEE -->
+  <section class="guarantee">
+    <div class="cs tc">
+      <div class="guarantee-box ao">
+        <div style="font-size:3rem;margin-bottom:.75rem">🛡️</div>
+        <h3>${T('guarantee_title')}</h3>
+        <p>${T('guarantee_desc')}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="cx">
+      <h2 class="stt ao">${T('cta_title')}</h2>
+      <p class="sts ao">${T('cta_sub')}</p>
+      <button class="btn-primary ao" onclick="document.getElementById('leadModal').classList.add('active')">${T('plan_start')} ${planName} →</button>
+      <p class="ao" style="margin-top:1rem"><a href="/${locale}" style="color:#60a5fa;font-size:.9rem">← ${T('all_plans')}</a></p>
+    </div>
+  </section>
+
+  <!-- COMPLIANCE FOOTER -->
+  <section class="comp-footer">
+    <div class="ct">
+      <h3 style="text-align:center;font-size:1rem;font-weight:700;color:#9ca3af;margin-bottom:1rem">${T('comp_title')}</h3>
+      <p style="text-align:center;color:#6b7280;font-size:.75rem;margin-bottom:1rem">${T('comp_notice')}</p>
+      <div class="comp-grid">
+        <div class="comp-item"><h4>CROA</h4><p>${T('comp_croa')}</p></div>
+        <div class="comp-item"><h4>FCRA</h4><p>${T('comp_fcra')}</p></div>
+        <div class="comp-item"><h4>ECOA</h4><p>${T('comp_ecoa')}</p></div>
+        <div class="comp-item"><h4>FDCPA</h4><p>${T('comp_fdcpa')}</p></div>
+      </div>
+      <p style="text-align:center;color:#6b7280;font-size:.72rem;margin-top:1rem">${T('comp_contact')} <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa">rickjefferson@rickjeffersonsolutions.com</a></p>
+    </div>
+  </section>
+
+  <!-- LEAD MODAL -->
   <div class="mo" id="leadModal">
     <div class="md">
-      <button class="mc" onclick="closeModal()">&times;</button>
-      <div id="formView">
-        <h2 data-i18n="modal_title">Start Your Basic Plan</h2>
-        <p class="ms" data-i18n="modal_subtitle">Enter your info below. After submitting, you'll be directed to secure payment for your $99 forensic audit.</p>
-        <form id="leadForm" onsubmit="handleSubmit(event)">
-          <div class="fg2"><label for="name" data-i18n="form_name">Full Name *</label><input type="text" id="name" name="name" placeholder="John Smith" required></div>
-          <div class="fg2"><label for="email" data-i18n="form_email">Email Address *</label><input type="email" id="email" name="email" placeholder="john@example.com" required></div>
-          <div class="fg2"><label for="phone" data-i18n="form_phone">Phone Number</label><input type="tel" id="phone" name="phone" placeholder="(555) 123-4567"></div>
-          <button type="submit" class="fs" id="submitBtn" data-i18n="form_submit">Claim My Spot — $99 Audit</button>
-          <p class="fnt" data-i18n="form_secure">&#128274; Your information is 100% secure and never shared.</p>
-          <p class="fnt" style="margin-top:.5rem;line-height:1.5">By submitting, you acknowledge our <a href="/consumer-rights" target="_blank" style="color:#60a5fa">Consumer Rights Disclosure</a>, <a href="/terms" target="_blank" style="color:#60a5fa">Terms of Service</a>, and <a href="/privacy" target="_blank" style="color:#60a5fa">Privacy Policy</a>. You have the right to cancel within 3 business days of signing any contract (<a href="/cancellation" target="_blank" style="color:#60a5fa">Cancellation Policy</a>). No credit repair fees are charged until services are fully performed.</p>
-        </form>
-      </div>
-      <div id="successView" style="display:none">
-        <div class="fsu">
-          <div class="ci"><i data-lucide="check-circle"></i></div>
-          <h3 data-i18n="success_title">You're In!</h3>
-          <p data-i18n="success_desc">Your info has been captured. Complete these two steps to begin your credit repair:</p>
-          <div class="nsa">
-            <div class="nsi"><div class="nsn">1</div><div><a href="${mfsnUrl}" target="_blank" id="mfsnLink">Activate MyFreeScoreNow Monitoring &rarr;</a><br><span>$29.99/mo — Required before audit begins</span></div></div>
-            <div class="nsi"><div class="nsn">2</div><div><a href="#" onclick="startCheckout()" id="checkoutLink">Pay $99 Audit Fee (Secure Checkout) &rarr;</a><br><span>Stripe-secured payment — Audit delivered in 24–48 hours</span></div></div>
+      <button class="mc" onclick="this.closest('.mo').classList.remove('active')">&times;</button>
+      <h2>${T('modal_title')} ${planName}</h2>
+      <p class="ms">${T('modal_sub')}</p>
+      <form id="leadForm" onsubmit="handleSubmit(event)">
+        <div class="fg2"><label>${T('form_name')}</label><input type="text" id="fname" required placeholder="John Smith"></div>
+        <div class="fg2"><label>${T('form_email')}</label><input type="email" id="femail" required placeholder="john@example.com"></div>
+        <div class="fg2"><label>${T('form_phone')}</label><input type="tel" id="fphone" placeholder="(555) 123-4567"></div>
+        <button type="submit" class="fs-btn" id="submitBtn">${T('form_submit')} — $${cfg.price}</button>
+        <p class="fnt">🔒 ${T('form_secure')}</p>
+      </form>
+      <div id="successView" style="display:none;text-align:center;padding:2rem 0">
+        <div style="font-size:3rem;margin-bottom:1rem">✅</div>
+        <h3 style="font-size:1.25rem;font-weight:800;margin-bottom:.5rem">You're In!</h3>
+        <p style="color:#9ca3af;margin-bottom:1.5rem">Complete these steps to begin:</p>
+        <div style="text-align:left">
+          <div style="display:flex;gap:.75rem;padding:.75rem;background:rgba(30,58,138,.15);border:1px solid rgba(59,130,246,.2);border-radius:.75rem;margin-bottom:.75rem">
+            <div style="width:28px;height:28px;background:linear-gradient(135deg,#3b82f6,#06b6d4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.75rem;flex-shrink:0">1</div>
+            <div><a href="${mfsnUrl}" target="_blank" style="color:#60a5fa;font-weight:600">Activate MyFreeScoreNow →</a><br><span style="color:#9ca3af;font-size:.82rem">$29.99/mo — Required before audit</span></div>
+          </div>
+          <div style="display:flex;gap:.75rem;padding:.75rem;background:rgba(30,58,138,.15);border:1px solid rgba(59,130,246,.2);border-radius:.75rem">
+            <div style="width:28px;height:28px;background:linear-gradient(135deg,#3b82f6,#06b6d4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.75rem;flex-shrink:0">2</div>
+            <div><a href="#" onclick="startCheckout()" style="color:#60a5fa;font-weight:600">Pay $${cfg.price} Audit Fee →</a><br><span style="color:#9ca3af;font-size:.82rem">Stripe-secured — Delivered in 24–48 hours</span></div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- STICKY CTA BAR -->
-  <div class="sb" id="stickyBar"><button class="cb" onclick="openModal()" style="animation:none"><span data-i18n="sticky_cta">&#9654; Start My Basic Plan — $99</span><i data-lucide="arrow-right"></i></button></div>
-
   <script>
-    let currentLeadId=null,currentEmail=null,currentName=null;
-
-    // ===== MULTILINGUAL TRANSLATION ENGINE =====
-    var currentLang = 'en';
-    var translations = {
-      // ===== SPANISH (ES) =====
-      es: {
-        lang_label: 'Idioma:',
-        hero_urgency: 'Cupos Limitados Este Mes — Solo Quedan 12',
-        hero_title: '¿Tienes un ITIN? Tienes <span class="gt">Derechos Completos de Reparación de Crédito</span>',
-        hero_subtitle: 'Las tres agencias de crédito — TransUnion, Equifax y Experian — aceptan números ITIN. Bajo la FCRA y ECOA, tienes los <strong>mismos derechos de disputa</strong> que los titulares de SSN. Usamos la ley federal para impugnar cada elemento inexacto en tu archivo de crédito ITIN — y no pagas nada hasta que algo se elimine.',
-        vp_itin: '✓ Funciona Con ITIN — Sin SSN',
-        vp_bureaus: '✓ Las 3 Agencias Aceptan ITIN',
-        vp_fcra: '✓ Protegido por FCRA + ECOA',
-        vp_nopay: '✓ No Pagas Hasta Ver Progreso',
-        vp_guarantee: '✓ Garantía de 90 Días',
-        vp_price: '✓ Desde $99',
-        countdown_label: '⚡ La Inscripción Cierra En',
-        cd_hours: 'Horas',
-        cd_minutes: 'Minutos',
-        cd_seconds: 'Segundos',
-        hero_cta: '▶ Comenzar Mi Plan Básico Ahora ▶',
-        hero_price_note: '+ $29.99/mes monitoreo de crédito requerido • Tarifa única de auditoría $99 • Solo se cobra cuando hay progreso',
-        spots_text: 'Cupos Limitados Este Mes - <em>Solo Quedan 12</em>',
-        pain_title: '¿Te Suena Familiar? Los Titulares de ITIN Enfrentan Esto a Diario',
-        pain_subtitle: 'Tener un ITIN no significa que tienes menos derechos — pero el sistema lo hace parecer así. Nosotros lo arreglamos.',
-        pain1_title: 'Te dicen "no podemos ayudarte" porque tienes un ITIN',
-        pain1_desc: 'Incorrecto. Bajo la ECOA (15 U.S.C. § 1691), los acreedores no pueden discriminar por origen nacional. Tu archivo ITIN tiene los mismos derechos.',
-        pain2_title: 'Cobranzas o errores reportados en tu archivo de crédito ITIN',
-        pain2_desc: 'Las agencias aceptan ITIN — y la FCRA les obliga a investigar disputas de titulares de ITIN igual que las de titulares de SSN.',
-        pain3_title: 'No puedes obtener aprobación para hipoteca, auto o tarjeta de crédito',
-        pain3_desc: 'Los negativos inexactos en tu archivo ITIN bloquean aprobaciones. Los préstamos ITIN existen — pero solo si tu reporte está limpio.',
-        pain4_title: 'No sabes cómo disputar con un número ITIN',
-        pain4_desc: 'Las agencias tienen diferentes procedimientos de disputa ITIN. Nosotros sabemos exactamente cómo presentar ante TransUnion, Equifax y Experian con tu ITIN.',
-        feat_title: 'Todo Lo Que Obtienes Con El <span style="color:#60a5fa">Plan Básico ITIN</span>',
-        feat_subtitle: 'Reparación de crédito diseñada específicamente para titulares de ITIN. Conocemos los procedimientos ITIN de cada agencia, las leyes federales que te protegen, y exactamente cómo obtener resultados.',
-        f1_title: 'Auditoría Forense ITIN de 3 Agencias',
-        f1_desc: 'Tu archivo completo de crédito ITIN en TransUnion, Equifax y Experian — cada línea comercial, consulta y registro público revisado contra los estándares de precisión FCRA usando tu número ITIN.',
-        f2_title: 'Hoja de Ruta de Restauración Específica para ITIN',
-        f2_desc: 'Estrategia personalizada para archivos de crédito ITIN. Sabemos qué agencias requieren disputas por correo para titulares de ITIN vs. en línea, y mapeamos tus hitos de 30/60/90 días.',
-        f3_title: 'Hasta 15 Disputas por Estatuto/Mes',
-        f3_desc: 'Cartas de disputa personalizadas citando FCRA §611, §623, §605 y protecciones ECOA — presentadas ante cada agencia usando sus procedimientos específicos de disputa ITIN.',
-        f4_title: 'Reportes Mensuales de Progreso de Crédito ITIN',
-        f4_desc: 'Documentación de cada respuesta de agencia, eliminación, corrección y cambio de puntaje en tu archivo de crédito ITIN entregada en cada ciclo de facturación.',
-        f5_title: 'Soporte Bilingüe (Inglés y Español)',
-        f5_desc: 'Acceso directo con respuesta garantizada en un día hábil. Nuestro equipo se comunica en inglés y español para que nada se pierda en la traducción.',
-        f6_title: 'Biblioteca de Construcción de Crédito ITIN',
-        f6_desc: 'Cómo construir crédito con un ITIN, tarjetas aseguradas que aceptan ITIN, preparación hipotecaria ITIN, estrategia de utilización y protocolos de mantenimiento.',
-        vs_total_label: 'Valor Total de Todo Lo Anterior',
-        vs_pay_label: 'Tú Pagas Solo',
-        vs_per_month: '/mes',
-        vs_price_note: '+ $99 tarifa única de auditoría + $29.99/mes monitoreo<br><strong>Solo se cobra cuando se verifica progreso</strong>',
-        vs_cta: '▶ Reclamar Esta Oferta Ahora',
-        how_title: 'Cómo Funciona la Reparación de Crédito ITIN',
-        step1_title: 'Activar Monitoreo MyFreeScoreNow ($29.99/mes)',
-        step1_desc: 'Inscríbete usando tu ITIN — MyFreeScoreNow acepta números ITIN. Esto nos da visibilidad en tiempo real de tu archivo de crédito ITIN en las 3 agencias.',
-        step2_title: 'Paga Tu Tarifa Única de Auditoría ($99)',
-        step2_desc: 'Extraemos y analizamos tu archivo completo de crédito ITIN en las 3 agencias. Tu auditoría forense + hoja de ruta específica ITIN se entregan en 24–48 horas.',
-        step3_title: 'Revisa Tu Auditoría de Crédito ITIN y Hoja de Ruta',
-        step3_desc: 'Antes de enviar una sola disputa, ves exactamente qué hay en tu archivo ITIN, qué es impugnable, y nuestra estrategia para el proceso de disputa específico de cada agencia.',
-        step4_title: 'Presentamos Disputas Específicas de ITIN',
-        step4_desc: 'Cartas personalizadas citando FCRA §611, §623, §605 y ECOA §1691. Presentadas usando los procedimientos de disputa ITIN de cada agencia — algunas requieren correo, otras aceptan en línea.',
-        step5_title: 'Solo Se Te Cobra Cuando Hay Resultados',
-        step5_desc: 'Eliminaciones documentadas, correcciones o mejoras verificadas en tu archivo de crédito ITIN = tu tarifa mensual de $99. ¿Nada se movió? No se cobra. Punto.',
-        comp_title: '🔒 Los Titulares de ITIN Tienen Protección Federal Completa — Aquí Está la Ley',
-        comp1_title: 'Protegido por ECOA (15 U.S.C. § 1691)',
-        comp1_desc: 'La Ley de Igualdad de Oportunidades de Crédito prohíbe la discriminación por origen nacional. Los acreedores y agencias <strong>no pueden</strong> tratar tu archivo ITIN diferente que uno de SSN.',
-        comp2_title: 'FCRA — Mismos Derechos, Misma Ley',
-        comp2_desc: 'Bajo la FCRA, los titulares de ITIN tienen los <strong>mismos derechos</strong> de disputa que los de SSN. §611, §623, §605 — todos aplican a tu archivo ITIN. Ventanas de investigación de 30 días cumplidas.',
-        comp3_title: 'Cumplimiento CROA',
-        comp3_desc: 'Contrato por escrito proporcionado. Derecho de cancelación de 3 días honrado. Sin cargos anticipados hasta que los servicios se realicen. Divulgación completa per 15 U.S.C. § 1679c.',
-        comp4_title: 'FDCPA Aplicada',
-        comp4_desc: 'Cuentas de cobranza en tu archivo ITIN impugnadas bajo FDCPA. Derechos de validación de deuda (15 U.S.C. § 1692g) citados. Los cobradores no pueden discriminar por estatus ITIN.',
-        comp5_title: 'TSR + FTC + CFPB Alineados',
-        comp5_desc: 'Sin cargos anticipados per TSR. Cumplimiento de Sección 5 de la Ley FTC. Procedimientos de Regulación V y F del CFPB seguidos para todas las disputas ITIN.',
-        comp6_title: 'Cumplimiento de Ley Estatal',
-        comp6_desc: 'Cumplimiento con la Ley de Prácticas Injustas de Nuevo México. Derechos de cancelación estatales honrados. Los titulares de ITIN reciben todas las protecciones estatales aplicables.',
-        cta_title: '¿Listo Para Limpiar Tu <span style="color:#60a5fa">Archivo de Crédito ITIN</span>?',
-        cta_subtitle: 'Tu ITIN te da derechos crediticios bajo la ley federal. Comienza con tu auditoría de $99 — ve exactamente qué hay en tu archivo ITIN en las 3 agencias. Luego mira cómo impugnamos legalmente cada elemento inexacto — y solo paga cuando obtengamos resultados.',
-        guarantee_title: 'Garantía de Devolución de 90 Días',
-        guarantee_desc: 'Si no podemos mostrar una sola mejora verificada en 90 días, te devolvemos cada tarifa. Sin preguntas. Sin condiciones.',
-        final_cta: '▶ COMENZAR MI PLAN BÁSICO AHORA ▶',
-        final_price_note: 'Tarifa de auditoría $99 + monitoreo $29.99/mes para empezar. Tarifa mensual de $99 solo se cobra cuando el progreso es verificado.<br>Cancela en cualquier momento dentro de 3 días hábiles per derechos CROA.',
-        modal_title: 'Comienza Tu Plan Básico',
-        modal_subtitle: 'Ingresa tu información abajo. Después de enviar, serás dirigido al pago seguro para tu auditoría forense de $99.',
-        form_name: 'Nombre Completo *',
-        form_email: 'Correo Electrónico *',
-        form_phone: 'Número de Teléfono',
-        form_submit: 'Reclamar Mi Cupo — Auditoría $99',
-        form_secure: '🔒 Tu información es 100% segura y nunca se comparte.',
-        success_title: '¡Estás Dentro!',
-        success_desc: 'Tu información ha sido capturada. Completa estos dos pasos para comenzar tu reparación de crédito:',
-        sticky_cta: '▶ Comenzar Mi Plan Básico — $99'
-      },
-
-      // ===== CHINESE SIMPLIFIED (ZH) =====
-      zh: {
-        lang_label: '语言：',
-        hero_urgency: '本月名额有限 — 仅剩12个名额',
-        hero_title: '有ITIN？您拥有<span class="gt">完整的信用修复权利</span>',
-        hero_subtitle: '三大信用机构 — TransUnion、Equifax和Experian — 均接受ITIN号码。根据FCRA和ECOA，您拥有与SSN持有者<strong>完全相同的争议权利</strong>。我们运用联邦法律质疑您ITIN信用档案中的每一个不准确项目 — 在实际删除之前，您无需支付任何费用。',
-        vp_itin: '✓ 使用ITIN — 无需SSN',
-        vp_bureaus: '✓ 三大机构均接受ITIN',
-        vp_fcra: '✓ FCRA + ECOA保护',
-        vp_nopay: '✓ 无进展不收费',
-        vp_guarantee: '✓ 90天退款保证',
-        vp_price: '✓ 起价$99',
-        countdown_label: '⚡ 注册截止倒计时',
-        cd_hours: '小时',
-        cd_minutes: '分钟',
-        cd_seconds: '秒',
-        hero_cta: '▶ 立即开始我的基础计划 ▶',
-        hero_price_note: '+ 每月$29.99信用监控 • 一次性$99审计费 • 仅在有进展时收费',
-        spots_text: '本月名额有限 - <em>仅剩12个</em>',
-        pain_title: '听起来很熟悉？ITIN持有者每天都面临这些问题',
-        pain_subtitle: '拥有ITIN并不意味着您的权利更少 — 但制度让人感觉如此。我们来解决这个问题。',
-        pain1_title: '因为有ITIN就被告知"我们无法帮助您"',
-        pain1_desc: '错误。根据ECOA（15 U.S.C. § 1691），债权人不能基于国籍进行歧视。您的ITIN档案拥有同等权利。',
-        pain2_title: 'ITIN信用档案上有催收或错误报告',
-        pain2_desc: '信用机构接受ITIN — FCRA要求他们像调查SSN持有者的争议一样调查ITIN持有者的争议。',
-        pain3_title: '无法获得房贷、车贷或信用卡批准',
-        pain3_desc: '您ITIN档案上的不准确负面信息阻碍了审批。ITIN贷款是存在的 — 但前提是您的报告是干净的。',
-        pain4_title: '不知道如何用ITIN号码进行争议',
-        pain4_desc: '各信用机构有不同的ITIN争议程序。我们清楚知道如何使用您的ITIN向TransUnion、Equifax和Experian提交争议。',
-        feat_title: '<span style="color:#60a5fa">ITIN基础计划</span>包含的所有内容',
-        feat_subtitle: '专为ITIN持有者设计的信用修复服务。我们了解各机构的ITIN特定程序、保护您的联邦法律，以及如何获得切实成果。',
-        f1_title: 'ITIN三机构法医审计',
-        f1_desc: '使用您的ITIN号码对TransUnion、Equifax和Experian的完整ITIN信用档案进行审查 — 每一条交易记录、查询和公共记录都对照FCRA准确性标准进行核实。',
-        f2_title: 'ITIN专属修复路线图',
-        f2_desc: '为ITIN信用档案量身定制的策略。我们知道哪些机构要求ITIN持有者邮寄争议，哪些接受在线提交，并相应规划您的30/60/90天里程碑。',
-        f3_title: '每月最多15项法规争议',
-        f3_desc: '引用FCRA §611、§623、§605和ECOA保护条款的个性化争议信 — 使用各机构的ITIN特定争议程序提交。',
-        f4_title: '每月ITIN信用进度报告',
-        f4_desc: '记录每个机构的回复、删除、更正和您ITIN信用档案上的分数变化，在每个计费周期交付。',
-        f5_title: '双语支持（英语和西班牙语）',
-        f5_desc: '直接联系，保证一个工作日内回复。我们的团队使用英语和西班牙语沟通，确保没有任何信息遗漏。',
-        f6_title: 'ITIN信用建设资料库',
-        f6_desc: '如何用ITIN建立信用、接受ITIN的担保卡、ITIN房贷准备、利用率策略和信用维护方案。',
-        vs_total_label: '以上全部的总价值',
-        vs_pay_label: '您只需支付',
-        vs_per_month: '/月',
-        vs_price_note: '+ $99一次性审计费 + $29.99/月监控<br><strong>仅在验证有进展时收费</strong>',
-        vs_cta: '▶ 立即获取此优惠',
-        how_title: 'ITIN信用修复如何运作',
-        step1_title: '激活MyFreeScoreNow监控（$29.99/月）',
-        step1_desc: '使用您的ITIN注册 — MyFreeScoreNow接受ITIN号码。这让我们能实时查看您三大机构的ITIN信用档案，追踪每一次删除、变更和分数变动。',
-        step2_title: '支付一次性审计费（$99）',
-        step2_desc: '我们提取并分析您在三大机构的完整ITIN信用档案。您的法医审计+ITIN专属修复路线图将在24-48小时内交付。',
-        step3_title: '审查您的ITIN信用审计和路线图',
-        step3_desc: '在发送任何争议之前，您将准确看到ITIN档案上的内容、哪些可以质疑，以及我们针对各机构ITIN特定争议流程的策略。',
-        step4_title: '我们提交ITIN专属机构争议',
-        step4_desc: '引用FCRA §611、§623、§605和ECOA §1691保护条款的个性化信函。使用各机构的ITIN争议程序提交 — 有些需要邮寄，有些接受在线。我们全部处理。',
-        step5_title: '仅在有进展时收费',
-        step5_desc: '您ITIN信用档案上有记录的删除、更正或验证的分数提升 = 您的$99月费。没有变动？不收费。就是这样。',
-        comp_title: '🔒 ITIN持有者享有完整联邦保护 — 以下是法律依据',
-        comp1_title: 'ECOA保护（15 U.S.C. § 1691）',
-        comp1_desc: '《平等信贷机会法》禁止基于国籍的歧视。债权人和信用机构<strong>不能</strong>区别对待您的ITIN档案和SSN档案。',
-        comp2_title: 'FCRA — 相同权利，相同法律',
-        comp2_desc: '根据FCRA，ITIN持有者与SSN持有者拥有<strong>完全相同的</strong>争议权利。§611、§623、§605 — 全部适用于您的ITIN信用档案。30天调查期强制执行。',
-        comp3_title: 'CROA合规',
-        comp3_desc: '提供书面合同。3天取消权保证。服务完成前不收取预付费用。完全符合15 U.S.C. § 1679c消费者披露要求。',
-        comp4_title: 'FDCPA执行',
-        comp4_desc: '根据FDCPA质疑您ITIN档案上的催收账户。引用债务验证权利（15 U.S.C. § 1692g）。催收者不得因ITIN身份进行歧视。',
-        comp5_title: 'TSR + FTC + CFPB对齐',
-        comp5_desc: '根据TSR无预付费。符合FTC法第5节。CFPB法规V和F程序适用于所有ITIN争议。',
-        comp6_title: '州法律合规',
-        comp6_desc: '符合新墨西哥州《不公平商业行为法》。州取消权保证。ITIN持有者享有所有适用的州保护。',
-        cta_title: '准备好清理您的<span style="color:#60a5fa">ITIN信用档案</span>了吗？',
-        cta_subtitle: '您的ITIN赋予您联邦法律下的信用权利。从$99审计开始 — 准确了解您在三大机构的ITIN档案内容。然后看我们合法质疑每一个不准确项目 — 只在我们取得成果时付费。',
-        guarantee_title: '90天退款保证',
-        guarantee_desc: '如果90天内我们无法展示任何一项经验证的改善，您将获得全额退款。无需理由。无附加条件。',
-        final_cta: '▶ 立即开始我的基础计划 ▶',
-        final_price_note: '$99审计费 + $29.99/月监控开始。月费$99仅在进展验证后收取。<br>根据CROA权利，可在3个工作日内随时取消。',
-        modal_title: '开始您的基础计划',
-        modal_subtitle: '请在下方填写您的信息。提交后，您将被引导至$99法医审计的安全支付页面。',
-        form_name: '全名 *',
-        form_email: '电子邮件 *',
-        form_phone: '电话号码',
-        form_submit: '确认名额 — $99审计',
-        form_secure: '🔒 您的信息100%安全，绝不共享。',
-        success_title: '您已加入！',
-        success_desc: '您的信息已记录。完成以下两个步骤开始您的信用修复：',
-        sticky_cta: '▶ 开始我的基础计划 — $99'
-      },
-
-      // ===== VIETNAMESE (VI) =====
-      vi: {
-        lang_label: 'Ngôn ngữ:',
-        hero_urgency: 'Số Lượng Có Hạn Trong Tháng Này — Chỉ Còn 12 Suất',
-        hero_title: 'Có ITIN? Bạn Có <span class="gt">Quyền Sửa Chữa Tín Dụng Đầy Đủ</span>',
-        hero_subtitle: 'Cả ba cơ quan tín dụng — TransUnion, Equifax và Experian — đều chấp nhận số ITIN. Theo FCRA và ECOA, bạn có <strong>quyền tranh chấp giống hệt</strong> như người có SSN. Chúng tôi sử dụng luật liên bang để phản đối mọi thông tin không chính xác trên hồ sơ tín dụng ITIN của bạn — và bạn không phải trả một xu nào cho đến khi có kết quả thực sự.',
-        vp_itin: '✓ Hoạt Động Với ITIN — Không Cần SSN',
-        vp_bureaus: '✓ Cả 3 Cơ Quan Chấp Nhận ITIN',
-        vp_fcra: '✓ Được FCRA + ECOA Bảo Vệ',
-        vp_nopay: '✓ Không Trả Cho Đến Khi Có Tiến Triển',
-        vp_guarantee: '✓ Bảo Đảm Hoàn Tiền 90 Ngày',
-        vp_price: '✓ Bắt Đầu Từ $99',
-        countdown_label: '⚡ Đăng Ký Kết Thúc Trong',
-        cd_hours: 'Giờ',
-        cd_minutes: 'Phút',
-        cd_seconds: 'Giây',
-        hero_cta: '▶ Bắt Đầu Gói Cơ Bản Ngay ▶',
-        hero_price_note: '+ $29.99/tháng giám sát tín dụng • Phí kiểm toán một lần $99 • Chỉ tính phí khi có tiến triển',
-        spots_text: 'Số Lượng Có Hạn Trong Tháng — <em>Chỉ Còn 12 Suất</em>',
-        pain_title: 'Nghe Quen Không? Người Có ITIN Gặp Những Điều Này Mỗi Ngày',
-        pain_subtitle: 'Có ITIN không có nghĩa bạn có ít quyền hơn — nhưng hệ thống khiến bạn cảm thấy vậy. Chúng tôi sẽ sửa điều đó.',
-        pain1_title: 'Bị nói "chúng tôi không thể giúp bạn" vì bạn có ITIN',
-        pain1_desc: 'Sai. Theo ECOA (15 U.S.C. § 1691), chủ nợ không được phân biệt đối xử dựa trên nguồn gốc quốc gia. Hồ sơ ITIN của bạn có cùng quyền.',
-        pain2_title: 'Thu nợ hoặc lỗi báo cáo trên hồ sơ tín dụng ITIN',
-        pain2_desc: 'Các cơ quan chấp nhận ITIN — và FCRA yêu cầu họ điều tra tranh chấp từ người có ITIN giống như người có SSN.',
-        pain3_title: 'Không được duyệt vay mua nhà, mua xe hoặc thẻ tín dụng',
-        pain3_desc: 'Thông tin tiêu cực không chính xác trên hồ sơ ITIN chặn phê duyệt. Vay ITIN có tồn tại — nhưng chỉ khi báo cáo sạch.',
-        pain4_title: 'Không biết cách tranh chấp với số ITIN',
-        pain4_desc: 'Các cơ quan có quy trình tranh chấp ITIN khác nhau. Chúng tôi biết chính xác cách nộp với TransUnion, Equifax và Experian bằng ITIN của bạn.',
-        feat_title: 'Tất Cả Những Gì Bạn Nhận Được Với <span style="color:#60a5fa">Gói Cơ Bản ITIN</span>',
-        feat_subtitle: 'Sửa chữa tín dụng được xây dựng đặc biệt cho người có ITIN. Chúng tôi biết quy trình ITIN của từng cơ quan, luật liên bang bảo vệ bạn, và chính xác cách đạt kết quả.',
-        f1_title: 'Kiểm Toán Pháp Y ITIN 3 Cơ Quan',
-        f1_desc: 'Hồ sơ tín dụng ITIN đầy đủ tại TransUnion, Equifax và Experian — mọi dòng giao dịch, yêu cầu và hồ sơ công khai được xem xét theo tiêu chuẩn chính xác FCRA.',
-        f2_title: 'Lộ Trình Phục Hồi Riêng Cho ITIN',
-        f2_desc: 'Chiến lược tùy chỉnh cho hồ sơ tín dụng ITIN. Chúng tôi biết cơ quan nào yêu cầu tranh chấp qua thư cho ITIN và lập kế hoạch mốc 30/60/90 ngày.',
-        f3_title: 'Tối Đa 15 Tranh Chấp Theo Luật/Tháng',
-        f3_desc: 'Thư tranh chấp cá nhân hóa trích dẫn FCRA §611, §623, §605 và bảo vệ ECOA — nộp tại mỗi cơ quan theo quy trình tranh chấp ITIN.',
-        f4_title: 'Báo Cáo Tiến Độ Tín Dụng ITIN Hàng Tháng',
-        f4_desc: 'Tài liệu ghi nhận mọi phản hồi, xóa, sửa và thay đổi điểm số trên hồ sơ tín dụng ITIN được giao mỗi chu kỳ thanh toán.',
-        f5_title: 'Hỗ Trợ Song Ngữ (Tiếng Anh & Tây Ban Nha)',
-        f5_desc: 'Truy cập trực tiếp với cam kết phản hồi trong một ngày làm việc. Đội ngũ giao tiếp bằng tiếng Anh và Tây Ban Nha.',
-        f6_title: 'Thư Viện Xây Dựng Tín Dụng ITIN',
-        f6_desc: 'Cách xây dựng tín dụng với ITIN, thẻ bảo đảm chấp nhận ITIN, chuẩn bị vay mua nhà ITIN, chiến lược sử dụng và quy trình duy trì tín dụng.',
-        vs_total_label: 'Tổng Giá Trị Tất Cả Ở Trên',
-        vs_pay_label: 'Bạn Chỉ Trả',
-        vs_per_month: '/tháng',
-        vs_price_note: '+ $99 phí kiểm toán một lần + $29.99/tháng giám sát<br><strong>Chỉ tính phí khi tiến triển được xác minh</strong>',
-        vs_cta: '▶ Nhận Ưu Đãi Này Ngay',
-        how_title: 'Quy Trình Sửa Chữa Tín Dụng ITIN',
-        step1_title: 'Kích Hoạt Giám Sát MyFreeScoreNow ($29.99/tháng)',
-        step1_desc: 'Đăng ký bằng ITIN — MyFreeScoreNow chấp nhận số ITIN. Điều này cho chúng tôi khả năng theo dõi trực tiếp hồ sơ tín dụng ITIN tại cả 3 cơ quan.',
-        step2_title: 'Thanh Toán Phí Kiểm Toán Một Lần ($99)',
-        step2_desc: 'Chúng tôi kéo và phân tích hồ sơ tín dụng ITIN đầy đủ tại 3 cơ quan. Kiểm toán + lộ trình ITIN được giao trong 24-48 giờ.',
-        step3_title: 'Xem Xét Kiểm Toán Tín Dụng ITIN & Lộ Trình',
-        step3_desc: 'Trước khi gửi bất kỳ tranh chấp nào, bạn sẽ thấy chính xác những gì có trên hồ sơ ITIN, những gì có thể tranh chấp, và chiến lược của chúng tôi.',
-        step4_title: 'Chúng Tôi Nộp Tranh Chấp ITIN Cho Từng Cơ Quan',
-        step4_desc: 'Thư cá nhân trích dẫn FCRA §611, §623, §605 và ECOA §1691. Nộp theo quy trình tranh chấp ITIN của từng cơ quan — có nơi yêu cầu thư, có nơi chấp nhận trực tuyến.',
-        step5_title: 'Chỉ Tính Phí Khi Có Kết Quả',
-        step5_desc: 'Xóa, sửa hoặc cải thiện điểm được xác minh trên hồ sơ tín dụng ITIN = phí $99/tháng. Không có thay đổi? Không tính phí. Chấm hết.',
-        comp_title: '🔒 Người Có ITIN Được Bảo Vệ Đầy Đủ Bởi Luật Liên Bang',
-        comp1_title: 'ECOA Bảo Vệ (15 U.S.C. § 1691)',
-        comp1_desc: 'Đạo luật Cơ hội Tín dụng Bình đẳng cấm phân biệt đối xử dựa trên nguồn gốc quốc gia. Chủ nợ <strong>không thể</strong> đối xử khác với hồ sơ ITIN.',
-        comp2_title: 'FCRA — Cùng Quyền, Cùng Luật',
-        comp2_desc: 'Theo FCRA, người có ITIN có <strong>quyền tranh chấp giống hệt</strong> như người có SSN. §611, §623, §605 — tất cả áp dụng cho hồ sơ ITIN.',
-        comp3_title: 'Tuân Thủ CROA',
-        comp3_desc: 'Hợp đồng bằng văn bản. Quyền hủy 3 ngày. Không thu phí trước khi dịch vụ hoàn thành. Tiết lộ đầy đủ theo 15 U.S.C. § 1679c.',
-        comp4_title: 'FDCPA Thực Thi',
-        comp4_desc: 'Tài khoản thu nợ trên hồ sơ ITIN được tranh chấp theo FDCPA. Quyền xác minh nợ (15 U.S.C. § 1692g). Không phân biệt đối xử ITIN.',
-        comp5_title: 'TSR + FTC + CFPB Phù Hợp',
-        comp5_desc: 'Không phí trước theo TSR. Tuân thủ Mục 5 Đạo luật FTC. Quy trình CFPB Quy định V và F cho mọi tranh chấp ITIN.',
-        comp6_title: 'Tuân Thủ Luật Tiểu Bang',
-        comp6_desc: 'Tuân thủ Đạo luật Thực Hành Không Công Bằng New Mexico. Quyền hủy tiểu bang được tôn trọng. Người có ITIN nhận mọi bảo vệ tiểu bang.',
-        cta_title: 'Sẵn Sàng Làm Sạch <span style="color:#60a5fa">Hồ Sơ Tín Dụng ITIN</span>?',
-        cta_subtitle: 'ITIN cho bạn quyền tín dụng theo luật liên bang. Bắt đầu với kiểm toán $99 — xem chính xác nội dung hồ sơ ITIN tại cả 3 cơ quan. Rồi xem chúng tôi hợp pháp phản đối mọi thông tin không chính xác — chỉ trả khi có kết quả.',
-        guarantee_title: 'Bảo Đảm Hoàn Tiền 90 Ngày',
-        guarantee_desc: 'Nếu 90 ngày không có cải thiện được xác minh, bạn được hoàn lại toàn bộ. Không câu hỏi. Không điều kiện.',
-        final_cta: '▶ BẮT ĐẦU GÓI CƠ BẢN NGAY ▶',
-        final_price_note: 'Phí kiểm toán $99 + giám sát $29.99/tháng. Phí $99/tháng chỉ khi tiến triển được xác minh.<br>Hủy trong 3 ngày làm việc theo quyền CROA.',
-        modal_title: 'Bắt Đầu Gói Cơ Bản',
-        modal_subtitle: 'Nhập thông tin bên dưới. Sau khi gửi, bạn sẽ được chuyển đến thanh toán an toàn cho kiểm toán pháp y $99.',
-        form_name: 'Họ và Tên *',
-        form_email: 'Địa Chỉ Email *',
-        form_phone: 'Số Điện Thoại',
-        form_submit: 'Đăng Ký — Kiểm Toán $99',
-        form_secure: '🔒 Thông tin của bạn 100% an toàn và không bao giờ được chia sẻ.',
-        success_title: 'Bạn Đã Tham Gia!',
-        success_desc: 'Thông tin đã được ghi nhận. Hoàn thành hai bước sau để bắt đầu sửa chữa tín dụng:',
-        sticky_cta: '▶ Bắt Đầu Gói Cơ Bản — $99'
-      }
-    };
-
-    // ===== TRANSLATION ENGINE =====
-    function switchLang(lang) {
-      currentLang = lang;
-      localStorage.setItem('funnel_lang', lang);
-      document.documentElement.lang = lang;
-      
-      // Update active button
-      document.querySelectorAll('.lang-btn').forEach(function(btn) {
-        btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
-      });
-      
-      // If English, restore original content
-      if (lang === 'en') {
-        document.querySelectorAll('[data-i18n]').forEach(function(el) {
-          var orig = el.getAttribute('data-i18n-orig');
-          if (orig !== null) {
-            if (el.getAttribute('data-i18n-html') === '1') {
-              el.innerHTML = orig;
-            } else {
-              el.innerHTML = orig;
-            }
-          }
-        });
-        return;
-      }
-      
-      var dict = translations[lang];
-      if (!dict) return;
-      
-      document.querySelectorAll('[data-i18n]').forEach(function(el) {
-        var key = el.getAttribute('data-i18n');
-        // Save original English on first switch
-        if (!el.hasAttribute('data-i18n-orig')) {
-          el.setAttribute('data-i18n-orig', el.innerHTML);
-        }
-        if (dict[key]) {
-          el.innerHTML = dict[key];
-        }
-      });
-    }
-
-    // Auto-detect language on load
-    function detectLang() {
-      var saved = localStorage.getItem('funnel_lang');
-      if (saved && translations[saved]) { switchLang(saved); return; }
-      var browserLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
-      if (browserLang.startsWith('es')) switchLang('es');
-      else if (browserLang.startsWith('zh')) switchLang('zh');
-      else if (browserLang.startsWith('vi')) switchLang('vi');
-    }
-
-    document.addEventListener('DOMContentLoaded',function(){lucide.createIcons();initP();initAO();initSB();initImgLoad();detectLang()});
-
-    // Countdown Timer
-    (function(){let h=23,m=59,s=59;const hE=document.getElementById('cd-h'),mE=document.getElementById('cd-m'),sE=document.getElementById('cd-s');setInterval(function(){if(s>0)s--;else if(m>0){m--;s=59}else if(h>0){h--;m=59;s=59}else{h=23;m=59;s=59}hE.textContent=String(h).padStart(2,'0');mE.textContent=String(m).padStart(2,'0');sE.textContent=String(s).padStart(2,'0')},1000)})();
-
-    // Particles
-    function initP(){const c=document.getElementById('particles');if(!c)return;for(let i=0;i<30;i++){const p=document.createElement('div');p.className='hpd';p.style.left=Math.random()*100+'%';p.style.top=Math.random()*100+'%';p.style.setProperty('--tx',(Math.random()*200-100)+'px');p.style.setProperty('--ty',(Math.random()*200-100)+'px');p.style.setProperty('--duration',(Math.random()*15+10)+'s');c.appendChild(p)}}
-
-    // Animate On Scroll
-    function initAO(){const o=new IntersectionObserver(function(e){e.forEach(function(en){if(en.isIntersecting){en.target.classList.add('v')}})},{threshold:.08,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.ao').forEach(function(el){o.observe(el)})}
-
-    // Sticky Bar
-    function initSB(){const b=document.getElementById('stickyBar'),h=document.getElementById('hero');if(!b||!h)return;window.addEventListener('scroll',function(){b.classList.toggle('v',h.getBoundingClientRect().bottom<0)},{ passive:true })}
-
-    // Image load animation
-    function initImgLoad(){document.querySelectorAll('.sec-img img, .hero-img img, .guarantee-img img, .cta-banner-img img').forEach(function(img){if(img.complete){img.style.opacity='1'}else{img.style.opacity='0';img.style.transition='opacity .6s ease';img.addEventListener('load',function(){img.style.opacity='1'})}})}
-
-    // Modal
-    function openModal(){document.getElementById('leadModal').classList.add('active');document.body.style.overflow='hidden'}
-    function closeModal(){document.getElementById('leadModal').classList.remove('active');document.body.style.overflow=''}
-    document.getElementById('leadModal')?.addEventListener('click',function(e){if(e.target===this)closeModal()});
-    document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal()});
-
-    // Lead Submission
-    async function handleSubmit(e){
-      e.preventDefault();
-      const btn=document.getElementById('submitBtn');
-      const name=document.getElementById('name').value.trim();
-      const email=document.getElementById('email').value.trim();
-      const phone=document.getElementById('phone').value.trim();
-      btn.disabled=true;btn.textContent='Submitting...';
-      try{
-        const u=new URLSearchParams(window.location.search);
-        const res=await fetch('/api/leads',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,phone,plan:'basic',utm_source:u.get('utm_source'),utm_medium:u.get('utm_medium'),utm_campaign:u.get('utm_campaign')})});
-        const data=await res.json();
-        if(data.success){
-          currentLeadId=data.data.leadId;currentEmail=email;currentName=name;
-          document.getElementById('formView').style.display='none';
-          document.getElementById('successView').style.display='block';
-          lucide.createIcons();
-        }else{alert(data.error||'Something went wrong.');btn.disabled=false;btn.textContent='Claim My Spot — $99 Audit'}
-      }catch(err){alert('Network error. Please try again.');btn.disabled=false;btn.textContent='Claim My Spot — $99 Audit'}
-    }
-
-    // Stripe Checkout
-    async function startCheckout(){
-      try{
-        const res=await fetch('/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:currentEmail,name:currentName,leadId:currentLeadId})});
-        const data=await res.json();
-        if(data.success&&data.checkoutUrl){window.location.href=data.checkoutUrl}
-        else{alert('Payment system is being configured. Please contact us at rickjefferson@rickjeffersonsolutions.com to complete your enrollment.')}
-      }catch(err){alert('Payment system error. Please contact us at rickjefferson@rickjeffersonsolutions.com')}
-    }
+  let leadId=null,leadEmail=null,leadName=null;
+  async function handleSubmit(e){
+    e.preventDefault();
+    const btn=document.getElementById('submitBtn');
+    btn.disabled=true;btn.textContent='Processing...';
+    const name=document.getElementById('fname').value;
+    const email=document.getElementById('femail').value;
+    const phone=document.getElementById('fphone').value;
+    try{
+      const res=await fetch('/api/leads',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,phone,plan:'${plan}',locale:'${locale}'})});
+      const data=await res.json();
+      if(data.success){leadId=data.data?.leadId;leadEmail=email;leadName=name;document.getElementById('leadForm').style.display='none';document.getElementById('successView').style.display='block';}
+      else{alert(data.error||'Error');btn.disabled=false;btn.textContent='${T('form_submit')} — $${cfg.price}';}
+    }catch(err){alert('Connection error');btn.disabled=false;btn.textContent='${T('form_submit')} — $${cfg.price}';}
+  }
+  async function startCheckout(){
+    try{
+      const res=await fetch('/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:leadEmail,name:leadName,leadId,plan:'${plan}'})});
+      const data=await res.json();
+      if(data.checkoutUrl)window.location.href=data.checkoutUrl;
+      else alert('Payment error. Email: rickjefferson@rickjeffersonsolutions.com');
+    }catch(err){alert('Connection error.');}
+  }
   </script>
-</body>
-</html>`
+  `)
 }
+
+// ═══════════════════════════════════════════════════════════════
+// API ROUTES
+// ═══════════════════════════════════════════════════════════════
+app.get('/api/health', (c) => {
+  return c.json({ status: 'healthy', project: 'rj-itin-funnels', timestamp: new Date().toISOString(), locales: SUPPORTED_LOCALES, plans: Object.keys(PLANS) })
+})
+
+app.post('/api/leads', async (c) => {
+  try {
+    const { name, email, phone, plan, locale } = await c.req.json()
+    if (!name || !email) return c.json({ success: false, error: 'Name and email required' }, 400)
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return c.json({ success: false, error: 'Invalid email' }, 400)
+    console.log(`[LEAD] ${name} <${email}> plan=${plan||'basic'} locale=${locale||'en'}`)
+    const mfsnUrl = getMfsnUrl(c, plan || 'basic')
+    return c.json({ success: true, data: { leadId: Date.now(), name, email, plan: plan || 'basic', mfsnUrl } })
+  } catch (err) { return c.json({ success: false, error: 'Server error' }, 500) }
+})
+
+app.post('/api/checkout', async (c) => {
+  try {
+    const { email, name, leadId, plan } = await c.req.json()
+    const planKey = (plan || 'basic') as keyof typeof PLANS
+    const cfg = PLANS[planKey] || PLANS.basic
+    if (!c.env.STRIPE_SECRET_KEY) return c.json({ success: false, error: 'Payment not configured' }, 503)
+    const params = new URLSearchParams()
+    params.append('mode', 'payment')
+    params.append('success_url', `${c.req.header('origin') || 'https://rj-itin-funnels.pages.dev'}/en/success?plan=${planKey}`)
+    params.append('cancel_url', `${c.req.header('origin') || 'https://rj-itin-funnels.pages.dev'}/en/${planKey}?canceled=true`)
+    params.append('line_items[0][price_data][currency]', 'usd')
+    params.append('line_items[0][price_data][product_data][name]', `Forensic 3-Bureau ITIN/SSN Credit Audit — ${planKey.charAt(0).toUpperCase() + planKey.slice(1)} Plan`)
+    params.append('line_items[0][price_data][unit_amount]', String(cfg.stripeCents))
+    params.append('line_items[0][quantity]', '1')
+    params.append('payment_method_types[0]', 'card')
+    if (email) params.append('customer_email', email)
+    params.append('metadata[plan]', planKey)
+    if (leadId) params.append('metadata[lead_id]', String(leadId))
+    if (name) params.append('metadata[customer_name]', name)
+
+    const res = await fetch('https://api.stripe.com/v1/checkout/sessions', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${c.env.STRIPE_SECRET_KEY}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params.toString()
+    })
+    const session = await res.json() as any
+    if (session.error) return c.json({ success: false, error: 'Payment session failed' }, 500)
+    return c.json({ success: true, checkoutUrl: session.url, sessionId: session.id })
+  } catch (err) { return c.json({ success: false, error: 'Checkout error' }, 500) }
+})
+
+// ═══════════════════════════════════════════════════════════════
+// PAGE ROUTES — Auto-detect locale and serve pages
+// ═══════════════════════════════════════════════════════════════
+
+// Root redirect to detected locale
+app.get('/', (c) => {
+  const locale = detectLocale(c)
+  return c.redirect(`/${locale}`)
+})
+
+// Locale home pages
+for (const loc of SUPPORTED_LOCALES) {
+  app.get(`/${loc}`, (c) => c.html(mainFunnelHTML(loc)))
+
+  // Plan pages
+  for (const plan of ['basic', 'professional', 'premium'] as const) {
+    app.get(`/${loc}/${plan}`, (c) => {
+      const mfsnUrl = getMfsnUrl(c, plan)
+      return c.html(planPageHTML(loc, plan, mfsnUrl))
+    })
+  }
+
+  // Legal page
+  app.get(`/${loc}/legal`, (c) => {
+    const T = (key: string) => t(loc, key)
+    return c.html(pageLayout(loc, `${T('nav_legal')} — ${T('site_title')}`, `
+      <section style="padding:4rem 0">
+        <div class="cs">
+          <h1 style="font-size:2rem;font-weight:800;margin-bottom:1rem">${T('comp_title')}</h1>
+          <p style="color:#9ca3af;margin-bottom:2rem">${T('comp_notice')}</p>
+          <div style="display:flex;flex-direction:column;gap:1rem">
+            <div class="comp-item"><h4>CROA (15 U.S.C. § 1679)</h4><p>${T('comp_croa')}</p></div>
+            <div class="comp-item"><h4>FCRA (15 U.S.C. § 1681)</h4><p>${T('comp_fcra')}</p></div>
+            <div class="comp-item"><h4>ECOA (15 U.S.C. § 1691)</h4><p>${T('comp_ecoa')}</p></div>
+            <div class="comp-item"><h4>FDCPA (15 U.S.C. § 1692)</h4><p>${T('comp_fdcpa')}</p></div>
+            <div class="comp-item"><h4>TSR / FTC / CFPB</h4><p>${T('comp_tsr')}</p></div>
+            <div class="comp-item"><h4>Identity Policy</h4><p>${T('comp_identity')}</p></div>
+          </div>
+          <p style="margin-top:2rem"><a href="/${loc}" class="btn-secondary">← ${T('back_home')}</a></p>
+        </div>
+      </section>
+    `))
+  })
+
+  // Privacy
+  app.get(`/${loc}/privacy`, (c) => {
+    const T = (key: string) => t(loc, key)
+    return c.html(pageLayout(loc, `${T('nav_privacy')} — ${T('site_title')}`, `
+      <section style="padding:4rem 0">
+        <div class="cs">
+          <h1 style="font-size:2rem;font-weight:800;margin-bottom:1rem">${T('nav_privacy')}</h1>
+          <p style="color:#9ca3af;margin-bottom:2rem">Last Updated: February 23, 2026</p>
+          <div style="color:#d1d5db;font-size:.9rem;line-height:1.8">
+            <p>RJ Business Solutions respects your privacy. We collect contact info, ITIN/SSN (for bureau communication only), payment info via Stripe, and site usage data. We never sell your data. We do not collect immigration status.</p>
+            <p style="margin-top:1rem">Data shared only with: credit bureaus (for disputes), Stripe (for payments), MyFreeScoreNow (for monitoring). TLS/SSL encrypted. PCI-DSS compliant via Stripe.</p>
+            <p style="margin-top:1rem">${T('comp_contact')} <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa">rickjefferson@rickjeffersonsolutions.com</a></p>
+          </div>
+          <p style="margin-top:2rem"><a href="/${loc}" class="btn-secondary">← ${T('back_home')}</a></p>
+        </div>
+      </section>
+    `))
+  })
+
+  // Terms
+  app.get(`/${loc}/terms`, (c) => {
+    const T = (key: string) => t(loc, key)
+    return c.html(pageLayout(loc, `${T('nav_terms')} — ${T('site_title')}`, `
+      <section style="padding:4rem 0">
+        <div class="cs">
+          <h1 style="font-size:2rem;font-weight:800;margin-bottom:1rem">${T('nav_terms')}</h1>
+          <p style="color:#9ca3af;margin-bottom:2rem">Last Updated: February 23, 2026</p>
+          <div style="color:#d1d5db;font-size:.9rem;line-height:1.8">
+            <p>RJ Business Solutions provides credit repair services for SSN and ITIN holders under CROA, FCRA, ECOA. Plans: Basic ($99/mo), Professional ($149/mo), Premium ($199/mo). Monthly fees charged only when verifiable progress documented.</p>
+            <p style="margin-top:1rem">3-day cancellation right under CROA. 90-day money-back guarantee on all plans. MyFreeScoreNow monitoring ($29.99/mo) required. We do not guarantee specific results.</p>
+            <p style="margin-top:1rem">${T('comp_contact')} <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa">rickjefferson@rickjeffersonsolutions.com</a></p>
+          </div>
+          <p style="margin-top:2rem"><a href="/${loc}" class="btn-secondary">← ${T('back_home')}</a></p>
+        </div>
+      </section>
+    `))
+  })
+
+  // Success
+  app.get(`/${loc}/success`, (c) => {
+    const T = (key: string) => t(loc, key)
+    return c.html(pageLayout(loc, `Payment Confirmed — ${T('site_title')}`, `
+      <section style="padding:5rem 0;text-align:center;min-height:60vh;display:flex;align-items:center">
+        <div class="cx">
+          <div style="font-size:4rem;margin-bottom:1rem">✅</div>
+          <h1 style="font-size:2rem;font-weight:800;margin-bottom:1rem">Payment Confirmed!</h1>
+          <p style="color:#9ca3af;font-size:1.1rem;margin-bottom:2rem">Your forensic ITIN/SSN credit audit fee has been received. Check your email for next steps and audit delivery within 24–48 hours.</p>
+          <a href="${getMfsnUrl(c, 'basic')}" target="_blank" class="btn-primary" style="animation:none">Activate MyFreeScoreNow →</a>
+          <p style="margin-top:2rem"><a href="/${loc}" style="color:#60a5fa;font-size:.9rem">← ${T('back_home')}</a></p>
+        </div>
+      </section>
+    `))
+  })
+}
+
+// Fallback redirects for non-locale paths
+app.get('/basic', (c) => c.redirect(`/${detectLocale(c)}/basic`))
+app.get('/professional', (c) => c.redirect(`/${detectLocale(c)}/professional`))
+app.get('/premium', (c) => c.redirect(`/${detectLocale(c)}/premium`))
+app.get('/legal', (c) => c.redirect(`/${detectLocale(c)}/legal`))
+app.get('/privacy', (c) => c.redirect(`/${detectLocale(c)}/privacy`))
+app.get('/terms', (c) => c.redirect(`/${detectLocale(c)}/terms`))
+app.get('/success', (c) => c.redirect(`/${detectLocale(c)}/success`))
 
 export default app
