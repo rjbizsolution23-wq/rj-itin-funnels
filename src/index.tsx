@@ -404,65 +404,162 @@ function successPageHTML(): string {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Payment Confirmed | Clean It Up ITIN Credit Repair — RJ Business Solutions</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Noto+Sans+SC:wght@400;600;700;900&family=Noto+Sans:wght@400;600;700;900&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'Inter',sans-serif;background:#030712;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
-    .card{max-width:560px;width:100%;background:#111827;border:1px solid rgba(74,222,128,0.3);border-radius:1.5rem;padding:3rem;text-align:center}
+    body{font-family:'Inter','Noto Sans',-apple-system,BlinkMacSystemFont,sans-serif;background:#030712;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0}
+    /* ===== LANGUAGE SWITCHER ===== */
+    .lang-bar{position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(90deg,#1e1b4b,#172554);border-bottom:1px solid rgba(59,130,246,0.3);padding:.35rem 1rem;display:flex;align-items:center;justify-content:center;gap:.4rem;font-size:.8rem;flex-wrap:wrap}
+    .lang-label{color:#9ca3af;margin-right:.15rem;font-size:.7rem}
+    .lang-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#d1d5db;padding:.25rem .6rem;border-radius:6px;font-size:.72rem;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:.3rem;font-family:inherit;white-space:nowrap}
+    .lang-btn:hover{background:rgba(59,130,246,.3);border-color:rgba(59,130,246,.5);color:#fff}
+    .lang-btn.active{background:linear-gradient(135deg,#3b82f6,#06b6d4);border-color:transparent;color:#fff;font-weight:700}
+    .lang-btn .flag{font-size:.95rem;line-height:1}
+    @media(max-width:600px){.lang-bar{gap:.25rem;padding:.3rem .5rem}.lang-btn{padding:.2rem .45rem;font-size:.65rem}.lang-label{display:none}}
+    /* ===== PAGE CONTENT ===== */
+    .page-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:4rem 2rem 2rem;width:100%}
+    .success-logo{margin-bottom:1.5rem}
+    .success-logo img{height:40px;width:auto;border-radius:6px}
+    .card{max-width:580px;width:100%;background:#111827;border:1px solid rgba(74,222,128,0.3);border-radius:1.5rem;padding:3rem;text-align:center;box-shadow:0 16px 64px rgba(0,0,0,.4)}
     .icon{width:80px;height:80px;color:#4ade80;margin:0 auto 1.5rem}
     h1{font-size:2rem;font-weight:900;margin-bottom:0.75rem}
     .sub{color:#9ca3af;font-size:1.1rem;margin-bottom:2rem;line-height:1.6}
     .steps{text-align:left;margin-bottom:2rem}
-    .step{display:flex;gap:1rem;padding:1rem;background:rgba(30,58,138,0.2);border:1px solid rgba(59,130,246,0.2);border-radius:0.75rem;margin-bottom:0.75rem}
+    .step{display:flex;gap:1rem;padding:1rem;background:rgba(30,58,138,0.2);border:1px solid rgba(59,130,246,0.2);border-radius:0.75rem;margin-bottom:0.75rem;transition:border-color .3s}
+    .step:hover{border-color:rgba(59,130,246,.5)}
     .step-num{width:32px;height:32px;background:linear-gradient(135deg,#3b82f6,#06b6d4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.85rem;flex-shrink:0}
     .step h3{font-size:0.95rem;font-weight:700;margin-bottom:0.25rem}
     .step p{color:#9ca3af;font-size:0.85rem}
     .btn{display:inline-flex;align-items:center;gap:0.5rem;background:linear-gradient(135deg,#3b82f6,#06b6d4);color:#fff;font-weight:800;font-size:1.1rem;padding:1rem 2rem;border-radius:0.75rem;text-decoration:none;transition:all 0.3s}
     .btn:hover{opacity:0.9;transform:translateY(-2px)}
-    .footer{margin-top:2rem;color:#6b7280;font-size:0.8rem}
+    .home-link{display:inline-flex;align-items:center;gap:.4rem;color:#60a5fa;font-size:.9rem;margin-top:1.5rem;text-decoration:none;transition:color .2s}
+    .home-link:hover{color:#93c5fd}
+    .footer-bar{width:100%;padding:1.5rem;background:#111827;border-top:1px solid #1f2937;text-align:center}
+    .footer-bar p{color:#6b7280;font-size:.78rem;margin:0}
+    .footer-bar a{color:#60a5fa}
   </style>
 </head>
 <body>
-  <div class="card">
-    <div class="icon"><i data-lucide="check-circle-2"></i></div>
-    <h1>Payment Confirmed!</h1>
-    <p class="sub">Your $99 forensic ITIN/SSN credit audit fee has been received. Here's what happens next:</p>
-
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <div>
-          <h3>Check Your Email</h3>
-          <p>You'll receive a confirmation email with your audit timeline and next steps within the hour.</p>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <div>
-          <h3>Activate Credit Monitoring</h3>
-          <p>If you haven't already, activate your MyFreeScoreNow monitoring using your ITIN or SSN so we can begin your audit.</p>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <div>
-          <h3>Audit Delivered in 24–48 Hours</h3>
-          <p>Your complete forensic 3-bureau audit of your ITIN or SSN credit file + personalized 10-Point Restoration Roadmap will be emailed to you.</p>
-        </div>
-      </div>
-    </div>
-
-    <a href="https://myfreescorenow.com/enroll/?AID=RickJeffersonSolutions&PID=49914" target="_blank" class="btn">
-      Activate Monitoring Now <i data-lucide="external-link" style="width:18px;height:18px"></i>
-    </a>
-
-    <p class="footer">
-      Questions? Email <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa">rickjefferson@rickjeffersonsolutions.com</a><br>
-      &copy; 2026 RJ Business Solutions
-    </p>
+  <!-- ===== LANGUAGE SWITCHER BAR ===== -->
+  <div class="lang-bar" id="langBar">
+    <span class="lang-label" data-i18n="lang_label">Language:</span>
+    <button class="lang-btn active" onclick="switchLang('en')" data-lang="en"><span class="flag">&#127482;&#127480;</span> English</button>
+    <button class="lang-btn" onclick="switchLang('es')" data-lang="es"><span class="flag">&#127474;&#127485;</span> Español</button>
+    <button class="lang-btn" onclick="switchLang('zh')" data-lang="zh"><span class="flag">&#127464;&#127475;</span> 中文</button>
+    <button class="lang-btn" onclick="switchLang('vi')" data-lang="vi"><span class="flag">&#127483;&#127475;</span> Tiếng Việt</button>
   </div>
-  <script>lucide.createIcons();</script>
+
+  <div class="page-wrap">
+    <div class="card">
+      <div class="success-logo">
+        <img src="https://media.rickjeffersonsolutions.com/rj-business-solutions-logo-banner.jpg" alt="RJ Business Solutions" height="40">
+      </div>
+      <div class="icon"><i data-lucide="check-circle-2"></i></div>
+      <h1 data-i18n="suc_title">Payment Confirmed!</h1>
+      <p class="sub" data-i18n="suc_subtitle">Your $99 forensic ITIN/SSN credit audit fee has been received. Here's what happens next:</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div>
+            <h3 data-i18n="suc_step1_title">Check Your Email</h3>
+            <p data-i18n="suc_step1_desc">You'll receive a confirmation email with your audit timeline and next steps within the hour.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div>
+            <h3 data-i18n="suc_step2_title">Activate Credit Monitoring</h3>
+            <p data-i18n="suc_step2_desc">If you haven't already, activate your MyFreeScoreNow monitoring using your ITIN or SSN so we can begin your audit.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div>
+            <h3 data-i18n="suc_step3_title">Audit Delivered in 24–48 Hours</h3>
+            <p data-i18n="suc_step3_desc">Your complete forensic 3-bureau audit of your ITIN or SSN credit file + personalized 10-Point Restoration Roadmap will be emailed to you.</p>
+          </div>
+        </div>
+      </div>
+
+      <a href="https://myfreescorenow.com/enroll/?AID=RickJeffersonSolutions&PID=49914" target="_blank" class="btn" data-i18n="suc_btn">
+        Activate Monitoring Now &#8599;
+      </a>
+
+      <a href="/" class="home-link" data-i18n="suc_home">&#8592; Back to Home</a>
+
+      <p style="margin-top:1.5rem;color:#6b7280;font-size:0.8rem" data-i18n="suc_contact">
+        Questions? Email <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa">rickjefferson@rickjeffersonsolutions.com</a>
+      </p>
+    </div>
+  </div>
+
+  <div class="footer-bar">
+    <p>&copy; 2026 <strong style="color:#d1d5db">RJ Business Solutions</strong> &bull; 1342 NM 333, Tijeras, NM 87059 &bull; <a href="https://rickjeffersonsolutions.com">rickjeffersonsolutions.com</a></p>
+  </div>
+
+  <script>
+  lucide.createIcons();
+  var currentLang = 'en';
+  var sucTranslations = {
+    es: {
+      lang_label:'Idioma:',suc_title:'¡Pago Confirmado!',suc_subtitle:'Se ha recibido su tarifa de auditoría forense ITIN/SSN de $99. Esto es lo que sigue:',
+      suc_step1_title:'Revisa Tu Correo',suc_step1_desc:'Recibirás un correo de confirmación con el cronograma de tu auditoría y los próximos pasos dentro de la hora.',
+      suc_step2_title:'Activa el Monitoreo de Crédito',suc_step2_desc:'Si aún no lo has hecho, activa tu monitoreo MyFreeScoreNow usando tu ITIN o SSN para que podamos comenzar tu auditoría.',
+      suc_step3_title:'Auditoría Entregada en 24–48 Horas',suc_step3_desc:'Tu auditoría forense completa de 3 agencias de tu archivo ITIN o SSN + Hoja de Ruta de Restauración personalizada se enviará por correo.',
+      suc_btn:'Activar Monitoreo Ahora &#8599;',suc_home:'&#8592; Volver al Inicio',
+      suc_contact:'¿Preguntas? Email <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa">rickjefferson@rickjeffersonsolutions.com</a>'
+    },
+    zh: {
+      lang_label:'语言：',suc_title:'付款已确认！',suc_subtitle:'您的$99 ITIN/SSN法医信用审计费已收到。接下来将发生以下事项：',
+      suc_step1_title:'检查您的邮箱',suc_step1_desc:'您将在一小时内收到确认邮件，包含审计时间表和后续步骤。',
+      suc_step2_title:'激活信用监控',suc_step2_desc:'如果您还没有激活，请使用您的ITIN或SSN激活MyFreeScoreNow监控，以便我们开始审计。',
+      suc_step3_title:'24-48小时内交付审计',suc_step3_desc:'您的完整三机构ITIN或SSN信用档案法医审计 + 个性化10点修复路线图将通过邮件发送给您。',
+      suc_btn:'立即激活监控 &#8599;',suc_home:'&#8592; 返回首页',
+      suc_contact:'有疑问？发送邮件至 <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa">rickjefferson@rickjeffersonsolutions.com</a>'
+    },
+    vi: {
+      lang_label:'Ngôn ngữ:',suc_title:'Thanh Toán Đã Xác Nhận!',suc_subtitle:'Phí kiểm toán pháp y ITIN/SSN $99 của bạn đã được nhận. Đây là những gì sẽ xảy ra tiếp theo:',
+      suc_step1_title:'Kiểm Tra Email',suc_step1_desc:'Bạn sẽ nhận được email xác nhận với lịch trình kiểm toán và các bước tiếp theo trong vòng một giờ.',
+      suc_step2_title:'Kích Hoạt Giám Sát Tín Dụng',suc_step2_desc:'Nếu chưa kích hoạt, hãy kích hoạt giám sát MyFreeScoreNow bằng ITIN hoặc SSN để chúng tôi bắt đầu kiểm toán.',
+      suc_step3_title:'Kiểm Toán Giao Trong 24–48 Giờ',suc_step3_desc:'Kiểm toán pháp y đầy đủ 3 cơ quan hồ sơ ITIN hoặc SSN + Lộ Trình Phục Hồi 10 Điểm cá nhân hóa sẽ được gửi qua email.',
+      suc_btn:'Kích Hoạt Giám Sát Ngay &#8599;',suc_home:'&#8592; Về Trang Chủ',
+      suc_contact:'Câu hỏi? Email <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa">rickjefferson@rickjeffersonsolutions.com</a>'
+    }
+  };
+  function switchLang(lang) {
+    currentLang = lang;
+    localStorage.setItem('funnel_lang', lang);
+    document.documentElement.lang = lang;
+    document.querySelectorAll('.lang-btn').forEach(function(btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+    });
+    if (lang === 'en') {
+      document.querySelectorAll('[data-i18n]').forEach(function(el) {
+        var orig = el.getAttribute('data-i18n-orig');
+        if (orig !== null) el.innerHTML = orig;
+      });
+      return;
+    }
+    var dict = sucTranslations[lang];
+    if (!dict) return;
+    document.querySelectorAll('[data-i18n]').forEach(function(el) {
+      var key = el.getAttribute('data-i18n');
+      if (!el.hasAttribute('data-i18n-orig')) el.setAttribute('data-i18n-orig', el.innerHTML);
+      if (dict[key]) el.innerHTML = dict[key];
+    });
+  }
+  (function() {
+    var saved = localStorage.getItem('funnel_lang');
+    if (saved && sucTranslations[saved]) { switchLang(saved); return; }
+    var bl = (navigator.language || '').toLowerCase();
+    if (bl.startsWith('es')) switchLang('es');
+    else if (bl.startsWith('zh')) switchLang('zh');
+    else if (bl.startsWith('vi')) switchLang('vi');
+  })();
+  </script>
 </body>
 </html>`
 }
@@ -478,15 +575,30 @@ function legalLayout(title: string, metaDesc: string, content: string): string {
   <meta name="description" content="${metaDesc}">
   <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#x1f6e1;</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;600;700;900&family=Noto+Sans:wght@400;600;700;900&display=swap" rel="stylesheet">
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'Inter',sans-serif;background:#030712;color:#d1d5db;line-height:1.8;padding:0}
+    body{font-family:'Inter','Noto Sans',-apple-system,BlinkMacSystemFont,sans-serif;background:#030712;color:#d1d5db;line-height:1.8;padding:0}
     a{color:#60a5fa;text-decoration:none}a:hover{text-decoration:underline}
-    .nav{background:#111827;border-bottom:1px solid #1f2937;padding:1rem 0;position:sticky;top:0;z-index:100}
+    /* ===== LANGUAGE SWITCHER (same as main funnel) ===== */
+    .lang-bar{position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(90deg,#1e1b4b,#172554);border-bottom:1px solid rgba(59,130,246,0.3);padding:.35rem 1rem;display:flex;align-items:center;justify-content:center;gap:.4rem;font-size:.8rem;flex-wrap:wrap}
+    .lang-label{color:#9ca3af;margin-right:.15rem;font-size:.7rem}
+    .lang-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#d1d5db;padding:.25rem .6rem;border-radius:6px;font-size:.72rem;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:.3rem;font-family:inherit;white-space:nowrap}
+    .lang-btn:hover{background:rgba(59,130,246,.3);border-color:rgba(59,130,246,.5);color:#fff}
+    .lang-btn.active{background:linear-gradient(135deg,#3b82f6,#06b6d4);border-color:transparent;color:#fff;font-weight:700}
+    .lang-btn .flag{font-size:.95rem;line-height:1}
+    body.has-lang-bar{padding-top:36px}
+    body.has-lang-bar .nav{top:36px}
+    @media(max-width:600px){.lang-bar{gap:.25rem;padding:.3rem .5rem}.lang-btn{padding:.2rem .45rem;font-size:.65rem}.lang-label{display:none}body.has-lang-bar{padding-top:34px}body.has-lang-bar .nav{top:34px}}
+    /* ===== NAV ===== */
+    .nav{background:rgba(17,24,39,.97);backdrop-filter:blur(12px);border-bottom:1px solid #1f2937;padding:.75rem 0;position:sticky;top:0;z-index:100}
     .nav-inner{max-width:900px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between}
-    .nav a.logo{color:#fff;font-weight:700;font-size:1.1rem;display:flex;align-items:center;gap:.5rem}
-    .nav-links{display:flex;gap:1.5rem;font-size:.85rem}
+    .nav .logo-link{display:flex;align-items:center;gap:.5rem;text-decoration:none}
+    .nav .logo-link img{height:32px;width:auto;border-radius:4px}
+    .nav .logo-link span{color:#fff;font-weight:700;font-size:1rem}
+    .nav-links{display:flex;gap:1rem;font-size:.85rem;align-items:center}
+    .nav-links a{color:#93c5fd;transition:color .2s}.nav-links a:hover{color:#fff;text-decoration:none}
     .container{max-width:900px;margin:0 auto;padding:3rem 1.5rem 4rem}
     h1{color:#fff;font-size:2.25rem;font-weight:800;margin-bottom:.5rem;line-height:1.3}
     h2{color:#fff;font-size:1.5rem;font-weight:700;margin:2.5rem 0 1rem;padding-bottom:.5rem;border-bottom:1px solid #1f2937}
@@ -494,7 +606,7 @@ function legalLayout(title: string, metaDesc: string, content: string): string {
     p{margin-bottom:1rem}
     .updated{color:#6b7280;font-size:.85rem;margin-bottom:2rem}
     .legal-nav{display:flex;flex-wrap:wrap;gap:.75rem;margin-bottom:2.5rem;padding-bottom:1.5rem;border-bottom:1px solid #1f2937}
-    .legal-nav a{background:rgba(30,58,138,.3);border:1px solid rgba(59,130,246,.3);color:#93c5fd;padding:.4rem 1rem;border-radius:999px;font-size:.8rem;font-weight:500;white-space:nowrap}
+    .legal-nav a{background:rgba(30,58,138,.3);border:1px solid rgba(59,130,246,.3);color:#93c5fd;padding:.4rem 1rem;border-radius:999px;font-size:.8rem;font-weight:500;white-space:nowrap;transition:all .2s}
     .legal-nav a:hover{background:rgba(59,130,246,.2);text-decoration:none}
     .legal-nav a.active{background:rgba(59,130,246,.4);border-color:#3b82f6;color:#fff}
     .highlight-box{background:rgba(30,58,138,.2);border:1px solid rgba(59,130,246,.3);border-radius:.75rem;padding:1.5rem;margin:1.5rem 0}
@@ -507,39 +619,121 @@ function legalLayout(title: string, metaDesc: string, content: string): string {
     .statute-ref{color:#fbbf24;font-weight:600;font-size:.85rem}
     .section-badge{display:inline-block;background:rgba(59,130,246,.2);border:1px solid rgba(59,130,246,.3);color:#93c5fd;padding:.15rem .5rem;border-radius:.25rem;font-size:.75rem;font-weight:600;margin-right:.5rem}
     blockquote{border-left:3px solid #3b82f6;padding:.75rem 1.25rem;margin:1rem 0 1.5rem;background:rgba(30,58,138,.1);border-radius:0 .5rem .5rem 0;font-style:italic;color:#bfdbfe}
-    .footer{padding:2rem 0;background:#111827;border-top:1px solid #1f2937;text-align:center;margin-top:3rem}
+    .back-btn{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,#3b82f6,#06b6d4);color:#fff;font-weight:700;font-size:.9rem;padding:.65rem 1.5rem;border-radius:.5rem;text-decoration:none;transition:all .3s;margin-top:2rem}
+    .back-btn:hover{opacity:.9;transform:translateY(-2px);text-decoration:none}
+    .footer{padding:2.5rem 1.5rem;background:#111827;border-top:1px solid #1f2937;text-align:center;margin-top:3rem}
+    .footer-logo{display:flex;align-items:center;justify-content:center;gap:.5rem;margin-bottom:1rem}
+    .footer-logo img{height:36px;width:auto;border-radius:4px}
     .footer p{color:#6b7280;font-size:.8rem;line-height:1.8;margin:0}
     .footer a{color:#60a5fa}
-    @media(max-width:768px){h1{font-size:1.75rem}.legal-nav{gap:.5rem}.legal-nav a{font-size:.75rem;padding:.35rem .75rem}}
+    .footer-links{margin-top:.75rem;display:flex;flex-wrap:wrap;justify-content:center;gap:.75rem}
+    .footer-links a{font-size:.78rem}
+    @media(max-width:768px){h1{font-size:1.75rem}.legal-nav{gap:.5rem}.legal-nav a{font-size:.75rem;padding:.35rem .75rem}.nav-links{gap:.5rem;font-size:.8rem}}
   </style>
 </head>
-<body>
+<body class="has-lang-bar">
+  <!-- ===== LANGUAGE SWITCHER BAR ===== -->
+  <div class="lang-bar" id="langBar">
+    <span class="lang-label" data-i18n="lang_label">Language:</span>
+    <button class="lang-btn active" onclick="switchLang('en')" data-lang="en"><span class="flag">&#127482;&#127480;</span> English</button>
+    <button class="lang-btn" onclick="switchLang('es')" data-lang="es"><span class="flag">&#127474;&#127485;</span> Español</button>
+    <button class="lang-btn" onclick="switchLang('zh')" data-lang="zh"><span class="flag">&#127464;&#127475;</span> 中文</button>
+    <button class="lang-btn" onclick="switchLang('vi')" data-lang="vi"><span class="flag">&#127483;&#127475;</span> Tiếng Việt</button>
+  </div>
+
   <nav class="nav">
     <div class="nav-inner">
-      <a href="/" class="logo">&#128737; Clean It Up</a>
+      <a href="/" class="logo-link">
+        <img src="https://media.rickjeffersonsolutions.com/rj-business-solutions-logo-banner.jpg" alt="RJ Business Solutions" height="32">
+        <span data-i18n="nav_brand">Clean It Up</span>
+      </a>
       <div class="nav-links">
-        <a href="/legal">Legal</a>
-        <a href="/privacy">Privacy</a>
-        <a href="/terms">Terms</a>
-        <a href="/">Home</a>
+        <a href="/legal" data-i18n="nav_legal">Legal</a>
+        <a href="/privacy" data-i18n="nav_privacy">Privacy</a>
+        <a href="/terms" data-i18n="nav_terms">Terms</a>
+        <a href="/" data-i18n="nav_home">Home</a>
       </div>
     </div>
   </nav>
   <div class="container">
     <div class="legal-nav">
-      <a href="/legal">Disclosures &amp; Compliance (ECOA, FCRA, CROA)</a>
-      <a href="/consumer-rights">Consumer Rights (CROA)</a>
-      <a href="/privacy">Privacy Policy</a>
-      <a href="/terms">Terms of Service</a>
-      <a href="/cancellation">Cancellation Policy</a>
+      <a href="/legal" data-i18n="lnav_disclosures">Disclosures &amp; Compliance (ECOA, FCRA, CROA)</a>
+      <a href="/consumer-rights" data-i18n="lnav_consumer_rights">Consumer Rights (CROA)</a>
+      <a href="/privacy" data-i18n="lnav_privacy">Privacy Policy</a>
+      <a href="/terms" data-i18n="lnav_terms">Terms of Service</a>
+      <a href="/cancellation" data-i18n="lnav_cancellation">Cancellation Policy</a>
     </div>
     ${content}
+    <a href="/" class="back-btn" data-i18n="back_to_home">&#8592; Back to Home</a>
   </div>
   <footer class="footer">
+    <div class="footer-logo">
+      <img src="https://media.rickjeffersonsolutions.com/rj-business-solutions-logo-banner.jpg" alt="RJ Business Solutions" height="36">
+    </div>
     <p><strong style="color:#d1d5db">RJ Business Solutions</strong><br>1342 NM 333, Tijeras, New Mexico 87059<br><a href="https://rickjeffersonsolutions.com">rickjeffersonsolutions.com</a> &bull; <a href="mailto:rickjefferson@rickjeffersonsolutions.com">rickjefferson@rickjeffersonsolutions.com</a></p>
     <p style="margin-top:.75rem">&copy; 2026 RJ Business Solutions. All rights reserved.</p>
-    <p style="margin-top:.5rem"><a href="/legal">Legal Disclosures</a> &bull; <a href="/privacy">Privacy Policy</a> &bull; <a href="/terms">Terms of Service</a> &bull; <a href="/consumer-rights">Consumer Rights</a> &bull; <a href="/cancellation">Cancellation Policy</a></p>
+    <div class="footer-links">
+      <a href="/legal" data-i18n="fl_legal">Legal Disclosures</a> &bull;
+      <a href="/privacy" data-i18n="fl_privacy">Privacy Policy</a> &bull;
+      <a href="/terms" data-i18n="fl_terms">Terms of Service</a> &bull;
+      <a href="/consumer-rights" data-i18n="fl_consumer_rights">Consumer Rights</a> &bull;
+      <a href="/cancellation" data-i18n="fl_cancellation">Cancellation Policy</a>
+    </div>
   </footer>
+
+  <script>
+  var currentLang = 'en';
+  var legalTranslations = {
+    es: {
+      lang_label:'Idioma:',nav_brand:'Limpia Tu Crédito',nav_legal:'Legal',nav_privacy:'Privacidad',nav_terms:'Términos',nav_home:'Inicio',
+      lnav_disclosures:'Divulgaciones y Cumplimiento (ECOA, FCRA, CROA)',lnav_consumer_rights:'Derechos del Consumidor (CROA)',lnav_privacy:'Política de Privacidad',lnav_terms:'Términos de Servicio',lnav_cancellation:'Política de Cancelación',
+      back_to_home:'&#8592; Volver al Inicio',
+      fl_legal:'Divulgaciones Legales',fl_privacy:'Política de Privacidad',fl_terms:'Términos de Servicio',fl_consumer_rights:'Derechos del Consumidor',fl_cancellation:'Política de Cancelación'
+    },
+    zh: {
+      lang_label:'语言：',nav_brand:'信用修复',nav_legal:'法律',nav_privacy:'隐私',nav_terms:'条款',nav_home:'首页',
+      lnav_disclosures:'披露与合规（ECOA、FCRA、CROA）',lnav_consumer_rights:'消费者权利（CROA）',lnav_privacy:'隐私政策',lnav_terms:'服务条款',lnav_cancellation:'取消政策',
+      back_to_home:'&#8592; 返回首页',
+      fl_legal:'法律披露',fl_privacy:'隐私政策',fl_terms:'服务条款',fl_consumer_rights:'消费者权利',fl_cancellation:'取消政策'
+    },
+    vi: {
+      lang_label:'Ngôn ngữ:',nav_brand:'Sửa Chữa Tín Dụng',nav_legal:'Pháp Lý',nav_privacy:'Riêng Tư',nav_terms:'Điều Khoản',nav_home:'Trang Chủ',
+      lnav_disclosures:'Công Bố & Tuân Thủ (ECOA, FCRA, CROA)',lnav_consumer_rights:'Quyền Người Tiêu Dùng (CROA)',lnav_privacy:'Chính Sách Bảo Mật',lnav_terms:'Điều Khoản Dịch Vụ',lnav_cancellation:'Chính Sách Hủy Bỏ',
+      back_to_home:'&#8592; Về Trang Chủ',
+      fl_legal:'Công Bố Pháp Lý',fl_privacy:'Chính Sách Bảo Mật',fl_terms:'Điều Khoản Dịch Vụ',fl_consumer_rights:'Quyền Người Tiêu Dùng',fl_cancellation:'Chính Sách Hủy Bỏ'
+    }
+  };
+  function switchLang(lang) {
+    currentLang = lang;
+    localStorage.setItem('funnel_lang', lang);
+    document.documentElement.lang = lang;
+    document.querySelectorAll('.lang-btn').forEach(function(btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+    });
+    if (lang === 'en') {
+      document.querySelectorAll('[data-i18n]').forEach(function(el) {
+        var orig = el.getAttribute('data-i18n-orig');
+        if (orig !== null) el.innerHTML = orig;
+      });
+      return;
+    }
+    var dict = legalTranslations[lang];
+    if (!dict) return;
+    document.querySelectorAll('[data-i18n]').forEach(function(el) {
+      var key = el.getAttribute('data-i18n');
+      if (!el.hasAttribute('data-i18n-orig')) el.setAttribute('data-i18n-orig', el.innerHTML);
+      if (dict[key]) el.innerHTML = dict[key];
+    });
+  }
+  (function() {
+    var saved = localStorage.getItem('funnel_lang');
+    if (saved && legalTranslations[saved]) { switchLang(saved); return; }
+    var bl = (navigator.language || '').toLowerCase();
+    if (bl.startsWith('es')) switchLang('es');
+    else if (bl.startsWith('zh')) switchLang('zh');
+    else if (bl.startsWith('vi')) switchLang('vi');
+  })();
+  </script>
 </body>
 </html>`
 }
