@@ -459,7 +459,7 @@ function successPageHTML(): string {
 
     <p class="footer">
       Questions? Email <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa">rickjefferson@rickjeffersonsolutions.com</a><br>
-      &copy; 2025 RJ Business Solutions
+      &copy; 2026 RJ Business Solutions
     </p>
   </div>
   <script>lucide.createIcons();</script>
@@ -537,7 +537,7 @@ function legalLayout(title: string, metaDesc: string, content: string): string {
   </div>
   <footer class="footer">
     <p><strong style="color:#d1d5db">RJ Business Solutions</strong><br>1342 NM 333, Tijeras, New Mexico 87059<br><a href="https://rickjeffersonsolutions.com">rickjeffersonsolutions.com</a> &bull; <a href="mailto:rickjefferson@rickjeffersonsolutions.com">rickjefferson@rickjeffersonsolutions.com</a></p>
-    <p style="margin-top:.75rem">&copy; 2025 RJ Business Solutions. All rights reserved.</p>
+    <p style="margin-top:.75rem">&copy; 2026 RJ Business Solutions. All rights reserved.</p>
     <p style="margin-top:.5rem"><a href="/legal">Legal Disclosures</a> &bull; <a href="/privacy">Privacy Policy</a> &bull; <a href="/terms">Terms of Service</a> &bull; <a href="/consumer-rights">Consumer Rights</a> &bull; <a href="/cancellation">Cancellation Policy</a></p>
   </footer>
 </body>
@@ -1008,9 +1008,14 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
   <meta name="description" content="Remove 1-5 negative items from your credit report using federal law. Pay only when progress is made. 90-day money-back guarantee. Start with a $99 forensic audit.">
   <meta property="og:title" content="Clean It Up — Precision Credit Repair | Basic Plan">
   <meta property="og:description" content="You're 1-5 items away from the credit score you deserve. Federal law backed credit repair starting at $99.">
-  <meta property="og:image" content="https://storage.googleapis.com/msgsndr/qQnxRHDtyx0uydPd5sRl/media/67eb83c5e519ed689430646b.jpeg">
+  <meta property="og:image" content="https://www.genspark.ai/api/files/s/lrprJh4M">
   <meta property="og:type" content="website">
-  <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Clean It Up — Precision Credit Repair | Basic Plan">
+  <meta name="twitter:description" content="Remove 1-5 negative items from your credit report using federal law. 90-day money-back guarantee.">
+  <meta name="twitter:image" content="https://www.genspark.ai/api/files/s/lrprJh4M">
+  <meta name="keywords" content="credit repair services, Rick Jefferson credit expert, FCRA credit repair, tri-bureau credit repair, credit score improvement, $99 credit repair plan, no pay until progress credit repair, TransUnion Equifax Experian disputes">
+  <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#x1f6e1;</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -1019,106 +1024,135 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html{scroll-behavior:smooth}
     body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:#030712;color:#fff;line-height:1.6;overflow-x:hidden}
-    a{color:inherit;text-decoration:none}button{cursor:pointer;border:none;font-family:inherit}img{max-width:100%;height:auto}
+    a{color:inherit;text-decoration:none}button{cursor:pointer;border:none;font-family:inherit}img{max-width:100%;height:auto;display:block}
     @keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+    @keyframes fadeInLeft{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:translateX(0)}}
+    @keyframes fadeInRight{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
     @keyframes bounceY{0%,100%{transform:translateY(0)}50%{transform:translateY(10px)}}
-    @keyframes particleMove{0%{transform:translate(0,0);opacity:.2}50%{opacity:.8}100%{transform:translate(var(--tx),var(--ty));opacity:.2}}
+    @keyframes particleMove{0%{transform:translate(0,0);opacity:.15}50%{opacity:.6}100%{transform:translate(var(--tx),var(--ty));opacity:.15}}
     @keyframes scaleIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
-    .ao{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease}
+    @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(236,72,153,.4)}50%{box-shadow:0 0 0 16px rgba(236,72,153,0)}}
+    @keyframes glow{0%,100%{filter:drop-shadow(0 0 8px rgba(59,130,246,.3))}50%{filter:drop-shadow(0 0 20px rgba(59,130,246,.6))}}
+    @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+    @keyframes slideInStagger{from{opacity:0;transform:translateY(20px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+    .ao{opacity:0;transform:translateY(30px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)}
     .ao.v{opacity:1;transform:translateY(0)}
-    .ao.sl{transform:translateX(-30px)}.ao.sl.v{transform:translateX(0)}
-    .ao.si{transform:scale(.85)}.ao.si.v{transform:scale(1)}
-    .s1{transition-delay:.1s}.s2{transition-delay:.2s}.s3{transition-delay:.3s}.s4{transition-delay:.4s}.s5{transition-delay:.5s}.s6{transition-delay:.6s}
+    .ao.asl{transform:translateX(-40px)}.ao.asl.v{transform:translateX(0)}
+    .ao.asr{transform:translateX(40px)}.ao.asr.v{transform:translateX(0)}
+    .ao.asi{transform:scale(.85)}.ao.asi.v{transform:scale(1)}
+    .s1{transition-delay:.1s}.s2{transition-delay:.2s}.s3{transition-delay:.25s}.s4{transition-delay:.35s}.s5{transition-delay:.45s}.s6{transition-delay:.55s}
     .ct{max-width:1200px;margin:0 auto;padding:0 1.5rem}
-    .cs{max-width:900px;margin:0 auto;padding:0 1.5rem}
+    .cs{max-width:960px;margin:0 auto;padding:0 1.5rem}
     .cx{max-width:720px;margin:0 auto;padding:0 1.5rem}
-    .tc{text-align:center}.fc{display:flex;align-items:center;justify-content:center}
-    .hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;background:linear-gradient(135deg,#0c1445 0%,#1e1b4b 30%,#172554 60%,#0f172a 100%);padding:5rem 0 3rem;z-index:1}
-    .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 800px 600px at 20% 50%,rgba(59,130,246,.12),transparent),radial-gradient(ellipse 600px 400px at 80% 30%,rgba(6,182,212,.08),transparent)}
+    .tc{text-align:center}
+    /* ===== HERO ===== */
+    .hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:linear-gradient(135deg,#0c1445 0%,#1e1b4b 30%,#172554 60%,#0f172a 100%);padding:2rem 0 3rem;z-index:1}
+    .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 800px 600px at 20% 50%,rgba(59,130,246,.12),transparent),radial-gradient(ellipse 600px 400px at 80% 30%,rgba(6,182,212,.08),transparent);z-index:0}
     .hp{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
     .hpd{position:absolute;width:3px;height:3px;background:rgba(96,165,250,.5);border-radius:50%;animation:particleMove var(--duration) linear infinite}
-    .hc{position:relative;z-index:2;max-width:900px;margin:0 auto;text-align:center;padding:0 1.5rem}
-    .ub{display:inline-flex;align-items:center;gap:.5rem;background:rgba(59,130,246,.15);border:1px solid rgba(96,165,250,.3);border-radius:999px;padding:.5rem 1.25rem;margin-bottom:2rem;animation:fadeInUp .8s ease forwards}
-    .ub i{color:#fbbf24;width:16px;height:16px}.ub span{color:#93c5fd;font-size:.875rem;font-weight:500}
-    .hero h1{font-size:clamp(2.5rem,6vw,4.5rem);font-weight:900;line-height:1.1;margin-bottom:1.5rem;animation:fadeInUp .8s ease .2s forwards;opacity:0}
-    .gt{display:block;margin-top:.5rem;background:linear-gradient(90deg,#60a5fa,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    .hero .st{font-size:clamp(1.1rem,2.5vw,1.35rem);color:#bfdbfe;max-width:720px;margin:0 auto 2rem;animation:fadeInUp .8s ease .4s forwards;opacity:0;line-height:1.7}
-    .vp{display:flex;flex-wrap:wrap;justify-content:center;gap:.75rem;margin-bottom:2.5rem;animation:fadeInUp .8s ease .5s forwards;opacity:0}
-    .vpi{background:rgba(30,58,138,.5);border:1px solid rgba(59,130,246,.3);color:#bfdbfe;padding:.5rem 1rem;border-radius:999px;font-size:.875rem;font-weight:500;white-space:nowrap}
-    .cdw{background:rgba(30,58,138,.35);border:1px solid rgba(59,130,246,.35);border-radius:1.25rem;padding:1.5rem;max-width:380px;margin:0 auto 2.5rem;animation:fadeInUp .8s ease .6s forwards;opacity:0}
-    .cdl{color:#93c5fd;font-size:.8rem;text-transform:uppercase;letter-spacing:.15em;margin-bottom:.75rem}
-    .cdt{display:flex;justify-content:center;gap:1rem}
+    .hero-logo{position:relative;z-index:2;margin-bottom:1.5rem;animation:fadeInUp .8s ease forwards}
+    .hero-logo img{width:280px;height:auto;margin:0 auto;border-radius:.75rem;filter:drop-shadow(0 8px 32px rgba(59,130,246,.25))}
+    .hc{position:relative;z-index:2;max-width:960px;margin:0 auto;text-align:center;padding:0 1.5rem}
+    .ub{display:inline-flex;align-items:center;gap:.5rem;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.4);border-radius:999px;padding:.5rem 1.25rem;margin-bottom:1.5rem;animation:fadeInUp .8s ease .1s forwards;opacity:0}
+    .ub i{color:#fbbf24;width:16px;height:16px}.ub span{color:#fca5a5;font-size:.875rem;font-weight:600}
+    .hero h1{font-size:clamp(2.25rem,5.5vw,4rem);font-weight:900;line-height:1.1;margin-bottom:1.25rem;animation:fadeInUp .8s ease .2s forwards;opacity:0}
+    .gt{display:block;margin-top:.5rem;background:linear-gradient(90deg,#60a5fa,#22d3ee,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hero .st{font-size:clamp(1rem,2.2vw,1.25rem);color:#bfdbfe;max-width:680px;margin:0 auto 1.5rem;animation:fadeInUp .8s ease .35s forwards;opacity:0;line-height:1.7}
+    .hero-img{width:100%;max-width:900px;margin:0 auto 2rem;border-radius:1rem;overflow:hidden;animation:fadeInUp .8s ease .25s forwards;opacity:0;box-shadow:0 16px 64px rgba(0,0,0,.5),0 0 0 1px rgba(59,130,246,.2)}
+    .hero-img img{width:100%;height:auto}
+    .vp{display:flex;flex-wrap:wrap;justify-content:center;gap:.6rem;margin-bottom:2rem;animation:fadeInUp .8s ease .45s forwards;opacity:0}
+    .vpi{background:rgba(30,58,138,.5);border:1px solid rgba(59,130,246,.3);color:#bfdbfe;padding:.45rem .9rem;border-radius:999px;font-size:.8rem;font-weight:600;white-space:nowrap;transition:all .3s}
+    .vpi:hover{background:rgba(59,130,246,.3);border-color:rgba(96,165,250,.5);transform:translateY(-2px)}
+    .cdw{background:rgba(30,58,138,.35);border:1px solid rgba(59,130,246,.35);border-radius:1.25rem;padding:1.25rem;max-width:360px;margin:0 auto 2rem;animation:fadeInUp .8s ease .5s forwards;opacity:0}
+    .cdl{color:#93c5fd;font-size:.75rem;text-transform:uppercase;letter-spacing:.15em;margin-bottom:.6rem}
+    .cdt{display:flex;justify-content:center;gap:.75rem}
     .cdb{text-align:center}
-    .cdv{font-size:2.5rem;font-weight:900;color:#fff;width:4rem;height:4rem;display:flex;align-items:center;justify-content:center;background:rgba(30,64,175,.6);border-radius:.75rem;margin-bottom:.25rem}
-    .cdu{color:#60a5fa;font-size:.7rem;text-transform:uppercase;letter-spacing:.1em}
-    .cw{animation:fadeInUp .8s ease .7s forwards;opacity:0}
-    .cb{display:inline-flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#3b82f6,#06b6d4);color:#fff;font-weight:800;font-size:1.25rem;padding:1.25rem 2.5rem;border-radius:.875rem;box-shadow:0 8px 32px rgba(59,130,246,.35);transition:all .3s;position:relative;overflow:hidden}
-    .cb::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,#2563eb,#0891b2);opacity:0;transition:opacity .3s}
-    .cb:hover::before{opacity:1}.cb:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(59,130,246,.45)}
-    .cb span,.cb i{position:relative;z-index:1}.cb i{transition:transform .3s;width:20px;height:20px}.cb:hover i{transform:translateX(4px)}
-    .cts{color:#60a5fa;font-size:.85rem;margin-top:1rem;opacity:.8}
+    .cdv{font-size:2.25rem;font-weight:900;color:#fff;width:3.75rem;height:3.75rem;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(220,38,38,.7),rgba(190,18,60,.5));border-radius:.75rem;margin-bottom:.25rem;border:1px solid rgba(239,68,68,.4)}
+    .cdu{color:#fca5a5;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;font-weight:600}
+    .cw{animation:fadeInUp .8s ease .6s forwards;opacity:0}
+    .cb{display:inline-flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#ec4899,#db2777);color:#fff;font-weight:800;font-size:1.2rem;padding:1.2rem 2.5rem;border-radius:.875rem;box-shadow:0 8px 32px rgba(236,72,153,.35);transition:all .3s;position:relative;overflow:hidden;animation:pulse 2s infinite;text-transform:uppercase;letter-spacing:.03em}
+    .cb::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,#db2777,#be185d);opacity:0;transition:opacity .3s}
+    .cb:hover::before{opacity:1}.cb:hover{transform:translateY(-3px);box-shadow:0 16px 48px rgba(236,72,153,.5)}
+    .cb span,.cb i{position:relative;z-index:1}.cb i{transition:transform .3s;width:20px;height:20px}.cb:hover i{transform:translateX(5px)}
+    .cts{color:#93c5fd;font-size:.8rem;margin-top:1rem;opacity:.7}
     .sci{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);animation:bounceY 1.5s infinite;z-index:3}
-    .sm{width:24px;height:40px;border:2px solid rgba(255,255,255,.4);border-radius:12px;display:flex;justify-content:center;padding-top:8px}
-    .sd{width:4px;height:12px;background:rgba(255,255,255,.6);border-radius:2px}
-    .sp{position:relative;z-index:2;padding:6rem 0;background:#030712}
-    .stt{font-size:clamp(2rem,4.5vw,3rem);font-weight:800;margin-bottom:1rem}
-    .sts{font-size:1.15rem;color:#9ca3af;max-width:600px;margin:0 auto 3.5rem}
-    .pg{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem}
-    .pc{background:#111827;border:1px solid rgba(127,29,29,.3);border-radius:1.25rem;padding:1.75rem;transition:border-color .3s,transform .3s}
-    .pc:hover{border-color:rgba(239,68,68,.4);transform:translateY(-4px)}
-    .pc .iw{width:48px;height:48px;color:#ef4444;margin-bottom:1rem}
-    .pc h3{font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:.5rem;line-height:1.4}
-    .pc p{color:#9ca3af;font-size:.9rem}
-    .sf{position:relative;z-index:2;padding:6rem 0;background:linear-gradient(180deg,#030712 0%,#0a1128 50%,#0f172a 100%)}
-    .fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;margin-bottom:3rem}
-    .fc2{background:#111827;border:1px solid rgba(30,58,138,.4);border-radius:1.25rem;padding:1.75rem;transition:border-color .3s,transform .3s}
-    .fc2:hover{border-color:rgba(59,130,246,.5);transform:translateY(-4px)}
-    .fch{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1rem}
-    .fc2 .iw{width:40px;height:40px;color:#60a5fa}
-    .fv{color:#60a5fa;font-size:.8rem;font-weight:700;background:rgba(30,58,138,.4);padding:.25rem .75rem;border-radius:999px;white-space:nowrap}
-    .fc2 h3{font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:.5rem}
-    .fc2 p{color:#9ca3af;font-size:.9rem;line-height:1.6}
-    .vs{position:relative;z-index:2;background:linear-gradient(135deg,rgba(30,58,138,.4),rgba(6,78,59,.2));border:1px solid rgba(59,130,246,.35);border-radius:1.25rem;padding:2.5rem;text-align:center;margin-top:3rem}
-    .vs .lb{color:#9ca3af;font-size:1.15rem;margin-bottom:.5rem}
-    .vs .op{font-size:3.25rem;font-weight:900;color:#4b5563;text-decoration:line-through;margin-bottom:.5rem}
-    .vs .nl{color:#d1d5db;margin-bottom:.5rem}
-    .vs .ap{font-size:4rem;font-weight:900;color:#60a5fa;margin-bottom:.25rem}
-    .vs .ap .pr{font-size:1.25rem;font-weight:600}
-    .vs .pn{color:#9ca3af;font-size:.9rem;line-height:1.6}.vs .pn strong{color:#93c5fd}
-    .ss{position:relative;z-index:2;padding:6rem 0;background:#030712}
-    .sl{display:flex;flex-direction:column;gap:1.25rem}
-    .sc{display:flex;gap:1.5rem;background:#111827;border:1px solid #1f2937;border-radius:1.25rem;padding:1.75rem;transition:border-color .3s,transform .3s}
-    .sc:hover{border-color:rgba(59,130,246,.3);transform:translateX(4px)}
-    .sn{font-size:2.5rem;font-weight:900;color:rgba(30,64,175,.6);min-width:4rem;flex-shrink:0;line-height:1;padding-top:.25rem}
-    .sc h3{font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:.5rem}
-    .sc p{color:#9ca3af;font-size:.9rem;line-height:1.7}
-    .scp{position:relative;z-index:2;padding:4rem 0;background:rgba(23,37,84,.15);border-top:1px solid rgba(30,58,138,.3);border-bottom:1px solid rgba(30,58,138,.3)}
+    .sm{width:24px;height:40px;border:2px solid rgba(255,255,255,.3);border-radius:12px;display:flex;justify-content:center;padding-top:8px}
+    .sd{width:4px;height:12px;background:rgba(255,255,255,.5);border-radius:2px}
+    /* ===== SECTION IMAGE BLOCKS ===== */
+    .sec-img{width:100%;max-width:900px;margin:0 auto;border-radius:1rem;overflow:hidden;box-shadow:0 12px 48px rgba(0,0,0,.4),0 0 0 1px rgba(59,130,246,.15);transition:transform .5s cubic-bezier(.16,1,.3,1),box-shadow .5s}
+    .sec-img:hover{transform:translateY(-4px) scale(1.005);box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 0 1px rgba(59,130,246,.3)}
+    .sec-img img{width:100%;height:auto}
+    /* ===== PAIN POINTS ===== */
+    .sp{position:relative;z-index:2;padding:6rem 0;background:linear-gradient(180deg,#030712 0%,#0a0f1f 100%)}
+    .stt{font-size:clamp(2rem,4.5vw,3rem);font-weight:900;margin-bottom:1rem}
+    .sts{font-size:1.1rem;color:#9ca3af;max-width:640px;margin:0 auto 3rem}
+    .pg{display:grid;grid-template-columns:repeat(2,1fr);gap:1.25rem;margin-top:3rem}
+    .pc{background:#111827;border:1px solid rgba(127,29,29,.3);border-radius:1.25rem;padding:1.75rem;transition:all .4s cubic-bezier(.16,1,.3,1)}
+    .pc:hover{border-color:rgba(239,68,68,.5);transform:translateY(-6px);box-shadow:0 12px 40px rgba(239,68,68,.1)}
+    .pc .iw{width:44px;height:44px;color:#ef4444;margin-bottom:.75rem}
+    .pc h3{font-size:1rem;font-weight:700;color:#fff;margin-bottom:.4rem;line-height:1.4}
+    .pc p{color:#9ca3af;font-size:.85rem}
+    /* ===== FEATURES / VALUE ===== */
+    .sf{position:relative;z-index:2;padding:6rem 0;background:linear-gradient(180deg,#0a0f1f 0%,#0a1128 50%,#0f172a 100%)}
+    .fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.25rem;margin-bottom:3rem}
+    .fc2{background:#111827;border:1px solid rgba(30,58,138,.4);border-radius:1.25rem;padding:1.5rem;transition:all .4s cubic-bezier(.16,1,.3,1)}
+    .fc2:hover{border-color:rgba(59,130,246,.5);transform:translateY(-6px);box-shadow:0 12px 40px rgba(59,130,246,.1)}
+    .fch{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.75rem}
+    .fc2 .iw{width:36px;height:36px;color:#60a5fa}
+    .fv{color:#60a5fa;font-size:.75rem;font-weight:700;background:rgba(30,58,138,.4);padding:.2rem .65rem;border-radius:999px;white-space:nowrap}
+    .fc2 h3{font-size:1rem;font-weight:700;color:#fff;margin-bottom:.4rem}
+    .fc2 p{color:#9ca3af;font-size:.85rem;line-height:1.6}
+    .vs{position:relative;z-index:2;background:linear-gradient(135deg,rgba(30,58,138,.4),rgba(6,78,59,.2));border:2px solid rgba(59,130,246,.35);border-radius:1.5rem;padding:2.5rem;text-align:center;margin-top:2rem}
+    .vs .lb{color:#9ca3af;font-size:1.1rem;margin-bottom:.5rem}
+    .vs .op{font-size:3rem;font-weight:900;color:#4b5563;text-decoration:line-through;margin-bottom:.35rem}
+    .vs .nl{color:#d1d5db;margin-bottom:.35rem;font-size:1.1rem}
+    .vs .ap{font-size:3.75rem;font-weight:900;color:#60a5fa;margin-bottom:.25rem}
+    .vs .ap .pr{font-size:1.15rem;font-weight:600}
+    .vs .pn{color:#9ca3af;font-size:.85rem;line-height:1.6}.vs .pn strong{color:#93c5fd}
+    /* ===== HOW IT WORKS ===== */
+    .ss{position:relative;z-index:2;padding:6rem 0;background:linear-gradient(180deg,#0f172a 0%,#030712 100%)}
+    .stl{display:flex;flex-direction:column;gap:1.25rem}
+    .sc{display:flex;gap:1.5rem;background:#111827;border:1px solid #1f2937;border-radius:1.25rem;padding:1.5rem;transition:all .4s cubic-bezier(.16,1,.3,1)}
+    .sc:hover{border-color:rgba(59,130,246,.4);transform:translateX(6px);box-shadow:0 8px 32px rgba(59,130,246,.08)}
+    .sn{font-size:2.25rem;font-weight:900;background:linear-gradient(135deg,#3b82f6,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;min-width:3.5rem;flex-shrink:0;line-height:1;padding-top:.2rem}
+    .sc h3{font-size:1rem;font-weight:700;color:#fff;margin-bottom:.4rem}
+    .sc p{color:#9ca3af;font-size:.85rem;line-height:1.7}
+    /* ===== COMPLIANCE ===== */
+    .scp{position:relative;z-index:2;padding:5rem 0;background:rgba(23,37,84,.15);border-top:1px solid rgba(30,58,138,.3);border-bottom:1px solid rgba(30,58,138,.3)}
     .cpt{font-size:1.5rem;font-weight:700;text-align:center;margin-bottom:2rem}
-    .cpg{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem}
-    .cpc{background:rgba(17,24,39,.6);border:1px solid rgba(30,58,138,.35);border-radius:.875rem;padding:1.5rem}
-    .cpc h4{color:#60a5fa;font-weight:700;margin-bottom:.5rem;font-size:1rem}
-    .cpc p{color:#9ca3af;font-size:.85rem;line-height:1.6}
-    .sfc{position:relative;z-index:2;padding:6rem 0;background:linear-gradient(180deg,#030712 0%,#172554 100%)}
+    .cpg{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+    .cpc{background:rgba(17,24,39,.6);border:1px solid rgba(30,58,138,.35);border-radius:.875rem;padding:1.25rem;transition:all .3s}
+    .cpc:hover{border-color:rgba(59,130,246,.4);transform:translateY(-3px)}
+    .cpc h4{color:#60a5fa;font-weight:700;margin-bottom:.4rem;font-size:.95rem}
+    .cpc p{color:#9ca3af;font-size:.8rem;line-height:1.6}
+    /* ===== FINAL CTA ===== */
+    .sfc{position:relative;z-index:2;padding:6rem 0;background:linear-gradient(180deg,#030712 0%,#172554 100%);overflow:hidden}
+    .sfc::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 600px 400px at 50% 60%,rgba(236,72,153,.08),transparent)}
     .fci{width:64px;height:64px;color:#60a5fa;margin:0 auto 1.5rem;animation:float 3s ease-in-out infinite}
     .gb{background:#111827;border:1px solid rgba(59,130,246,.35);border-radius:1.25rem;padding:2rem;margin-bottom:2.5rem}
     .gb .shi{width:48px;height:48px;color:#4ade80;margin:0 auto .75rem}
-    .gb h3{font-size:1.35rem;font-weight:800;margin-bottom:.75rem}
-    .gb p{color:#9ca3af;font-size:.95rem;line-height:1.6}
+    .gb h3{font-size:1.25rem;font-weight:800;margin-bottom:.6rem}
+    .gb p{color:#9ca3af;font-size:.9rem;line-height:1.6}
     .fn{color:#6b7280;font-size:.8rem;margin-top:1rem;line-height:1.6}
-    .mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);z-index:1000;align-items:center;justify-content:center;padding:1.5rem}
+    .guarantee-img{max-width:320px;margin:0 auto 2rem;border-radius:1rem;overflow:hidden;animation:glow 3s ease-in-out infinite}
+    .guarantee-img img{width:100%;height:auto;border-radius:1rem}
+    .cta-banner-img{width:100%;max-width:880px;margin:0 auto 2.5rem;border-radius:1rem;overflow:hidden;box-shadow:0 16px 64px rgba(236,72,153,.2),0 0 0 1px rgba(236,72,153,.2)}
+    .cta-banner-img img{width:100%;height:auto}
+    /* ===== MODAL ===== */
+    .mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(12px);z-index:1000;align-items:center;justify-content:center;padding:1.5rem}
     .mo.active{display:flex}
-    .md{background:#111827;border:1px solid rgba(59,130,246,.4);border-radius:1.5rem;padding:2.5rem;max-width:520px;width:100%;position:relative;animation:scaleIn .3s ease}
+    .md{background:#111827;border:1px solid rgba(59,130,246,.4);border-radius:1.5rem;padding:2.5rem;max-width:520px;width:100%;position:relative;animation:scaleIn .3s ease;box-shadow:0 32px 80px rgba(0,0,0,.6)}
     .mc{position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,.1);color:#9ca3af;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.25rem;transition:background .3s}
     .mc:hover{background:rgba(255,255,255,.2);color:#fff}
     .md h2{font-size:1.5rem;font-weight:800;margin-bottom:.5rem}
-    .md .ms{color:#9ca3af;font-size:.9rem;margin-bottom:1.75rem}
+    .md .ms{color:#9ca3af;font-size:.9rem;margin-bottom:1.5rem}
     .fg2{margin-bottom:1.25rem}
     .fg2 label{display:block;color:#d1d5db;font-size:.85rem;font-weight:600;margin-bottom:.4rem}
     .fg2 input{width:100%;padding:.875rem 1rem;background:#1f2937;border:1px solid #374151;border-radius:.75rem;color:#fff;font-size:1rem;transition:border-color .3s;outline:none}
     .fg2 input:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.15)}
     .fg2 input::placeholder{color:#6b7280}
-    .fs{width:100%;padding:1rem;background:linear-gradient(135deg,#3b82f6,#06b6d4);color:#fff;font-weight:800;font-size:1.1rem;border-radius:.75rem;transition:all .3s}
+    .fs{width:100%;padding:1rem;background:linear-gradient(135deg,#ec4899,#db2777);color:#fff;font-weight:800;font-size:1.1rem;border-radius:.75rem;transition:all .3s;text-transform:uppercase;letter-spacing:.02em}
     .fs:hover{opacity:.9;transform:translateY(-1px)}.fs:disabled{opacity:.5;cursor:not-allowed;transform:none}
     .fnt{text-align:center;color:#6b7280;font-size:.75rem;margin-top:1rem}
     .fsu{text-align:center;padding:2rem 0}
@@ -1130,32 +1164,77 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
     .fsu .nsn{width:28px;height:28px;background:linear-gradient(135deg,#3b82f6,#06b6d4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.75rem;flex-shrink:0}
     .fsu .nsi a{color:#60a5fa;font-weight:600;font-size:.9rem}
     .fsu .nsi span{color:#9ca3af;font-size:.85rem}
-    .sb{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(17,24,39,.95);backdrop-filter:blur(12px);border-top:1px solid rgba(59,130,246,.3);padding:.875rem 1.5rem;z-index:900;justify-content:center;transform:translateY(100%);transition:transform .3s ease}
-    .sb.v{transform:translateY(0)}.sb .cb{font-size:1rem;padding:.875rem 2rem;width:100%;justify-content:center}
+    /* ===== STICKY BAR ===== */
+    .sb{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(17,24,39,.97);backdrop-filter:blur(16px);border-top:1px solid rgba(236,72,153,.3);padding:.75rem 1.5rem;z-index:900;justify-content:center;transform:translateY(100%);transition:transform .3s ease}
+    .sb.v{transform:translateY(0)}.sb .cb{font-size:.95rem;padding:.8rem 1.75rem;width:100%;justify-content:center;animation:none}
+    /* ===== FOOTER ===== */
     .ft{padding:3rem 0;background:#030712;border-top:1px solid #1f2937;text-align:center}
-    .fl{width:160px;height:auto;margin:0 auto 1rem;border-radius:.5rem}
+    .fl{width:240px;height:auto;margin:0 auto 1.5rem;border-radius:.75rem;filter:drop-shadow(0 4px 16px rgba(59,130,246,.15))}
     .ft p{color:#6b7280;font-size:.8rem;line-height:1.8}
     .ft a{color:#60a5fa}.ft a:hover{text-decoration:underline}
+    /* ===== PROGRESS BAR ===== */
+    .spots-bar{max-width:320px;margin:1rem auto 0;animation:fadeInUp .8s ease .55s forwards;opacity:0}
+    .spots-text{font-size:.85rem;color:#fca5a5;font-weight:600;margin-bottom:.4rem}
+    .spots-text em{color:#ef4444;font-style:normal;font-weight:800}
+    .bar-track{height:10px;background:rgba(239,68,68,.15);border-radius:5px;overflow:hidden}
+    .bar-fill{height:100%;width:50%;background:linear-gradient(90deg,#ef4444,#ec4899);border-radius:5px;transition:width 1s ease}
+    .bar-label{font-size:.7rem;color:#6b7280;text-align:right;margin-top:.2rem}
+    /* ===== RESPONSIVE ===== */
     @media(max-width:768px){
-      .hero{padding:4rem 0 6rem}.hero h1{font-size:2.25rem}.hero .st{font-size:1.05rem}
-      .vp{gap:.5rem}.vpi{font-size:.75rem;padding:.4rem .75rem}
-      .cdv{font-size:2rem;width:3.25rem;height:3.25rem}
-      .cb{font-size:1.05rem;padding:1rem 1.75rem;width:100%;justify-content:center}
-      .sc{flex-direction:column;gap:.75rem}.sn{font-size:2rem}
+      .hero{padding:1.5rem 0 5rem}
+      .hero-logo img{width:200px}
+      .hero h1{font-size:2rem}
+      .hero .st{font-size:.95rem}
+      .hero-img{margin:0 auto 1.5rem}
+      .vp{gap:.4rem}.vpi{font-size:.7rem;padding:.35rem .65rem}
+      .cdv{font-size:1.75rem;width:3rem;height:3rem}
+      .cb{font-size:1rem;padding:1rem 1.75rem;width:100%;justify-content:center}
+      .sc{flex-direction:column;gap:.75rem}.sn{font-size:1.75rem}
       .fg{grid-template-columns:1fr}
-      .vs .op{font-size:2.5rem}.vs .ap{font-size:3rem}
+      .pg{grid-template-columns:1fr}
+      .vs .op{font-size:2.25rem}.vs .ap{font-size:2.75rem}
       .sb{display:flex}
-      .sp,.sf,.ss,.sfc{padding:4rem 0}
+      .sp,.sf,.ss,.sfc,.scp{padding:3.5rem 0}
+      .sec-img{border-radius:.75rem}
+      .guarantee-img{max-width:240px}
+      .fl{width:180px}
     }
   </style>
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Service",
+    "name":"Clean It Up — Basic Plan Credit Repair",
+    "provider":{"@type":"Organization","name":"RJ Business Solutions","url":"https://rickjeffersonsolutions.com","logo":"https://media.rickjeffersonsolutions.com/rj-business-solutions-logo-banner.jpg","address":{"@type":"PostalAddress","streetAddress":"1342 NM 333","addressLocality":"Tijeras","addressRegion":"NM","postalCode":"87059","addressCountry":"US"}},
+    "description":"Precision credit repair targeting 1-5 negative items using federal law (FCRA, CROA). Pay only when progress is verified. 90-day money-back guarantee.",
+    "offers":{"@type":"Offer","price":"99.00","priceCurrency":"USD","description":"One-time forensic 3-bureau credit audit fee"}
+  }
+  </script>
 </head>
 <body>
+
+  <!-- ===== HERO SECTION ===== -->
   <section class="hero" id="hero">
     <div class="hp" id="particles"></div>
+
+    <div class="hero-logo">
+      <img src="https://media.rickjeffersonsolutions.com/rj-business-solutions-logo-banner.jpg" alt="RJ Business Solutions - Professional Credit Repair Services" title="RJ Business Solutions" width="280" height="auto" fetchpriority="high">
+    </div>
+
     <div class="hc">
       <div class="ub"><i data-lucide="alert-triangle"></i><span>Limited Spots Available This Month — Only 12 Remaining</span></div>
-      <h1>You're 1–5 Items Away From<span class="gt">The Credit Score You Deserve</span></h1>
+      <h1>You're 1-5 Items Away From<span class="gt">The Credit Score You Deserve</span></h1>
       <p class="st">A few stubborn negative items shouldn't define your financial future. Our Basic Plan uses federal law to challenge every single one — and you don't pay a cent until something actually gets removed.</p>
+    </div>
+
+    <!-- HERO IMAGE -->
+    <div class="hero-img">
+      <img src="https://www.genspark.ai/api/files/s/lrprJh4M" alt="Credit repair services Rick Jefferson anime style hero banner showing tri-bureau credit score rising from 580 to 750 with FCRA compliance and $99 basic plan pricing" title="Rick Jefferson Credit Repair Basic Plan - Remove 1-5 Items, No Pay Until Progress" width="1365" height="768" fetchpriority="high" loading="eager">
+    </div>
+
+    <div class="hc" style="padding-top:0">
       <div class="vp">
         <span class="vpi">&#10003; No Pay Until Progress</span>
         <span class="vpi">&#10003; 3-Bureau Coverage</span>
@@ -1172,79 +1251,151 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
         </div>
       </div>
       <div class="cw">
-        <button class="cb" onclick="openModal()"><span>Start My Basic Plan — $99</span><i data-lucide="arrow-right"></i></button>
+        <button class="cb" onclick="openModal()"><span>&#9654; Start My Basic Plan Now &#9654;</span><i data-lucide="arrow-right"></i></button>
       </div>
       <p class="cts">+ $29.99/mo credit monitoring required &bull; One-time $99 audit fee &bull; Only billed when progress is made</p>
+      <div class="spots-bar">
+        <p class="spots-text">Limited Spots Available This Month - <em>Only 12 Remaining</em></p>
+        <div class="bar-track"><div class="bar-fill"></div></div>
+        <p class="bar-label">12 of 24</p>
+      </div>
     </div>
     <div class="sci"><div class="sm"><div class="sd"></div></div></div>
   </section>
 
+  <!-- ===== PAIN POINTS SECTION ===== -->
   <section class="sp" id="problems">
     <div class="cs">
-      <div class="tc ao"><h2 class="stt">Does Any of This Sound Familiar?</h2></div>
+      <div class="tc ao">
+        <h2 class="stt">Does Any of This Sound Familiar?</h2>
+        <p class="sts">You're not alone. These are the exact problems our Basic Plan was built to solve.</p>
+      </div>
+
+      <!-- PAIN POINTS IMAGE -->
+      <div class="sec-img ao s1">
+        <img src="https://www.genspark.ai/api/files/s/MQzVrV53" alt="Common credit repair problems visualization showing paid collections still on report, old late payments dragging score, DIY disputes rejected, confusion about removable items - Rick Jefferson solutions" title="Credit Repair Pain Points - Why DIY Disputes Fail and Expert Help Succeeds" width="1024" height="1024" loading="lazy">
+      </div>
+
       <div class="pg">
-        <div class="pc ao s1"><div class="iw"><i data-lucide="x-circle"></i></div><h3>You paid off a collection months ago but it's STILL showing on your report</h3><p>Costing you 40-80 points you already earned back</p></div>
-        <div class="pc ao s2"><div class="iw"><i data-lucide="x-circle"></i></div><h3>One late payment from 2 years ago is dragging your entire score down</h3><p>Blocking you from better interest rates and loan approvals</p></div>
-        <div class="pc ao s3"><div class="iw"><i data-lucide="x-circle"></i></div><h3>You've tried disputing yourself but the bureau just says "verified"</h3><p>Generic disputes almost always get rejected — ours don't</p></div>
-        <div class="pc ao s4"><div class="iw"><i data-lucide="x-circle"></i></div><h3>You don't know which items are legally removable and which aren't</h3><p>Without a forensic audit, you're guessing — we don't guess</p></div>
+        <div class="pc ao s1"><div class="iw"><i data-lucide="x-circle"></i></div><h3>Paid collection STILL showing on your report</h3><p>Costing you 40-80 points you already earned back</p></div>
+        <div class="pc ao s2"><div class="iw"><i data-lucide="x-circle"></i></div><h3>Old late payment dragging your score down</h3><p>Blocking you from better rates and loan approvals</p></div>
+        <div class="pc ao s3"><div class="iw"><i data-lucide="x-circle"></i></div><h3>DIY disputes keep getting rejected</h3><p>Generic disputes almost always get "verified" — ours don't</p></div>
+        <div class="pc ao s4"><div class="iw"><i data-lucide="x-circle"></i></div><h3>Don't know what's legally removable</h3><p>Without a forensic audit, you're guessing — we don't guess</p></div>
       </div>
     </div>
   </section>
 
+  <!-- ===== VALUE STACK / FEATURES ===== -->
   <section class="sf" id="features">
     <div class="ct">
-      <div class="tc ao"><h2 class="stt">Everything You Get With The <span style="color:#60a5fa">Basic Plan</span></h2><p class="sts">This isn't a starter plan with starter results. This is precision credit repair for targeted situations.</p></div>
-      <div class="fg">
-        <div class="fc2 ao s1"><div class="fch"><div class="iw"><i data-lucide="file-text"></i></div><span class="fv">$199 Value</span></div><h3>Forensic 3-Bureau Credit Audit</h3><p>Every tradeline, inquiry, and public record across TransUnion, Equifax, and Experian reviewed against FCRA accuracy standards. Full written report delivered before any dispute is filed.</p></div>
-        <div class="fc2 ao s2"><div class="fch"><div class="iw"><i data-lucide="bar-chart-2"></i></div><span class="fv">$149 Value</span></div><h3>Personalized 10-Point Restoration Roadmap</h3><p>A custom-built strategy document that shows exactly what we're targeting, in what order, and why — with 30/60/90-day score milestones specific to your file.</p></div>
-        <div class="fc2 ao s3"><div class="fch"><div class="iw"><i data-lucide="shield"></i></div><span class="fv">$297 Value</span></div><h3>Up to 15 Statute-Specific Disputes/Month</h3><p>Personalized dispute letters citing FCRA Sections 611, 623, and 605 — not template letters. Tracked and followed up on every 30-day response window without exception.</p></div>
-        <div class="fc2 ao s4"><div class="fch"><div class="iw"><i data-lucide="trending-up"></i></div><span class="fv">$99 Value</span></div><h3>Monthly Progress Reports</h3><p>Complete documentation of every bureau response, deletion, correction, score change, and active investigation status delivered at the end of every billing cycle.</p></div>
-        <div class="fc2 ao s5"><div class="fch"><div class="iw"><i data-lucide="mail"></i></div><span class="fv">$79 Value</span></div><h3>Priority Email Support</h3><p>Direct access to our team for questions, document requests, and status updates with a guaranteed one-business-day response time.</p></div>
-        <div class="fc2 ao s6"><div class="fch"><div class="iw"><i data-lucide="book-open"></i></div><span class="fv">$49 Value</span></div><h3>Credit Education Resource Library</h3><p>Ongoing access to our full education library covering scoring mechanics, utilization strategy, payment history optimization, and maintenance protocols.</p></div>
+      <div class="tc ao">
+        <h2 class="stt">Everything You Get With The <span style="color:#60a5fa">Basic Plan</span></h2>
+        <p class="sts">Precision credit repair for targeted situations. Not a starter plan — a results plan.</p>
       </div>
-      <div class="vs ao si"><p class="lb">Total Value of Everything Above</p><p class="op">$872</p><p class="nl">You Pay Just</p><p class="ap">$99<span class="pr">/month</span></p><p class="pn">+ $99 one-time audit fee + $29.99/mo monitoring<br><strong>Billed only when verifiable progress is made</strong></p></div>
+
+      <!-- VALUE STACK IMAGE -->
+      <div class="sec-img ao s1" style="margin-bottom:3rem">
+        <img src="https://www.genspark.ai/api/files/s/2vRLsR9K" alt="Credit repair basic plan value stack showing $872 total value for $99 monthly including forensic audit, restoration roadmap, statute-specific disputes, progress reports, email support, education library - Rick Jefferson" title="Credit Repair Basic Plan Value - $872 Worth of Services for $99/Month" width="1024" height="1024" loading="lazy">
+      </div>
+
+      <div class="fg">
+        <div class="fc2 ao s1"><div class="fch"><div class="iw"><i data-lucide="file-text"></i></div><span class="fv">$199 Value</span></div><h3>Forensic 3-Bureau Credit Audit</h3><p>Every tradeline, inquiry, and public record across TransUnion, Equifax, and Experian reviewed against FCRA accuracy standards.</p></div>
+        <div class="fc2 ao s2"><div class="fch"><div class="iw"><i data-lucide="bar-chart-2"></i></div><span class="fv">$149 Value</span></div><h3>10-Point Restoration Roadmap</h3><p>Custom strategy document showing exactly what we're targeting, in what order, with 30/60/90-day milestones.</p></div>
+        <div class="fc2 ao s3"><div class="fch"><div class="iw"><i data-lucide="shield"></i></div><span class="fv">$297 Value</span></div><h3>Up to 15 Statute-Specific Disputes/Mo</h3><p>Personalized dispute letters citing FCRA Sections 611, 623, and 605 — tracked through every 30-day response window.</p></div>
+        <div class="fc2 ao s4"><div class="fch"><div class="iw"><i data-lucide="trending-up"></i></div><span class="fv">$99 Value</span></div><h3>Monthly Progress Reports</h3><p>Documentation of every bureau response, deletion, correction, and score change delivered each billing cycle.</p></div>
+        <div class="fc2 ao s5"><div class="fch"><div class="iw"><i data-lucide="mail"></i></div><span class="fv">$79 Value</span></div><h3>Priority Email Support</h3><p>Direct access with guaranteed one-business-day response time for questions and status updates.</p></div>
+        <div class="fc2 ao s6"><div class="fch"><div class="iw"><i data-lucide="book-open"></i></div><span class="fv">$49 Value</span></div><h3>Credit Education Library</h3><p>Scoring mechanics, utilization strategy, payment history optimization, and maintenance protocols.</p></div>
+      </div>
+
+      <div class="vs ao asi">
+        <p class="lb">Total Value of Everything Above</p>
+        <p class="op">$872</p>
+        <p class="nl">You Pay Just</p>
+        <p class="ap">$99<span class="pr">/month</span></p>
+        <p class="pn">+ $99 one-time audit fee + $29.99/mo monitoring<br><strong>Billed only when verifiable progress is made</strong></p>
+        <div style="margin-top:1.5rem"><button class="cb" onclick="openModal()" style="font-size:1.1rem"><span>&#9654; Claim This Deal Now</span><i data-lucide="arrow-right"></i></button></div>
+      </div>
     </div>
   </section>
 
+  <!-- ===== HOW IT WORKS ===== -->
   <section class="ss" id="how-it-works">
     <div class="cs">
-      <h2 class="stt tc ao" style="margin-bottom:3rem">How The Basic Plan Works</h2>
-      <div class="sl">
-        <div class="sc ao sl s1"><div class="sn">01</div><div><h3>Activate Your MyFreeScoreNow Monitoring ($29.99/mo)</h3><p>Enroll using our link. This gives us live tri-bureau visibility into your file — the real-time intelligence we need to track every deletion, every change, every score movement. Required before any work begins. Non-negotiable.</p></div></div>
-        <div class="sc ao sl s2"><div class="sn">02</div><div><h3>Pay Your One-Time Audit Fee ($99)</h3><p>This covers your complete forensic 3-bureau credit audit — every tradeline, inquiry, and public record reviewed against FCRA accuracy standards — plus your personalized 10-Point Restoration Roadmap. You receive both within 5 business days.</p></div></div>
-        <div class="sc ao sl s3"><div class="sn">03</div><div><h3>Review Your Audit Report & Roadmap</h3><p>Before a single dispute goes out, you see exactly what we found, exactly what we're targeting, and what the realistic outcome looks like for your file. No surprises. No black boxes.</p></div></div>
-        <div class="sc ao sl s4"><div class="sn">04</div><div><h3>We File Statute-Specific Disputes — Up to 15/Month</h3><p>Personalized letters citing specific FCRA violations go to the bureaus. We track every 30-day response window. We re-dispute with escalated arguments when bureaus push back. We don't stop at the first "verified" response.</p></div></div>
-        <div class="sc ao sl s5"><div class="sn">05</div><div><h3>You're Only Billed When Things Move</h3><p>At the end of each month, if we have documented deletions, corrections, or verified score improvements — your $99 monthly fee is charged. If nothing moved that month, you are not billed. Simple as that.</p></div></div>
+      <h2 class="stt tc ao" style="margin-bottom:2.5rem">How The Basic Plan Works</h2>
+
+      <!-- PROCESS WORKFLOW IMAGE -->
+      <div class="sec-img ao s1" style="margin-bottom:3rem">
+        <img src="https://www.genspark.ai/api/files/s/UE00KFzE" alt="5-step credit repair process workflow diagram Rick Jefferson showing MyFreeScoreNow monitoring activation, forensic audit, statute-specific FCRA disputes, and pay-only-when-progress-made billing" title="How Credit Repair Works - 5-Step FCRA-Backed Process by Rick Jefferson" width="1365" height="768" loading="lazy">
+      </div>
+
+      <div class="stl">
+        <div class="sc ao asl s1"><div class="sn">01</div><div><h3>Activate MyFreeScoreNow Monitoring ($29.99/mo)</h3><p>This gives us live tri-bureau visibility into your file — real-time intelligence to track every deletion, change, and score movement. Required before any work begins.</p></div></div>
+        <div class="sc ao asl s2"><div class="sn">02</div><div><h3>Pay Your One-Time Audit Fee ($99)</h3><p>Covers your complete forensic 3-bureau credit audit plus personalized 10-Point Restoration Roadmap. Delivered within 5 business days.</p></div></div>
+        <div class="sc ao asl s3"><div class="sn">03</div><div><h3>Review Your Audit Report &amp; Roadmap</h3><p>Before a single dispute goes out, you see exactly what we found and what we're targeting. No surprises. No black boxes.</p></div></div>
+        <div class="sc ao asl s4"><div class="sn">04</div><div><h3>We File Statute-Specific Disputes</h3><p>Personalized letters citing specific FCRA violations. We track every 30-day response window and re-dispute with escalated arguments when bureaus push back.</p></div></div>
+        <div class="sc ao asl s5"><div class="sn">05</div><div><h3>You're Only Billed When Things Move</h3><p>Documented deletions, corrections, or verified score improvements = your $99 monthly fee is charged. Nothing moved? Not billed. Simple.</p></div></div>
       </div>
     </div>
   </section>
 
+  <!-- ===== COMPLIANCE SECTION ===== -->
   <section class="scp" id="compliance">
     <div class="cs">
       <h3 class="cpt ao">&#128274; 100% Federally Compliant — Your Rights Are Protected</h3>
+
+      <!-- COMPLIANCE IMAGE -->
+      <div class="sec-img ao s1" style="margin-bottom:2rem">
+        <img src="https://www.genspark.ai/api/files/s/OwYLOgsK" alt="Federal credit repair compliance badges showing CROA, FCRA, FDCPA, TSR, FTC, CFPB alignment - Rick Jefferson Solutions fully compliant credit repair organization" title="Federally Compliant Credit Repair - CROA, FCRA, FDCPA, TSR Certified" width="1024" height="768" loading="lazy">
+      </div>
+
       <div class="cpg">
-        <div class="cpc ao s1"><h4>CROA Compliant</h4><p>Written contract provided. 3-day cancellation right honored. No advance fees for future dispute work. Full consumer disclosure per 15 U.S.C. &sect; 1679c.</p></div>
-        <div class="cpc ao s2"><h4>FCRA Backed</h4><p>Every dispute cites specific FCRA sections. Your Section 611, 623, and 604 rights fully enforced. 30-day investigation windows tracked.</p></div>
-        <div class="cpc ao s3"><h4>FDCPA Enforced</h4><p>Collection accounts challenged under Fair Debt Collection Practices Act. Debt validation rights (15 U.S.C. &sect; 1692g) cited when applicable.</p></div>
-        <div class="cpc ao s4"><h4>TSR Compliant</h4><p>Full Telemarketing Sales Rule compliance. No advance fees per 16 C.F.R. &sect; 310.4(a)(2). Required disclosures provided. Records maintained per TSR.</p></div>
-        <div class="cpc ao s5"><h4>FTC &amp; CFPB Aligned</h4><p>Section 5 FTC Act compliant. No deceptive practices. CFPB dispute standards applied. Regulation V and Regulation F procedures followed.</p></div>
-        <div class="cpc ao s6"><h4>State Law Compliant</h4><p>New Mexico Unfair Practices Act compliant. State-specific cancellation rights honored. Applicable bonding and registration maintained.</p></div>
+        <div class="cpc ao s1"><h4>CROA Compliant</h4><p>Written contract provided. 3-day cancellation right honored. No advance fees. Full consumer disclosure per 15 U.S.C. &sect; 1679c.</p></div>
+        <div class="cpc ao s2"><h4>FCRA Backed</h4><p>Every dispute cites specific FCRA sections. Section 611, 623, and 604 rights fully enforced. 30-day investigation windows tracked.</p></div>
+        <div class="cpc ao s3"><h4>FDCPA Enforced</h4><p>Collection accounts challenged under FDCPA. Debt validation rights (15 U.S.C. &sect; 1692g) cited when applicable.</p></div>
+        <div class="cpc ao s4"><h4>TSR Compliant</h4><p>No advance fees per 16 C.F.R. &sect; 310.4(a)(2). Required disclosures provided. Records maintained per TSR.</p></div>
+        <div class="cpc ao s5"><h4>FTC &amp; CFPB Aligned</h4><p>Section 5 FTC Act compliant. CFPB dispute standards applied. Regulation V and F procedures followed.</p></div>
+        <div class="cpc ao s6"><h4>State Law Compliant</h4><p>New Mexico Unfair Practices Act compliant. State cancellation rights honored. Applicable bonding maintained.</p></div>
       </div>
       <p class="ao" style="text-align:center;margin-top:1.5rem;font-size:.8rem;color:#6b7280">Full legal disclosures: <a href="/legal" style="color:#60a5fa">Legal &amp; Compliance</a> &bull; <a href="/consumer-rights" style="color:#60a5fa">Consumer Rights</a> &bull; <a href="/cancellation" style="color:#60a5fa">Cancellation Policy</a></p>
     </div>
   </section>
 
+  <!-- ===== FINAL CTA SECTION ===== -->
   <section class="sfc" id="final-cta">
     <div class="cx tc">
-      <div class="ao"><div class="fci"><i data-lucide="award"></i></div><h2 class="stt" style="margin-bottom:1.5rem">Ready to Remove Those <span style="color:#60a5fa">1–5 Items</span> For Good?</h2><p class="sts" style="margin-bottom:2.5rem">Start with your $99 audit. See exactly what's dragging your score down. Then watch us legally eliminate it — and only pay when we do.</p></div>
-      <div class="gb ao"><div class="shi"><i data-lucide="shield-check"></i></div><h3>90-Day Money-Back Guarantee</h3><p>If we can't show a single verified improvement in 90 days, you get every package fee back. No questions. No conditions. No runaround.</p></div>
-      <div class="ao"><button class="cb" onclick="openModal()" style="margin:0 auto"><span>Start My Basic Plan Now</span><i data-lucide="arrow-right"></i></button><p class="fn">$99 audit fee + $29.99/mo monitoring to start. Monthly $99 fee only charged when progress is verified. Cancel anytime within 3 business days per CROA rights.</p></div>
+
+      <!-- CTA URGENCY BANNER IMAGE -->
+      <div class="cta-banner-img ao">
+        <img src="https://www.genspark.ai/api/files/s/nwESbFu5" alt="Credit repair enrollment call-to-action banner showing limited 12 spots remaining this month, countdown timer, start basic plan $99 button - Rick Jefferson urgency offer" title="Enroll Now - Limited Credit Repair Spots Available This Month" width="1365" height="768" loading="lazy">
+      </div>
+
+      <div class="ao">
+        <h2 class="stt" style="margin-bottom:1.5rem">Ready to Remove Those <span style="color:#60a5fa">1-5 Items</span> For Good?</h2>
+        <p class="sts" style="margin-bottom:2rem">Start with your $99 audit. See exactly what's dragging your score down. Then watch us legally eliminate it — and only pay when we do.</p>
+      </div>
+
+      <!-- GUARANTEE SEAL IMAGE -->
+      <div class="guarantee-img ao">
+        <img src="https://www.genspark.ai/api/files/s/xXymvXu5" alt="90-day money-back guarantee seal for credit repair services - no verified improvement equals full refund, no questions, no conditions - Rick Jefferson commitment" title="90-Day Money-Back Guarantee - Risk-Free Credit Repair Services" width="1024" height="1024" loading="lazy">
+      </div>
+
+      <div class="gb ao">
+        <div class="shi"><i data-lucide="shield-check"></i></div>
+        <h3>90-Day Money-Back Guarantee</h3>
+        <p>If we can't show a single verified improvement in 90 days, you get every package fee back. No questions. No conditions. No runaround.</p>
+      </div>
+
+      <div class="ao">
+        <button class="cb" onclick="openModal()" style="margin:0 auto;font-size:1.3rem;padding:1.4rem 3rem"><span>&#9654; START MY BASIC PLAN NOW &#9654;</span><i data-lucide="arrow-right"></i></button>
+        <p class="fn" style="margin-top:1.25rem">$99 audit fee + $29.99/mo monitoring to start. Monthly $99 fee only charged when progress is verified.<br>Cancel anytime within 3 business days per CROA rights.</p>
+      </div>
     </div>
   </section>
 
+  <!-- ===== FOOTER ===== -->
   <footer class="ft">
     <div class="cx">
-      <img src="https://storage.googleapis.com/msgsndr/qQnxRHDtyx0uydPd5sRl/media/67eb83c5e519ed689430646b.jpeg" alt="RJ Business Solutions" class="fl">
+      <img src="https://media.rickjeffersonsolutions.com/rj-business-solutions-logo-banner.jpg" alt="RJ Business Solutions" class="fl">
       <p><strong style="color:#d1d5db">RJ Business Solutions</strong><br>1342 NM 333, Tijeras, New Mexico 87059<br><a href="https://rickjeffersonsolutions.com" target="_blank">rickjeffersonsolutions.com</a> &bull; <a href="mailto:rickjefferson@rickjeffersonsolutions.com">rickjefferson@rickjeffersonsolutions.com</a></p>
       <div style="margin:1.25rem auto;max-width:700px;padding:1rem;background:rgba(17,24,39,.8);border:1px solid #1f2937;border-radius:.75rem;text-align:left">
         <p style="color:#9ca3af;font-size:.7rem;line-height:1.7;margin:0">
@@ -1255,11 +1406,11 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
         </p>
       </div>
       <p style="margin-top:.75rem"><a href="/legal">Legal Disclosures</a> &bull; <a href="/consumer-rights">Consumer Rights</a> &bull; <a href="/privacy">Privacy Policy</a> &bull; <a href="/terms">Terms of Service</a> &bull; <a href="/cancellation">Cancellation Policy</a></p>
-      <p style="margin-top:.75rem">&copy; 2025 RJ Business Solutions. All rights reserved.<br>Credit repair services are performed in compliance with CROA, FCRA, FDCPA, TSR, and applicable state regulations.</p>
+      <p style="margin-top:.75rem">&copy; 2026 RJ Business Solutions. All rights reserved.<br>Credit repair services are performed in compliance with CROA, FCRA, FDCPA, TSR, and applicable state regulations.</p>
     </div>
   </footer>
 
-  <!-- Lead Capture + Stripe Checkout Modal -->
+  <!-- ===== LEAD CAPTURE + STRIPE CHECKOUT MODAL ===== -->
   <div class="mo" id="leadModal">
     <div class="md">
       <button class="mc" onclick="closeModal()">&times;</button>
@@ -1289,19 +1440,35 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
     </div>
   </div>
 
-  <div class="sb" id="stickyBar"><button class="cb" onclick="openModal()"><span>Start My Basic Plan — $99</span><i data-lucide="arrow-right"></i></button></div>
+  <!-- STICKY CTA BAR -->
+  <div class="sb" id="stickyBar"><button class="cb" onclick="openModal()" style="animation:none"><span>&#9654; Start My Basic Plan — $99</span><i data-lucide="arrow-right"></i></button></div>
 
   <script>
     let currentLeadId=null,currentEmail=null,currentName=null;
-    document.addEventListener('DOMContentLoaded',function(){lucide.createIcons();initP();initAO();initSB()});
+    document.addEventListener('DOMContentLoaded',function(){lucide.createIcons();initP();initAO();initSB();initImgLoad()});
+
+    // Countdown Timer
     (function(){let h=23,m=59,s=59;const hE=document.getElementById('cd-h'),mE=document.getElementById('cd-m'),sE=document.getElementById('cd-s');setInterval(function(){if(s>0)s--;else if(m>0){m--;s=59}else if(h>0){h--;m=59;s=59}else{h=23;m=59;s=59}hE.textContent=String(h).padStart(2,'0');mE.textContent=String(m).padStart(2,'0');sE.textContent=String(s).padStart(2,'0')},1000)})();
-    function initP(){const c=document.getElementById('particles');if(!c)return;for(let i=0;i<25;i++){const p=document.createElement('div');p.className='hpd';p.style.left=Math.random()*100+'%';p.style.top=Math.random()*100+'%';p.style.setProperty('--tx',(Math.random()*200-100)+'px');p.style.setProperty('--ty',(Math.random()*200-100)+'px');p.style.setProperty('--duration',(Math.random()*15+10)+'s');c.appendChild(p)}}
-    function initAO(){const o=new IntersectionObserver(function(e){e.forEach(function(en){if(en.isIntersecting)en.target.classList.add('v')})},{threshold:.1,rootMargin:'0px 0px -50px 0px'});document.querySelectorAll('.ao').forEach(function(el){o.observe(el)})}
-    function initSB(){const b=document.getElementById('stickyBar'),h=document.getElementById('hero');if(!b||!h)return;window.addEventListener('scroll',function(){b.classList.toggle('v',h.getBoundingClientRect().bottom<0)})}
+
+    // Particles
+    function initP(){const c=document.getElementById('particles');if(!c)return;for(let i=0;i<30;i++){const p=document.createElement('div');p.className='hpd';p.style.left=Math.random()*100+'%';p.style.top=Math.random()*100+'%';p.style.setProperty('--tx',(Math.random()*200-100)+'px');p.style.setProperty('--ty',(Math.random()*200-100)+'px');p.style.setProperty('--duration',(Math.random()*15+10)+'s');c.appendChild(p)}}
+
+    // Animate On Scroll
+    function initAO(){const o=new IntersectionObserver(function(e){e.forEach(function(en){if(en.isIntersecting){en.target.classList.add('v')}})},{threshold:.08,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.ao').forEach(function(el){o.observe(el)})}
+
+    // Sticky Bar
+    function initSB(){const b=document.getElementById('stickyBar'),h=document.getElementById('hero');if(!b||!h)return;window.addEventListener('scroll',function(){b.classList.toggle('v',h.getBoundingClientRect().bottom<0)},{ passive:true })}
+
+    // Image load animation
+    function initImgLoad(){document.querySelectorAll('.sec-img img, .hero-img img, .guarantee-img img, .cta-banner-img img').forEach(function(img){if(img.complete){img.style.opacity='1'}else{img.style.opacity='0';img.style.transition='opacity .6s ease';img.addEventListener('load',function(){img.style.opacity='1'})}})}
+
+    // Modal
     function openModal(){document.getElementById('leadModal').classList.add('active');document.body.style.overflow='hidden'}
     function closeModal(){document.getElementById('leadModal').classList.remove('active');document.body.style.overflow=''}
     document.getElementById('leadModal')?.addEventListener('click',function(e){if(e.target===this)closeModal()});
     document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal()});
+
+    // Lead Submission
     async function handleSubmit(e){
       e.preventDefault();
       const btn=document.getElementById('submitBtn');
@@ -1321,6 +1488,8 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
         }else{alert(data.error||'Something went wrong.');btn.disabled=false;btn.textContent='Claim My Spot — $99 Audit'}
       }catch(err){alert('Network error. Please try again.');btn.disabled=false;btn.textContent='Claim My Spot — $99 Audit'}
     }
+
+    // Stripe Checkout
     async function startCheckout(){
       try{
         const res=await fetch('/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:currentEmail,name:currentName,leadId:currentLeadId})});
