@@ -378,6 +378,13 @@ app.get('/success', (c) => {
   return c.html(successPageHTML())
 })
 
+// ========== LEGAL PAGES ==========
+app.get('/legal', (c) => c.html(legalPageHTML()))
+app.get('/privacy', (c) => c.html(privacyPageHTML()))
+app.get('/terms', (c) => c.html(termsPageHTML()))
+app.get('/consumer-rights', (c) => c.html(consumerRightsPageHTML()))
+app.get('/cancellation', (c) => c.html(cancellationPageHTML()))
+
 // ========== MAIN FUNNEL PAGE ==========
 app.get('/', (c) => {
   const stripeKey = c.env.STRIPE_PUBLISHABLE_KEY || ''
@@ -458,6 +465,536 @@ function successPageHTML(): string {
   <script>lucide.createIcons();</script>
 </body>
 </html>`
+}
+
+// ========== SHARED LEGAL PAGE LAYOUT ==========
+function legalLayout(title: string, metaDesc: string, content: string): string {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${title} | RJ Business Solutions</title>
+  <meta name="description" content="${metaDesc}">
+  <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#x1f6e1;</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:#030712;color:#d1d5db;line-height:1.8;padding:0}
+    a{color:#60a5fa;text-decoration:none}a:hover{text-decoration:underline}
+    .nav{background:#111827;border-bottom:1px solid #1f2937;padding:1rem 0;position:sticky;top:0;z-index:100}
+    .nav-inner{max-width:900px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between}
+    .nav a.logo{color:#fff;font-weight:700;font-size:1.1rem;display:flex;align-items:center;gap:.5rem}
+    .nav-links{display:flex;gap:1.5rem;font-size:.85rem}
+    .container{max-width:900px;margin:0 auto;padding:3rem 1.5rem 4rem}
+    h1{color:#fff;font-size:2.25rem;font-weight:800;margin-bottom:.5rem;line-height:1.3}
+    h2{color:#fff;font-size:1.5rem;font-weight:700;margin:2.5rem 0 1rem;padding-bottom:.5rem;border-bottom:1px solid #1f2937}
+    h3{color:#e5e7eb;font-size:1.15rem;font-weight:600;margin:1.5rem 0 .75rem}
+    p{margin-bottom:1rem}
+    .updated{color:#6b7280;font-size:.85rem;margin-bottom:2rem}
+    .legal-nav{display:flex;flex-wrap:wrap;gap:.75rem;margin-bottom:2.5rem;padding-bottom:1.5rem;border-bottom:1px solid #1f2937}
+    .legal-nav a{background:rgba(30,58,138,.3);border:1px solid rgba(59,130,246,.3);color:#93c5fd;padding:.4rem 1rem;border-radius:999px;font-size:.8rem;font-weight:500;white-space:nowrap}
+    .legal-nav a:hover{background:rgba(59,130,246,.2);text-decoration:none}
+    .legal-nav a.active{background:rgba(59,130,246,.4);border-color:#3b82f6;color:#fff}
+    .highlight-box{background:rgba(30,58,138,.2);border:1px solid rgba(59,130,246,.3);border-radius:.75rem;padding:1.5rem;margin:1.5rem 0}
+    .warning-box{background:rgba(127,29,29,.15);border:1px solid rgba(239,68,68,.3);border-radius:.75rem;padding:1.5rem;margin:1.5rem 0}
+    .warning-box strong{color:#fca5a5}
+    .croa-box{background:rgba(6,78,59,.15);border:2px solid rgba(52,211,153,.3);border-radius:.75rem;padding:2rem;margin:1.5rem 0}
+    .croa-box h3{color:#6ee7b7;margin-top:0}
+    ul,ol{margin:0 0 1rem 1.5rem}
+    li{margin-bottom:.5rem}
+    .statute-ref{color:#fbbf24;font-weight:600;font-size:.85rem}
+    .section-badge{display:inline-block;background:rgba(59,130,246,.2);border:1px solid rgba(59,130,246,.3);color:#93c5fd;padding:.15rem .5rem;border-radius:.25rem;font-size:.75rem;font-weight:600;margin-right:.5rem}
+    blockquote{border-left:3px solid #3b82f6;padding:.75rem 1.25rem;margin:1rem 0 1.5rem;background:rgba(30,58,138,.1);border-radius:0 .5rem .5rem 0;font-style:italic;color:#bfdbfe}
+    .footer{padding:2rem 0;background:#111827;border-top:1px solid #1f2937;text-align:center;margin-top:3rem}
+    .footer p{color:#6b7280;font-size:.8rem;line-height:1.8;margin:0}
+    .footer a{color:#60a5fa}
+    @media(max-width:768px){h1{font-size:1.75rem}.legal-nav{gap:.5rem}.legal-nav a{font-size:.75rem;padding:.35rem .75rem}}
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="logo">&#128737; Clean It Up</a>
+      <div class="nav-links">
+        <a href="/legal">Legal</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+        <a href="/">Home</a>
+      </div>
+    </div>
+  </nav>
+  <div class="container">
+    <div class="legal-nav">
+      <a href="/legal">Disclosures &amp; Compliance</a>
+      <a href="/consumer-rights">Consumer Rights (CROA)</a>
+      <a href="/privacy">Privacy Policy</a>
+      <a href="/terms">Terms of Service</a>
+      <a href="/cancellation">Cancellation Policy</a>
+    </div>
+    ${content}
+  </div>
+  <footer class="footer">
+    <p><strong style="color:#d1d5db">RJ Business Solutions</strong><br>1342 NM 333, Tijeras, New Mexico 87059<br><a href="https://rickjeffersonsolutions.com">rickjeffersonsolutions.com</a> &bull; <a href="mailto:rickjefferson@rickjeffersonsolutions.com">rickjefferson@rickjeffersonsolutions.com</a></p>
+    <p style="margin-top:.75rem">&copy; 2025 RJ Business Solutions. All rights reserved.</p>
+    <p style="margin-top:.5rem"><a href="/legal">Legal Disclosures</a> &bull; <a href="/privacy">Privacy Policy</a> &bull; <a href="/terms">Terms of Service</a> &bull; <a href="/consumer-rights">Consumer Rights</a> &bull; <a href="/cancellation">Cancellation Policy</a></p>
+  </footer>
+</body>
+</html>`
+}
+
+// ========== /legal — FULL COMPLIANCE DISCLOSURES PAGE ==========
+function legalPageHTML(): string {
+  return legalLayout(
+    'Legal Disclosures &amp; Federal Compliance',
+    'Complete federal legal disclosures for RJ Business Solutions credit repair services. CROA, FCRA, FDCPA, TSR, FTC, CFPB compliance.',
+    `<h1>Legal Disclosures &amp; Federal Compliance</h1>
+    <p class="updated">Last Updated: February 23, 2026 &bull; Effective for all services provided by RJ Business Solutions</p>
+
+    <div class="warning-box">
+      <strong>Important Notice:</strong> RJ Business Solutions is a credit repair organization as defined under the Credit Repair Organizations Act (15 U.S.C. &sect; 1679 et seq.). We are not a law firm, we are not attorneys, and we do not provide legal advice. The information on this page is provided for transparency and compliance purposes only.
+    </div>
+
+    <!-- ═══════ CROA ═══════ -->
+    <h2 id="croa"><span class="section-badge">CROA</span> Credit Repair Organizations Act (15 U.S.C. &sect; 1679)</h2>
+
+    <p>RJ Business Solutions operates in full compliance with the Credit Repair Organizations Act, enacted September 30, 1996 (Pub. L. 104-208). CROA provides important protections for consumers who use credit repair services.</p>
+
+    <div class="croa-box">
+      <h3>&#9989; Required CROA Consumer Disclosure Statement</h3>
+      <p><em>Pursuant to 15 U.S.C. &sect; 1679c, the following disclosure is provided to all consumers before any contract or agreement is executed:</em></p>
+
+      <blockquote>
+        <strong>"Consumer Credit File Rights Under State and Federal Law</strong><br><br>
+        You have a right to dispute inaccurate information in your credit report by contacting the credit bureau directly. However, neither you nor any 'credit repair' company or credit repair organization has the right to have accurate, current, and verifiable information removed from your credit report. The credit bureau must remove accurate, negative information from your report only if it is over 7 years old. Bankruptcy information can be reported for 10 years.<br><br>
+        You have a right to obtain a copy of your credit report from a credit bureau. You may be charged a reasonable fee. There is no fee, however, if you have been turned down for credit, employment, insurance, or a rental dwelling because of information in your credit report within the preceding 60 days. The credit bureau must provide someone to help you interpret the information in your credit file. You are entitled to receive a free copy of your credit report if you are unemployed and intend to apply for employment in the next 60 days, if you are a recipient of public welfare assistance, or if you have reason to believe that there is inaccurate information in your credit report due to fraud.<br><br>
+        You have a right to sue a credit repair organization that violates the Credit Repair Organization Act. This law prohibits deceptive practices by credit repair organizations.<br><br>
+        You have the right to cancel your contract with any credit repair organization for any reason within 3 business days from the date you signed it.<br><br>
+        Credit bureaus are required to follow reasonable procedures to ensure that the information they report is accurate. However, mistakes may occur.<br><br>
+        You may, on your own, notify a credit bureau in writing that you dispute the accuracy of information in your credit file. The credit bureau must then reinvestigate and modify or remove inaccurate or incomplete information. The credit bureau may not charge any fee for this service. Any pertinent information and copies of all documents you have concerning an error should be given to the credit bureau.<br><br>
+        If the credit bureau's reinvestigation does not resolve the dispute to your satisfaction, you may send a brief statement to the credit bureau, to be kept in your file, explaining why you think the record is inaccurate. The credit bureau must include a summary of your statement about disputed information with any report it issues about you.<br><br>
+        The Federal Trade Commission regulates credit bureaus and credit repair organizations. For more information contact:<br><br>
+        <strong>The Public Reference Branch<br>
+        Federal Trade Commission<br>
+        Washington, D.C. 20580"</strong>
+      </blockquote>
+    </div>
+
+    <h3>CROA Compliance Practices</h3>
+    <ul>
+      <li><strong>No Advance Fees (15 U.S.C. &sect; 1679b(b)):</strong> We do not charge or receive payment for credit repair services until such services have been fully performed. The $99 audit fee covers a completed forensic audit product delivered to you — it is not an advance fee for future dispute work.</li>
+      <li><strong>Written Contracts (15 U.S.C. &sect; 1679d):</strong> All services require a signed, written contract that details the services to be performed, total costs, payment terms, estimated timelines, and your cancellation rights.</li>
+      <li><strong>3-Business-Day Cancellation Right (15 U.S.C. &sect; 1679e):</strong> You may cancel your contract for any reason within 3 business days of signing, without penalty or obligation. A Notice of Cancellation form is provided with every contract.</li>
+      <li><strong>No Misleading Claims (15 U.S.C. &sect; 1679b(a)):</strong> We do not guarantee specific credit score increases or claim we can remove accurate, current, and verifiable information from your credit report.</li>
+      <li><strong>Disclosure Before Contract (15 U.S.C. &sect; 1679c):</strong> The Consumer Credit File Rights statement above is provided to every consumer before any contract is executed, as a separate document.</li>
+      <li><strong>Consumer Waivers Void (15 U.S.C. &sect; 1679f):</strong> Any waiver of your rights under CROA is void and unenforceable.</li>
+    </ul>
+
+    <!-- ═══════ FCRA ═══════ -->
+    <h2 id="fcra"><span class="section-badge">FCRA</span> Fair Credit Reporting Act (15 U.S.C. &sect; 1681)</h2>
+
+    <p>All dispute activities performed by RJ Business Solutions are conducted in accordance with the Fair Credit Reporting Act. We invoke specific FCRA provisions on your behalf to challenge inaccurate, incomplete, unverifiable, or obsolete information on your credit reports.</p>
+
+    <h3>Your Rights Under the FCRA</h3>
+    <ul>
+      <li><strong>Right to Dispute (Section 611, 15 U.S.C. &sect; 1681i):</strong> You have the right to dispute any information in your credit file that you believe is inaccurate or incomplete. Credit reporting agencies (CRAs) must investigate within 30 days (extendable to 45 days if you provide additional information).</li>
+      <li><strong>Duty to Correct (Section 623, 15 U.S.C. &sect; 1681s-2):</strong> Furnishers of information (creditors, lenders, collection agencies) must investigate disputes forwarded by CRAs and correct or delete inaccurate information.</li>
+      <li><strong>Permissible Purpose (Section 604, 15 U.S.C. &sect; 1681b):</strong> Your credit report may only be accessed by parties with a legally permissible purpose, such as credit applications, insurance underwriting, or employment screening (with your consent).</li>
+      <li><strong>Obsolescence Protections (Section 605, 15 U.S.C. &sect; 1681c):</strong> Most negative information must be removed after 7 years. Bankruptcy filings under Chapter 7 may be reported for 10 years; Chapter 13 for 7 years.</li>
+      <li><strong>Free Annual Reports (Section 612, 15 U.S.C. &sect; 1681j):</strong> You are entitled to one free credit report per year from each of the three major bureaus (TransUnion, Equifax, Experian) via <a href="https://www.annualcreditreport.com" target="_blank" rel="noopener">AnnualCreditReport.com</a>.</li>
+      <li><strong>Right to Sue (Section 616-617, 15 U.S.C. &sect; 1681n-o):</strong> You may sue CRAs or furnishers for willful or negligent noncompliance with the FCRA.</li>
+      <li><strong>Fraud Alerts &amp; Credit Freezes (Section 605A-B):</strong> You have the right to place fraud alerts or security freezes on your credit file at no cost.</li>
+    </ul>
+
+    <div class="highlight-box">
+      <strong>How We Use the FCRA:</strong> Our disputes cite specific FCRA sections (primarily 611, 623, and 605) when challenging information with the credit bureaus. We do not file frivolous disputes or misrepresent information on your behalf. Every dispute is substantive, statute-specific, and tracked through the full 30-day investigation window.
+    </div>
+
+    <!-- ═══════ FDCPA ═══════ -->
+    <h2 id="fdcpa"><span class="section-badge">FDCPA</span> Fair Debt Collection Practices Act (15 U.S.C. &sect; 1692)</h2>
+
+    <p>While RJ Business Solutions is not a debt collector, we educate our clients on their rights under the Fair Debt Collection Practices Act and may reference FDCPA violations when challenging collection accounts on your credit report.</p>
+
+    <h3>Your Rights Under the FDCPA</h3>
+    <ul>
+      <li><strong>Debt Validation (Section 809, 15 U.S.C. &sect; 1692g):</strong> Within 5 days of initial contact, a debt collector must provide you with written notice of the amount of debt, name of the creditor, and your right to dispute the debt within 30 days.</li>
+      <li><strong>Cease Communication (Section 805(c), 15 U.S.C. &sect; 1692c(c)):</strong> You may demand in writing that a debt collector stop contacting you.</li>
+      <li><strong>Prohibited Practices (Section 806-808):</strong> Debt collectors cannot harass, threaten, or use abusive language; cannot call before 8am or after 9pm; cannot make false or misleading representations; cannot use unfair collection practices.</li>
+      <li><strong>Third-Party Disclosure (Section 805(b)):</strong> Debt collectors cannot discuss your debt with third parties (with limited exceptions for your attorney, spouse, or parents if you are a minor).</li>
+      <li><strong>Right to Sue (Section 813, 15 U.S.C. &sect; 1692k):</strong> You may sue a debt collector for FDCPA violations and recover actual damages, statutory damages up to $1,000 per case, and attorney's fees.</li>
+    </ul>
+
+    <div class="highlight-box">
+      <strong>How We Use the FDCPA:</strong> When a collection account on your credit report is found to be unverifiable or improperly reported, we may reference FDCPA &sect; 1692g debt validation requirements in our dispute strategy. If a collector has failed to validate a debt, reporting it to a CRA may violate both the FDCPA and the FCRA.
+    </div>
+
+    <!-- ═══════ TSR ═══════ -->
+    <h2 id="tsr"><span class="section-badge">TSR</span> FTC Telemarketing Sales Rule (16 C.F.R. Part 310)</h2>
+
+    <p>The Telemarketing Sales Rule (TSR), enforced by the Federal Trade Commission, imposes specific requirements on credit repair services marketed via telemarketing.</p>
+
+    <h3>Our TSR Compliance</h3>
+    <ul>
+      <li><strong>Advance Fee Ban (16 C.F.R. &sect; 310.4(a)(2)):</strong> We do not charge fees for credit repair services until the promised service has been fully performed and the results have been documented. This applies to all services, whether marketed by telephone, internet, or other means.</li>
+      <li><strong>No Misrepresentations (16 C.F.R. &sect; 310.3(a)):</strong> We do not make false or misleading claims about the nature, results, or efficacy of our credit repair services during telemarketing or in any marketing materials.</li>
+      <li><strong>Required Disclosures (16 C.F.R. &sect; 310.4(d)):</strong> Before a customer pays, we disclose the total cost of services, any material restrictions or conditions, and our refund or cancellation policy.</li>
+      <li><strong>Recordkeeping (16 C.F.R. &sect; 310.5):</strong> We maintain records of all telemarketing transactions, advertising, and customer communications for a minimum of 24 months (extended to 5 years under the 2024 TSR amendments).</li>
+    </ul>
+
+    <div class="warning-box">
+      <strong>TSR Advance Fee Ban Clarification:</strong> Under both CROA and the TSR, it is illegal to charge advance fees for credit repair services. Our $99 forensic audit fee is payment for a <em>completed, delivered product</em> (your forensic audit report and personalized roadmap), not an advance fee for future dispute work. Monthly service fees are billed only after verifiable results have been achieved in that billing period.
+    </div>
+
+    <!-- ═══════ FTC ACT ═══════ -->
+    <h2 id="ftc"><span class="section-badge">FTC</span> Federal Trade Commission Act (15 U.S.C. &sect; 41 et seq.)</h2>
+
+    <p>Section 5 of the FTC Act prohibits unfair or deceptive acts or practices in or affecting commerce. Under 15 U.S.C. &sect; 1679h, violations of CROA are treated as violations of the FTC Act.</p>
+
+    <h3>Our FTC Act Compliance</h3>
+    <ul>
+      <li><strong>No Deceptive Practices:</strong> All marketing materials, website content, and client communications are truthful, non-misleading, and substantiated.</li>
+      <li><strong>No Unfair Practices:</strong> We do not impose unreasonable terms, hidden fees, or conditions that cause substantial consumer injury.</li>
+      <li><strong>Substantiation:</strong> All claims about our services, success rates, or potential outcomes are based on documented evidence and presented with appropriate qualifications.</li>
+      <li><strong>Clear Disclosures:</strong> Material terms, costs, and conditions are disclosed clearly and conspicuously before a consumer makes a purchasing decision.</li>
+    </ul>
+
+    <!-- ═══════ CFPB ═══════ -->
+    <h2 id="cfpb"><span class="section-badge">CFPB</span> Consumer Financial Protection Bureau</h2>
+
+    <p>The Consumer Financial Protection Bureau (CFPB) shares enforcement authority with the FTC over credit repair organizations. RJ Business Solutions adheres to all CFPB guidance and regulatory standards applicable to credit repair services.</p>
+
+    <h3>CFPB Regulatory Compliance</h3>
+    <ul>
+      <li><strong>Regulation V (12 C.F.R. Part 1022):</strong> Implements the FCRA. We ensure all disputes are filed in accordance with Regulation V procedures.</li>
+      <li><strong>Regulation F (12 C.F.R. Part 1006):</strong> Implements the FDCPA. We educate clients on their rights and reference Regulation F when challenging improperly reported collection accounts.</li>
+      <li><strong>Supervision Authority:</strong> We acknowledge the CFPB's supervisory and enforcement authority over credit repair organizations and maintain our practices in accordance with CFPB guidance.</li>
+      <li><strong>Consumer Complaint Process:</strong> If you are dissatisfied with our services, you have the right to file a complaint with the CFPB at <a href="https://www.consumerfinance.gov/complaint/" target="_blank" rel="noopener">consumerfinance.gov/complaint</a>.</li>
+    </ul>
+
+    <!-- ═══════ STATE LAW ═══════ -->
+    <h2 id="state"><span class="section-badge">STATE</span> State Law Compliance</h2>
+
+    <p>In addition to federal law, credit repair organizations may be subject to state-specific regulations. RJ Business Solutions complies with all applicable state laws, including but not limited to:</p>
+    <ul>
+      <li><strong>New Mexico:</strong> As our principal place of business is in Tijeras, New Mexico, we comply with all New Mexico consumer protection statutes, including the Unfair Practices Act (NMSA 57-12-1 et seq.).</li>
+      <li><strong>State Bonding/Registration:</strong> Where required by state law, we maintain appropriate bonds and registrations.</li>
+      <li><strong>State Cancellation Rights:</strong> Some states provide cancellation rights that exceed the federal 3-business-day period. Where applicable, the longer cancellation period applies.</li>
+      <li><strong>State-Specific Disclosures:</strong> Additional disclosures required by your state of residence will be provided as part of your service contract.</li>
+    </ul>
+
+    <!-- ═══════ RESULTS DISCLAIMER ═══════ -->
+    <h2 id="results"><span class="section-badge">DISCLAIMER</span> Results &amp; Earnings Disclaimer</h2>
+
+    <div class="warning-box">
+      <strong>No Guarantee of Results:</strong> Credit repair results vary based on individual circumstances. RJ Business Solutions does not guarantee any specific credit score increase, removal of any specific item, or any particular outcome. Past results achieved for other clients do not guarantee or predict future results for you.<br><br>
+      <strong>Factors Affecting Results:</strong> The outcome of credit repair depends on many factors including but not limited to: the accuracy and completeness of information currently reported, the willingness of furnishers to investigate and correct errors, the specific items on your credit report, your payment history during the repair process, and changes in credit reporting regulations.<br><br>
+      <strong>Not a Guarantee:</strong> Any examples of results, testimonials, or case studies shared on this website or in our marketing materials are for illustrative purposes only and should not be construed as a guarantee of similar results. Individual results may be better or worse than those described.
+    </div>
+
+    <!-- ═══════ CONTACT & REGULATORY ═══════ -->
+    <h2 id="regulatory">Regulatory Contacts</h2>
+
+    <p>If you believe your consumer rights have been violated, you may contact the following regulatory agencies:</p>
+
+    <ul>
+      <li><strong>Federal Trade Commission (FTC):</strong> <a href="https://www.ftc.gov/complaint" target="_blank" rel="noopener">ftc.gov/complaint</a> | 1-877-FTC-HELP (1-877-382-4357) | 600 Pennsylvania Avenue NW, Washington, DC 20580</li>
+      <li><strong>Consumer Financial Protection Bureau (CFPB):</strong> <a href="https://www.consumerfinance.gov/complaint/" target="_blank" rel="noopener">consumerfinance.gov/complaint</a> | 1-855-411-CFPB (1-855-411-2372)</li>
+      <li><strong>New Mexico Attorney General:</strong> <a href="https://www.nmag.gov/consumer-protection.aspx" target="_blank" rel="noopener">nmag.gov</a> | 1-844-255-9210 | P.O. Box 1508, Santa Fe, NM 87504</li>
+      <li><strong>TransUnion:</strong> <a href="https://www.transunion.com/dispute" target="_blank" rel="noopener">transunion.com/dispute</a> | 1-800-916-8800</li>
+      <li><strong>Equifax:</strong> <a href="https://www.equifax.com/personal/disputes" target="_blank" rel="noopener">equifax.com/personal/disputes</a> | 1-866-349-5191</li>
+      <li><strong>Experian:</strong> <a href="https://www.experian.com/disputes" target="_blank" rel="noopener">experian.com/disputes</a> | 1-888-397-3742</li>
+    </ul>
+
+    <h2 id="contact">Contact Us</h2>
+    <p><strong>RJ Business Solutions</strong><br>
+    1342 NM 333, Tijeras, New Mexico 87059<br>
+    Email: <a href="mailto:rickjefferson@rickjeffersonsolutions.com">rickjefferson@rickjeffersonsolutions.com</a><br>
+    Website: <a href="https://rickjeffersonsolutions.com" target="_blank" rel="noopener">rickjeffersonsolutions.com</a></p>`
+  )
+}
+
+// ========== /consumer-rights — CROA CONSUMER RIGHTS (STANDALONE) ==========
+function consumerRightsPageHTML(): string {
+  return legalLayout(
+    'Consumer Credit File Rights Under State and Federal Law',
+    'Your consumer credit file rights under CROA, FCRA, and applicable state and federal law. Required disclosure from RJ Business Solutions.',
+    `<h1>Consumer Credit File Rights Under State and Federal Law</h1>
+    <p class="updated">Required Disclosure Pursuant to 15 U.S.C. &sect; 1679c (Credit Repair Organizations Act)</p>
+
+    <div class="croa-box">
+      <p>You have a right to dispute inaccurate information in your credit report by contacting the credit bureau directly. However, neither you nor any "credit repair" company or credit repair organization has the right to have accurate, current, and verifiable information removed from your credit report. The credit bureau must remove accurate, negative information from your report only if it is over 7 years old. Bankruptcy information can be reported for 10 years.</p>
+
+      <p>You have a right to obtain a copy of your credit report from a credit bureau. You may be charged a reasonable fee. There is no fee, however, if you have been turned down for credit, employment, insurance, or a rental dwelling because of information in your credit report within the preceding 60 days. The credit bureau must provide someone to help you interpret the information in your credit file. You are entitled to receive a free copy of your credit report if you are unemployed and intend to apply for employment in the next 60 days, if you are a recipient of public welfare assistance, or if you have reason to believe that there is inaccurate information in your credit report due to fraud.</p>
+
+      <p>You have a right to sue a credit repair organization that violates the Credit Repair Organization Act. This law prohibits deceptive practices by credit repair organizations.</p>
+
+      <p>You have the right to cancel your contract with any credit repair organization for any reason within 3 business days from the date you signed it.</p>
+
+      <p>Credit bureaus are required to follow reasonable procedures to ensure that the information they report is accurate. However, mistakes may occur.</p>
+
+      <p>You may, on your own, notify a credit bureau in writing that you dispute the accuracy of information in your credit file. The credit bureau must then reinvestigate and modify or remove inaccurate or incomplete information. The credit bureau may not charge any fee for this service. Any pertinent information and copies of all documents you have concerning an error should be given to the credit bureau.</p>
+
+      <p>If the credit bureau's reinvestigation does not resolve the dispute to your satisfaction, you may send a brief statement to the credit bureau, to be kept in your file, explaining why you think the record is inaccurate. The credit bureau must include a summary of your statement about disputed information with any report it issues about you.</p>
+
+      <p>The Federal Trade Commission regulates credit bureaus and credit repair organizations. For more information contact:</p>
+
+      <p><strong>The Public Reference Branch<br>Federal Trade Commission<br>Washington, D.C. 20580</strong></p>
+    </div>
+
+    <h2>Additional Resources for Consumers</h2>
+    <ul>
+      <li><a href="https://www.annualcreditreport.com" target="_blank" rel="noopener">AnnualCreditReport.com</a> — Free annual credit reports from all three bureaus</li>
+      <li><a href="https://www.consumerfinance.gov/consumer-tools/credit-reports-and-scores/" target="_blank" rel="noopener">CFPB Credit Reports &amp; Scores</a> — Consumer tools and educational resources</li>
+      <li><a href="https://www.ftc.gov/legal-library/browse/statutes/credit-repair-organizations-act" target="_blank" rel="noopener">FTC — Credit Repair Organizations Act (Full Text)</a></li>
+      <li><a href="https://www.ftc.gov/legal-library/browse/statutes/fair-credit-reporting-act" target="_blank" rel="noopener">FTC — Fair Credit Reporting Act (Full Text)</a></li>
+      <li><a href="https://www.ftc.gov/legal-library/browse/rules/fair-debt-collection-practices-act-text" target="_blank" rel="noopener">FTC — Fair Debt Collection Practices Act (Full Text)</a></li>
+    </ul>
+
+    <h2>Your Right to Self-Dispute</h2>
+    <p>You have the right to dispute inaccurate information on your credit report directly with the credit bureaus at no cost. You do not need to hire a credit repair organization to exercise this right. The credit bureaus' dispute processes are available at:</p>
+    <ul>
+      <li><strong>TransUnion:</strong> <a href="https://www.transunion.com/dispute" target="_blank" rel="noopener">transunion.com/dispute</a> | 1-800-916-8800</li>
+      <li><strong>Equifax:</strong> <a href="https://www.equifax.com/personal/disputes" target="_blank" rel="noopener">equifax.com/personal/disputes</a> | 1-866-349-5191</li>
+      <li><strong>Experian:</strong> <a href="https://www.experian.com/disputes" target="_blank" rel="noopener">experian.com/disputes</a> | 1-888-397-3742</li>
+    </ul>`
+  )
+}
+
+// ========== /cancellation — CANCELLATION POLICY ==========
+function cancellationPageHTML(): string {
+  return legalLayout(
+    'Cancellation Policy &amp; Notice of Right to Cancel',
+    'Your right to cancel credit repair services from RJ Business Solutions within 3 business days under CROA.',
+    `<h1>Cancellation Policy &amp; Notice of Right to Cancel</h1>
+    <p class="updated">Effective February 23, 2026 &bull; In accordance with 15 U.S.C. &sect; 1679e</p>
+
+    <div class="croa-box">
+      <h3>&#128221; Notice of Cancellation</h3>
+      <p><strong>You may cancel this contract, without any penalty or obligation, at any time before midnight of the 3rd business day which begins after the date the contract is signed by you.</strong></p>
+      <p>To cancel this contract, mail or deliver a signed, dated copy of this cancellation notice, or any other written notice, to:</p>
+      <p><strong>RJ Business Solutions</strong><br>
+      1342 NM 333<br>
+      Tijeras, New Mexico 87059<br>
+      Email: <a href="mailto:rickjefferson@rickjeffersonsolutions.com">rickjefferson@rickjeffersonsolutions.com</a></p>
+      <p><em>I hereby cancel this transaction.</em></p>
+      <p>[Date] ____________________</p>
+      <p>[Signature] ____________________</p>
+    </div>
+
+    <h2>Cancellation Details</h2>
+    <h3>3-Business-Day Right to Cancel (CROA &sect; 1679e)</h3>
+    <p>Under the Credit Repair Organizations Act, you have the absolute right to cancel your contract with RJ Business Solutions for <strong>any reason</strong> within 3 business days of signing, without penalty or obligation of any kind.</p>
+
+    <h3>How to Cancel</h3>
+    <ul>
+      <li><strong>Email:</strong> Send a written cancellation notice to <a href="mailto:rickjefferson@rickjeffersonsolutions.com">rickjefferson@rickjeffersonsolutions.com</a></li>
+      <li><strong>Mail:</strong> Send a signed, dated cancellation notice to: RJ Business Solutions, 1342 NM 333, Tijeras, NM 87059</li>
+    </ul>
+
+    <h3>After the 3-Day Period</h3>
+    <p>After the 3-business-day cancellation window, you may still cancel your service at any time. However, fees for services already fully performed are non-refundable, consistent with CROA provisions. Any fees collected for services not yet performed will be refunded within 10 business days.</p>
+
+    <h3>Refund Policy</h3>
+    <ul>
+      <li><strong>Cancellation within 3 business days:</strong> Full refund of all fees paid, no questions asked.</li>
+      <li><strong>90-Day Money-Back Guarantee:</strong> If we cannot demonstrate a single verified improvement within 90 days of active service, all monthly service fees (not the audit fee for completed audit) will be refunded.</li>
+      <li><strong>Monitoring fees ($29.99/mo):</strong> MyFreeScoreNow monitoring is a third-party service. Cancellation of monitoring must be handled directly with MyFreeScoreNow.</li>
+    </ul>
+
+    <h3>No Work Before Contract</h3>
+    <p>Pursuant to 15 U.S.C. &sect; 1679d(a)(2), no credit repair services will be provided before the end of the 3-business-day cancellation period following the date the contract is signed. This protects your right to cancel without having received services you would then be obligated to pay for.</p>`
+  )
+}
+
+// ========== /privacy — PRIVACY POLICY ==========
+function privacyPageHTML(): string {
+  return legalLayout(
+    'Privacy Policy',
+    'Privacy policy for RJ Business Solutions credit repair services. How we collect, use, and protect your personal information.',
+    `<h1>Privacy Policy</h1>
+    <p class="updated">Last Updated: February 23, 2026 &bull; Effective Date: February 23, 2026</p>
+
+    <p>RJ Business Solutions ("we," "us," or "our") respects your privacy and is committed to protecting the personal information you share with us. This Privacy Policy describes how we collect, use, disclose, and safeguard your information when you visit our website, use our credit repair services, or interact with us in any way.</p>
+
+    <h2>1. Information We Collect</h2>
+    <h3>1.1 Personal Information You Provide</h3>
+    <ul>
+      <li><strong>Contact Information:</strong> Full name, email address, phone number, mailing address</li>
+      <li><strong>Financial Information:</strong> Credit report data (accessed through MyFreeScoreNow with your authorization), credit scores, account information relevant to credit repair</li>
+      <li><strong>Payment Information:</strong> Credit/debit card details processed through Stripe (we do not store your full card number)</li>
+      <li><strong>Identity Verification:</strong> Date of birth, last four digits of SSN (only when required for credit bureau communication)</li>
+    </ul>
+    <h3>1.2 Automatically Collected Information</h3>
+    <ul>
+      <li>IP address and approximate geolocation</li>
+      <li>Browser type and version</li>
+      <li>Device information</li>
+      <li>Pages visited and time spent on our site</li>
+      <li>Referring URL and UTM parameters</li>
+    </ul>
+
+    <h2>2. How We Use Your Information</h2>
+    <ul>
+      <li>To provide credit repair services as described in your service agreement</li>
+      <li>To communicate with credit bureaus and furnishers on your behalf</li>
+      <li>To process payments securely through Stripe</li>
+      <li>To send service-related communications (reports, updates, billing)</li>
+      <li>To respond to your inquiries and provide customer support</li>
+      <li>To comply with legal obligations and regulatory requirements</li>
+      <li>To improve our services and website functionality</li>
+    </ul>
+
+    <h2>3. How We Share Your Information</h2>
+    <p>We do <strong>not</strong> sell, rent, or trade your personal information. We share your information only in the following circumstances:</p>
+    <ul>
+      <li><strong>Credit Bureaus:</strong> TransUnion, Equifax, and Experian — as necessary to file disputes on your behalf with your written authorization</li>
+      <li><strong>Creditors/Furnishers:</strong> As necessary to challenge inaccurate reporting on your behalf</li>
+      <li><strong>Payment Processor:</strong> Stripe, Inc. — to process secure payments (<a href="https://stripe.com/privacy" target="_blank" rel="noopener">Stripe Privacy Policy</a>)</li>
+      <li><strong>Credit Monitoring:</strong> MyFreeScoreNow — you enroll directly with them; we access your reports with your authorization</li>
+      <li><strong>Legal Requirements:</strong> When required by law, regulation, legal process, or enforceable governmental request</li>
+    </ul>
+
+    <h2>4. Data Security</h2>
+    <p>We implement industry-standard security measures to protect your personal information, including:</p>
+    <ul>
+      <li>TLS/SSL encryption for all data transmitted to and from our website</li>
+      <li>Encrypted storage of sensitive data</li>
+      <li>Limited access to personal information on a need-to-know basis</li>
+      <li>Regular security reviews and updates</li>
+      <li>Stripe PCI-DSS compliant payment processing (we never store full card numbers)</li>
+    </ul>
+
+    <h2>5. Data Retention</h2>
+    <ul>
+      <li><strong>Service Records:</strong> Maintained for 2 years after service completion (CROA record retention requirement under 15 U.S.C. &sect; 1679c(c))</li>
+      <li><strong>Payment Records:</strong> Maintained for 7 years for tax and legal compliance</li>
+      <li><strong>Marketing Data:</strong> Until you opt out or request deletion</li>
+      <li><strong>Telemarketing Records:</strong> Maintained for 5 years (TSR recordkeeping requirement under 16 C.F.R. &sect; 310.5)</li>
+    </ul>
+
+    <h2>6. Your Rights</h2>
+    <h3>All Consumers</h3>
+    <ul>
+      <li><strong>Access:</strong> Request a copy of the personal information we hold about you</li>
+      <li><strong>Correction:</strong> Request correction of inaccurate personal information</li>
+      <li><strong>Deletion:</strong> Request deletion of your personal information (subject to legal retention requirements)</li>
+      <li><strong>Opt-Out:</strong> Opt out of marketing communications at any time</li>
+    </ul>
+    <h3>California Residents (CCPA/CPRA)</h3>
+    <p>If you are a California resident, you have additional rights under the California Consumer Privacy Act (CCPA) and the California Privacy Rights Act (CPRA):</p>
+    <ul>
+      <li>Right to know what personal information we collect, use, and disclose</li>
+      <li>Right to delete your personal information</li>
+      <li>Right to opt out of the sale of your personal information (we do not sell your data)</li>
+      <li>Right to non-discrimination for exercising your privacy rights</li>
+      <li>Right to correct inaccurate personal information</li>
+      <li>Right to limit use of sensitive personal information</li>
+    </ul>
+
+    <h2>7. Cookies and Tracking</h2>
+    <p>Our website may use cookies and similar tracking technologies to improve your experience. You can control cookie settings through your browser. We do not use cookies to collect personal financial information.</p>
+
+    <h2>8. Children's Privacy</h2>
+    <p>Our services are not directed to individuals under the age of 18. We do not knowingly collect personal information from children under 18. If you are a parent or guardian and believe we have collected information from your child, please contact us immediately.</p>
+
+    <h2>9. Changes to This Policy</h2>
+    <p>We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated "Last Updated" date. Your continued use of our services after changes constitutes acceptance of the updated policy.</p>
+
+    <h2>10. Contact Us</h2>
+    <p>For privacy-related inquiries or to exercise your rights:<br>
+    <strong>RJ Business Solutions</strong><br>
+    1342 NM 333, Tijeras, New Mexico 87059<br>
+    Email: <a href="mailto:rickjefferson@rickjeffersonsolutions.com">rickjefferson@rickjeffersonsolutions.com</a><br>
+    Website: <a href="https://rickjeffersonsolutions.com" target="_blank" rel="noopener">rickjeffersonsolutions.com</a></p>`
+  )
+}
+
+// ========== /terms — TERMS OF SERVICE ==========
+function termsPageHTML(): string {
+  return legalLayout(
+    'Terms of Service',
+    'Terms of Service for RJ Business Solutions credit repair services. Service agreement, billing, cancellation, and dispute resolution.',
+    `<h1>Terms of Service</h1>
+    <p class="updated">Last Updated: February 23, 2026 &bull; Effective Date: February 23, 2026</p>
+
+    <p>These Terms of Service ("Terms") govern your use of the credit repair services provided by RJ Business Solutions ("Company," "we," "us," or "our"). By engaging our services, you agree to these Terms in their entirety.</p>
+
+    <h2>1. Services Provided</h2>
+    <p>RJ Business Solutions provides credit repair services, including but not limited to:</p>
+    <ul>
+      <li>Forensic 3-bureau credit audits (TransUnion, Equifax, Experian)</li>
+      <li>Personalized credit restoration roadmaps</li>
+      <li>Filing statute-specific disputes with credit bureaus and furnishers under the FCRA</li>
+      <li>Monitoring dispute responses and filing follow-up disputes</li>
+      <li>Monthly progress reports</li>
+      <li>Credit education resources</li>
+    </ul>
+    <p>We are a credit repair organization as defined under the Credit Repair Organizations Act (15 U.S.C. &sect; 1679 et seq.). We are <strong>not</strong> a law firm, we do <strong>not</strong> provide legal advice, and we do <strong>not</strong> guarantee any specific results.</p>
+
+    <h2>2. Eligibility</h2>
+    <p>You must be at least 18 years old and a legal resident of the United States to use our services. You must provide accurate and truthful information throughout the engagement.</p>
+
+    <h2>3. Required Credit Monitoring</h2>
+    <p>Before we can begin any credit repair work, you must enroll in and maintain an active MyFreeScoreNow monitoring subscription ($29.99/month). This is a third-party service required for us to access your tri-bureau credit data. The monitoring fee is paid directly to MyFreeScoreNow and is separate from our service fees.</p>
+
+    <h2>4. Fees and Billing</h2>
+    <h3>4.1 Audit Fee</h3>
+    <p>A one-time fee of $99.00 is charged for your forensic 3-bureau credit audit and personalized 10-Point Restoration Roadmap. This fee is for a <strong>completed, delivered product</strong> and is charged at the time of purchase via Stripe secure checkout. The completed audit and roadmap are delivered within 5 business days.</p>
+    <h3>4.2 Monthly Service Fee</h3>
+    <p>A monthly service fee of $99.00 covers dispute filing, tracking, follow-up, and progress reporting. <strong>This fee is charged only in months where verifiable progress has been documented</strong> (deletions, corrections, or verified score improvements). If no progress is made in a given month, no service fee is charged for that month.</p>
+    <h3>4.3 No Advance Fees for Disputes</h3>
+    <p>In compliance with CROA (15 U.S.C. &sect; 1679b(b)) and the TSR (16 C.F.R. &sect; 310.4(a)(2)), we do not charge fees for dispute services until those services have been fully performed and results documented.</p>
+
+    <h2>5. Right to Cancel</h2>
+    <div class="croa-box">
+      <h3>&#128221; Your 3-Day Cancellation Right</h3>
+      <p>Pursuant to 15 U.S.C. &sect; 1679e, you may cancel your contract with us <strong>for any reason, without penalty or obligation, within 3 business days</strong> of signing. See our <a href="/cancellation">Cancellation Policy</a> for full details and the Notice of Cancellation form.</p>
+    </div>
+
+    <h2>6. Client Responsibilities</h2>
+    <ul>
+      <li>Provide accurate and truthful information at all times</li>
+      <li>Maintain active MyFreeScoreNow credit monitoring throughout the engagement</li>
+      <li>Respond promptly to requests for information or documentation</li>
+      <li>Review all dispute letters and reports provided to you</li>
+      <li>Not file additional disputes independently while we are actively working on your file (to avoid conflicting dispute processes)</li>
+      <li>Notify us of any changes to your contact information</li>
+    </ul>
+
+    <h2>7. What We Do NOT Do</h2>
+    <ul>
+      <li>We do <strong>not</strong> guarantee specific credit score increases or removal of specific items</li>
+      <li>We do <strong>not</strong> advise you to misrepresent your identity or create a "new" credit file</li>
+      <li>We do <strong>not</strong> advise you to dispute accurate, current, and verifiable information</li>
+      <li>We do <strong>not</strong> provide legal advice or legal representation</li>
+      <li>We do <strong>not</strong> charge for services before they are performed</li>
+    </ul>
+
+    <h2>8. 90-Day Money-Back Guarantee</h2>
+    <p>If we are unable to show a single verified improvement (deletion, correction, or documented score increase) within 90 days of active service, we will refund all monthly service fees collected during that period. This guarantee does not apply to the initial audit fee (for the completed audit product) or to third-party monitoring fees.</p>
+
+    <h2>9. Limitation of Liability</h2>
+    <p>To the maximum extent permitted by law, RJ Business Solutions' total liability for any claim arising from or related to our services shall not exceed the total fees you have paid to us during the 12 months preceding the claim. We are not liable for actions taken by credit bureaus, creditors, or third-party service providers.</p>
+
+    <h2>10. Dispute Resolution</h2>
+    <p>Any dispute arising from these Terms or our services will first be addressed through good-faith negotiation. If negotiation is unsuccessful, disputes will be resolved through binding arbitration in Bernalillo County, New Mexico, in accordance with the rules of the American Arbitration Association. Nothing in this section limits your rights under CROA, the FCRA, or other applicable federal or state consumer protection laws.</p>
+
+    <h2>11. Governing Law</h2>
+    <p>These Terms are governed by and construed in accordance with federal law (including CROA, FCRA, FDCPA, and the FTC Act) and the laws of the State of New Mexico, without regard to conflict of law principles.</p>
+
+    <h2>12. Severability</h2>
+    <p>If any provision of these Terms is found to be unenforceable, the remaining provisions will continue in full force and effect.</p>
+
+    <h2>13. Changes to Terms</h2>
+    <p>We reserve the right to modify these Terms at any time. Changes will be posted on this page. Your continued use of our services after changes constitutes acceptance of the modified Terms.</p>
+
+    <h2>14. Contact</h2>
+    <p><strong>RJ Business Solutions</strong><br>
+    1342 NM 333, Tijeras, New Mexico 87059<br>
+    Email: <a href="mailto:rickjefferson@rickjeffersonsolutions.com">rickjefferson@rickjeffersonsolutions.com</a><br>
+    Website: <a href="https://rickjeffersonsolutions.com" target="_blank" rel="noopener">rickjeffersonsolutions.com</a></p>`
+  )
 }
 
 // ========== FUNNEL PAGE HTML ==========
@@ -558,7 +1095,7 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
     .sc p{color:#9ca3af;font-size:.9rem;line-height:1.7}
     .scp{position:relative;z-index:2;padding:4rem 0;background:rgba(23,37,84,.15);border-top:1px solid rgba(30,58,138,.3);border-bottom:1px solid rgba(30,58,138,.3)}
     .cpt{font-size:1.5rem;font-weight:700;text-align:center;margin-bottom:2rem}
-    .cpg{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+    .cpg{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem}
     .cpc{background:rgba(17,24,39,.6);border:1px solid rgba(30,58,138,.35);border-radius:.875rem;padding:1.5rem}
     .cpc h4{color:#60a5fa;font-weight:700;margin-bottom:.5rem;font-size:1rem}
     .cpc p{color:#9ca3af;font-size:.85rem;line-height:1.6}
@@ -686,10 +1223,14 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
     <div class="cs">
       <h3 class="cpt ao">&#128274; 100% Federally Compliant — Your Rights Are Protected</h3>
       <div class="cpg">
-        <div class="cpc ao s1"><h4>CROA Compliant</h4><p>Written contract provided. 3-day cancellation right honored. No advance fees for future dispute work.</p></div>
-        <div class="cpc ao s2"><h4>FCRA Backed</h4><p>Every dispute cites specific FCRA sections. Your Section 611, 623, and 604 rights fully enforced.</p></div>
-        <div class="cpc ao s3"><h4>FTC & CFPB Aligned</h4><p>Telemarketing Sales Rule compliant. CFPB dispute standards applied to every bureau interaction.</p></div>
+        <div class="cpc ao s1"><h4>CROA Compliant</h4><p>Written contract provided. 3-day cancellation right honored. No advance fees for future dispute work. Full consumer disclosure per 15 U.S.C. &sect; 1679c.</p></div>
+        <div class="cpc ao s2"><h4>FCRA Backed</h4><p>Every dispute cites specific FCRA sections. Your Section 611, 623, and 604 rights fully enforced. 30-day investigation windows tracked.</p></div>
+        <div class="cpc ao s3"><h4>FDCPA Enforced</h4><p>Collection accounts challenged under Fair Debt Collection Practices Act. Debt validation rights (15 U.S.C. &sect; 1692g) cited when applicable.</p></div>
+        <div class="cpc ao s4"><h4>TSR Compliant</h4><p>Full Telemarketing Sales Rule compliance. No advance fees per 16 C.F.R. &sect; 310.4(a)(2). Required disclosures provided. Records maintained per TSR.</p></div>
+        <div class="cpc ao s5"><h4>FTC &amp; CFPB Aligned</h4><p>Section 5 FTC Act compliant. No deceptive practices. CFPB dispute standards applied. Regulation V and Regulation F procedures followed.</p></div>
+        <div class="cpc ao s6"><h4>State Law Compliant</h4><p>New Mexico Unfair Practices Act compliant. State-specific cancellation rights honored. Applicable bonding and registration maintained.</p></div>
       </div>
+      <p class="ao" style="text-align:center;margin-top:1.5rem;font-size:.8rem;color:#6b7280">Full legal disclosures: <a href="/legal" style="color:#60a5fa">Legal &amp; Compliance</a> &bull; <a href="/consumer-rights" style="color:#60a5fa">Consumer Rights</a> &bull; <a href="/cancellation" style="color:#60a5fa">Cancellation Policy</a></p>
     </div>
   </section>
 
@@ -704,8 +1245,17 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
   <footer class="ft">
     <div class="cx">
       <img src="https://storage.googleapis.com/msgsndr/qQnxRHDtyx0uydPd5sRl/media/67eb83c5e519ed689430646b.jpeg" alt="RJ Business Solutions" class="fl">
-      <p><strong style="color:#d1d5db">RJ Business Solutions</strong><br>1342 NM 333, Tijeras, New Mexico 87059<br><a href="https://rickjeffersonsolutions.com" target="_blank">rickjeffersonsolutions.com</a> &bull; <a href="mailto:rjbizsolution23@gmail.com">rjbizsolution23@gmail.com</a></p>
-      <p style="margin-top:1rem">&copy; 2025 RJ Business Solutions. All rights reserved.<br>Credit repair services are performed in compliance with CROA, FCRA, and applicable state regulations.</p>
+      <p><strong style="color:#d1d5db">RJ Business Solutions</strong><br>1342 NM 333, Tijeras, New Mexico 87059<br><a href="https://rickjeffersonsolutions.com" target="_blank">rickjeffersonsolutions.com</a> &bull; <a href="mailto:rickjefferson@rickjeffersonsolutions.com">rickjefferson@rickjeffersonsolutions.com</a></p>
+      <div style="margin:1.25rem auto;max-width:700px;padding:1rem;background:rgba(17,24,39,.8);border:1px solid #1f2937;border-radius:.75rem;text-align:left">
+        <p style="color:#9ca3af;font-size:.7rem;line-height:1.7;margin:0">
+          <strong style="color:#d1d5db">Federal Compliance Disclosures:</strong> RJ Business Solutions is a credit repair organization as defined under the Credit Repair Organizations Act (15 U.S.C. &sect; 1679 et seq.). We are not a law firm, we are not attorneys, and we do not provide legal advice. You have the right to dispute inaccurate information on your credit report directly with the credit bureaus at no cost. Neither you nor any credit repair company has the right to have accurate, current, and verifiable information removed from your credit report. Results vary and are not guaranteed. You have the right to cancel your contract within 3 business days of signing without penalty (CROA &sect; 1679e). No fees are charged for credit repair services until such services have been fully performed (CROA &sect; 1679b(b); TSR 16 C.F.R. &sect; 310.4(a)(2)). The $99 audit fee is for a completed, delivered forensic audit product. Monthly service fees are charged only when verifiable progress is documented. All disputes are filed in accordance with the Fair Credit Reporting Act (15 U.S.C. &sect; 1681 et seq.). Our services comply with the Fair Debt Collection Practices Act (15 U.S.C. &sect; 1692 et seq.), the FTC Telemarketing Sales Rule (16 C.F.R. Part 310), the Federal Trade Commission Act (15 U.S.C. &sect; 41 et seq.), and applicable CFPB regulations.
+        </p>
+        <p style="color:#9ca3af;font-size:.7rem;line-height:1.7;margin:.75rem 0 0">
+          <strong style="color:#d1d5db">Regulatory Contacts:</strong> FTC: <a href="https://www.ftc.gov/complaint" target="_blank" style="color:#60a5fa">ftc.gov/complaint</a> | 1-877-FTC-HELP &bull; CFPB: <a href="https://www.consumerfinance.gov/complaint/" target="_blank" style="color:#60a5fa">consumerfinance.gov/complaint</a> | 1-855-411-CFPB &bull; NM Attorney General: <a href="https://www.nmag.gov" target="_blank" style="color:#60a5fa">nmag.gov</a> | 1-844-255-9210
+        </p>
+      </div>
+      <p style="margin-top:.75rem"><a href="/legal">Legal Disclosures</a> &bull; <a href="/consumer-rights">Consumer Rights</a> &bull; <a href="/privacy">Privacy Policy</a> &bull; <a href="/terms">Terms of Service</a> &bull; <a href="/cancellation">Cancellation Policy</a></p>
+      <p style="margin-top:.75rem">&copy; 2025 RJ Business Solutions. All rights reserved.<br>Credit repair services are performed in compliance with CROA, FCRA, FDCPA, TSR, and applicable state regulations.</p>
     </div>
   </footer>
 
@@ -722,6 +1272,7 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
           <div class="fg2"><label for="phone">Phone Number</label><input type="tel" id="phone" name="phone" placeholder="(555) 123-4567"></div>
           <button type="submit" class="fs" id="submitBtn">Claim My Spot — $99 Audit</button>
           <p class="fnt">&#128274; Your information is 100% secure and never shared.</p>
+          <p class="fnt" style="margin-top:.5rem;line-height:1.5">By submitting, you acknowledge our <a href="/consumer-rights" target="_blank" style="color:#60a5fa">Consumer Rights Disclosure</a>, <a href="/terms" target="_blank" style="color:#60a5fa">Terms of Service</a>, and <a href="/privacy" target="_blank" style="color:#60a5fa">Privacy Policy</a>. You have the right to cancel within 3 business days of signing any contract (<a href="/cancellation" target="_blank" style="color:#60a5fa">Cancellation Policy</a>). No credit repair fees are charged until services are fully performed.</p>
         </form>
       </div>
       <div id="successView" style="display:none">
