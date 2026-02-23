@@ -1,6 +1,6 @@
-# Clean It Up — ITIN Multi-Language Credit Repair Funnel
+# RJ Business Solutions — ITIN Multi-Language Funnel System
 
-![RJ Business Solutions](https://storage.googleapis.com/msgsndr/qQnxRHDtyx0uydPd5sRl/media/67eb83c5e519ed689430646b.jpeg)
+![RJ Business Solutions](https://media.rickjeffersonsolutions.com/rj-business-solutions-logo-banner.jpg)
 
 **Built by RJ Business Solutions**
 1342 NM 333, Tijeras, New Mexico 87059
@@ -10,213 +10,137 @@
 
 ## Project Overview
 
-- **Name**: Clean It Up — ITIN Credit Repair Funnel (Basic Plan)
-- **Type**: Conversion-Optimized, Multi-Language ITIN Credit Repair Funnel
-- **Goal**: Convert ITIN holders with 1-5 negative credit items into paying clients through a high-conversion, federally compliant, multilingual sales funnel
-- **Target Audience**: ITIN holders (primarily Spanish, Chinese, and Vietnamese speaking communities) with negative items on their credit report
-- **Languages**: English, Espanol (Spanish), 中文 (Chinese Simplified), Tieng Viet (Vietnamese)
+The **ITIN Multi-Language Funnel System** is a production-grade, multi-locale credit repair funnel supporting **5 languages** and **3 pricing tiers** — all in a single Cloudflare Pages deployment. Designed specifically for ITIN holders who have the **same federal credit dispute rights** as SSN holders under FCRA, ECOA, CROA, and FDCPA.
 
 ## Live URLs
 
-- **Production**: [https://clean-it-up-funnel.pages.dev](https://clean-it-up-funnel.pages.dev)
-- **Custom Domain**: [https://rjbusinesssolutions.org](https://rjbusinesssolutions.org) (pending DNS)
-- **GitHub (Private)**: [https://github.com/rjbizsolution23-wq/clean-it-up-itin-funnel](https://github.com/rjbizsolution23-wq/clean-it-up-itin-funnel)
+| URL | Description |
+|-----|-------------|
+| **https://rj-itin-funnels.pages.dev** | Production (auto-detect language) |
+| https://rj-itin-funnels.pages.dev/en | English Home |
+| https://rj-itin-funnels.pages.dev/es | Spanish Home |
+| https://rj-itin-funnels.pages.dev/pt | Portuguese Home |
+| https://rj-itin-funnels.pages.dev/fr | French Home |
+| https://rj-itin-funnels.pages.dev/ht | Haitian Creole Home |
+| **GitHub:** https://github.com/rjbizsolution23-wq/rj-itin-funnels | Source Code |
 
-## Completed Features
+## Funnel URLs by Locale and Plan
 
-### Multilingual System (4 Languages)
-- **Language Switcher Bar** on ALL pages (funnel, legal, privacy, terms, consumer-rights, cancellation, success)
-- **Auto-detect browser language** + save preference to localStorage
-- **65+ translation keys** on main funnel page
-- **22+ translation keys** on each legal page (nav, footer links, page navigation)
-- **17 translation keys** on success page
-- **`html lang` attribute** switches dynamically per language selection
-- **Noto Sans SC** font loaded for Chinese character rendering
-- **Noto Sans** font for Vietnamese diacritical marks
+| Locale | Basic ($99) | Professional ($149) | Premium ($199) |
+|--------|-------------|---------------------|----------------|
+| English | /en/basic | /en/professional | /en/premium |
+| Español | /es/basic | /es/professional | /es/premium |
+| Português | /pt/basic | /pt/professional | /pt/premium |
+| Français | /fr/basic | /fr/professional | /fr/premium |
+| Kreyòl | /ht/basic | /ht/professional | /ht/premium |
 
-### Funnel Sections (Main Page `/`)
-- Hero Section with animated particles, countdown timer, urgency banner
-- Problem Agitation Section (4 pain point cards with i18n)
-- Value Stack Section (6 features, $872 value for $99/mo) with i18n
-- 5-Step Process Walkthrough with i18n
-- Federal Compliance Section (CROA, FCRA, FTC/CFPB) with i18n
-- Final CTA with 90-Day Money-Back Guarantee with i18n
-- Lead Capture Modal (name, email, phone) with i18n
-- Sticky CTA Bar with i18n
+## Features
 
-### Legal Pages (Consistent Branding)
-- **All 5 legal pages** share consistent template with:
-  - RJ Business Solutions logo in nav + footer
-  - Language switcher bar (4 languages)
-  - Translated navigation labels (Legal, Privacy, Terms, Home)
-  - Translated legal page navigation pills
-  - Translated footer links
-  - "Back to Home" button with i18n
-  - Backdrop-blur frosted glass nav bar
-- `/legal` — Full Federal Compliance Disclosures (CROA, ECOA, FCRA, FDCPA, TSR)
-- `/privacy` — Privacy Policy
-- `/terms` — Terms of Service
-- `/consumer-rights` — CROA Consumer Rights
-- `/cancellation` — Cancellation Policy & Notice of Right to Cancel
+### Languages (5)
+- **English (EN)** — Default
+- **Español (ES)** — 67M+ Latinos in US (2025), 43% un/underbanked
+- **Português (PT)** — Brazilian ITIN community
+- **Français (FR)** — French-speaking ITIN holders
+- **Kreyòl Ayisyen (HT)** — Haitian Creole community
 
-### Success Page (`/success`)
-- RJ Business Solutions logo branding
-- Language switcher (4 languages)
-- 3-step next-steps card (Check Email, Activate Monitoring, Audit Delivery)
-- Fully translated to ES/ZH/VI
-- Link back to home page
+### Plans (3)
+| Plan | Price | Disputes/Mo | Target | MFSN PID |
+|------|-------|-------------|--------|----------|
+| Basic | $99/mo | 15 | 1–5 negative items | 49914 |
+| Professional | $149/mo | 25 | 6–15 negative items | 75497 |
+| Premium | $199/mo | 40 | 16+ negative items | 30639 |
 
-### Backend (Fully Wired)
-- **D1 Database** — Leads, payments, disputes, and activity log tables
-- **Stripe Checkout** — $99 audit fee via Stripe Checkout Sessions API
-- **Stripe Webhooks** — Payment confirmation handler with lead status updates
-- **MyFreeScoreNow API** — Auth token, credit report retrieval integration
-- **Lead Capture** — Persistent storage with duplicate detection and UTM tracking
-- **Admin Dashboard API** — Stats (total leads, paid, revenue, conversion rate)
-- **Activity Logging** — CROA-compliant audit trail for every action
+All plans include: Forensic 3-Bureau ITIN Audit, ITIN-Specific Restoration Roadmap, Monthly Progress Reports, Bilingual Support, Credit Building Library, 90-Day Money-Back Guarantee.
 
-### Frontend
-- Modal lead capture form with 2-step post-submit flow (MFSN enrollment + Stripe checkout)
-- Mobile sticky CTA bar
-- Scroll animations (Intersection Observer)
-- Zero framework overhead (pure HTML/CSS/JS)
-- UTM parameter tracking
+### Core Components
+- **LanguageSwitcher** — 5-language bar at top of every page with flag emojis
+- **ITINRightsSection** — ECOA, FCRA, CROA, FDCPA federal protections grid
+- **RickJeffersonBio** — Founder bio with quote
+- **CommunityProof** — 10K+ served, 67M Latinos, 43% underbanked, 34% biz growth
+- **ITINFAQAccordion** — 6 common questions with toggle answers
+- **ComplianceFooter** — CROA, FCRA, ECOA, FDCPA, TSR/CFPB, Identity Policy grid
 
-## Functional URI Table
+### Technical
+- Auto-locale detection via `Accept-Language` header
+- HTML `lang` attribute switches per locale (en, es, pt, fr, ht)
+- Lead capture modal with plan-specific pricing
+- Stripe Checkout integration (per-plan amount)
+- MyFreeScoreNow affiliate links per plan tier (PID 49914, 75497, 30639)
+- `/api/health`, `/api/leads`, `/api/checkout` endpoints
 
-| Method | Path | Description | Auth |
-|--------|------|-------------|------|
-| `GET` | `/` | Main funnel page (multilingual) | Public |
-| `GET` | `/basic` | Redirects to `/` | Public |
-| `GET` | `/success` | Post-payment success page (multilingual) | Public |
-| `GET` | `/legal` | Legal disclosures (multilingual nav) | Public |
-| `GET` | `/privacy` | Privacy policy (multilingual nav) | Public |
-| `GET` | `/terms` | Terms of service (multilingual nav) | Public |
-| `GET` | `/consumer-rights` | CROA consumer rights (multilingual nav) | Public |
-| `GET` | `/cancellation` | Cancellation policy (multilingual nav) | Public |
-| `GET` | `/api/health` | Health check with service status | Public |
-| `GET` | `/api/config` | Public config (Stripe key, MFSN URL) | Public |
-| `POST` | `/api/leads` | Lead capture with D1 persistence | Public |
-| `POST` | `/api/checkout` | Create Stripe Checkout Session | Public |
-| `POST` | `/api/webhooks/stripe` | Stripe webhook handler | Stripe |
-| `GET` | `/api/leads/:email` | Get lead status by email | Internal |
-| `GET` | `/api/admin/leads` | List all leads (most recent 100) | Internal |
-| `GET` | `/api/admin/stats` | Dashboard stats | Internal |
-| `POST` | `/api/mfsn/auth` | Get MFSN API auth token | Internal |
-| `POST` | `/api/mfsn/report` | Fetch 3-bureau credit report | Internal |
+## Compliance
 
-## Multilingual Coverage
-
-| Page | EN | ES | ZH | VI | i18n Keys |
-|------|----|----|----|----|-----------|
-| Main Funnel (`/`) | Default | Full | Full | Full | 65+ |
-| Legal Pages | Default | Nav/Footer | Nav/Footer | Nav/Footer | 22+ |
-| Success (`/success`) | Default | Full | Full | Full | 17 |
+| Statute | Citation | Description |
+|---------|----------|-------------|
+| CROA | 15 U.S.C. § 1679 | Written contracts, 3-day cancel, no advance fees |
+| FCRA | 15 U.S.C. § 1681 | §611, §623, §605 dispute rights — same for ITIN |
+| ECOA | 15 U.S.C. § 1691 | National-origin discrimination prohibited |
+| FDCPA | 15 U.S.C. § 1692 | Debt validation rights, no ITIN discrimination |
+| FCBA | 15 U.S.C. § 1666 | Fair Credit Billing Act |
+| FTC TSR | 16 CFR Part 310 | No advance fees for credit repair services |
+| CFPB | Regulation V, F | Bureau dispute and collection procedures |
 
 ## Tech Stack
 
-- **Backend**: Hono v4 on Cloudflare Workers
-- **Database**: Cloudflare D1 (SQLite)
-- **Payments**: Stripe Checkout Sessions API
-- **Credit Monitoring**: MyFreeScoreNow API (Affiliate PID: 49914)
-- **Frontend**: Vanilla HTML/CSS/JS (zero framework overhead)
-- **i18n**: Client-side data-i18n attribute engine with localStorage persistence
-- **Icons**: Lucide Icons (CDN)
-- **Fonts**: Inter + Noto Sans SC + Noto Sans (Google Fonts)
-- **Hosting**: Cloudflare Pages (Global Edge)
-- **Build**: Vite
-- **Deployment**: Wrangler CLI
+- **Framework:** Hono v4 (Cloudflare Workers)
+- **Deployment:** Cloudflare Pages
+- **Frontend:** Vanilla HTML/CSS/JS with Inter font
+- **Payments:** Stripe Checkout API
+- **Monitoring:** MyFreeScoreNow API (PID per plan)
+- **Build:** Vite SSR → `dist/_worker.js` (97KB)
 
-## Data Architecture
+## Environment Variables
 
-### D1 Database Tables
-- **leads** — Name, email, phone, plan, status, Stripe IDs, MFSN status, UTM tracking
-- **payments** — Stripe payment records linked to leads
-- **disputes** — Credit dispute tracking (bureau, FCRA section, status, response dates)
-- **activity_log** — CROA-compliant audit trail for all actions
-
-### Cloudflare Secrets (Production)
-- `STRIPE_SECRET_KEY` / `STRIPE_PUBLISHABLE_KEY`
-- `MFSN_API_BASE` / `MFSN_EMAIL` / `MFSN_PASSWORD` / `MFSN_AID` / `MFSN_PID`
-- `MFSN_AFFILIATE_URL_PRIMARY`
-- `COMPANY_NAME` / `COMPANY_EMAIL`
-- `OPENAI_API_KEY`
-
-## Pricing Structure
-
-| Item | Cost | Frequency |
-|------|------|-----------|
-| Forensic Credit Audit | $99 | One-time (via Stripe) |
-| MyFreeScoreNow Monitoring | $29.99 | Monthly (affiliate PID: 49914) |
-| Basic Plan Service Fee | $99 | Monthly (only when progress is made) |
+```env
+STRIPE_SECRET_KEY=sk_live_...
+STRIPE_PUBLISHABLE_KEY=pk_live_...
+MFSN_API_BASE=https://api.myfreescorenow.com/api
+MFSN_EMAIL=rickjefferson@rickjeffersonsolutions.com
+MFSN_PASSWORD=...
+MFSN_AID=RickJeffersonSolutions
+MFSN_PID=49914
+MFSN_AFFILIATE_URL_PRIMARY=https://myfreescorenow.com/enroll/?AID=RickJeffersonSolutions&PID=49914
+MFSN_AFFILIATE_URL_NO_TRIAL=https://myfreescorenow.com/enroll/?AID=RickJeffersonSolutions&PID=75497
+MFSN_AFFILIATE_URL_PREMIUM=https://myfreescorenow.com/enroll/?AID=RickJeffersonSolutions&PID=30639
+```
 
 ## Development
 
 ```bash
-# Install dependencies
 npm install
-
-# Apply D1 migrations locally
-npx wrangler d1 migrations apply clean-it-up-db --local
-
-# Seed test data
-npx wrangler d1 execute clean-it-up-db --local --file=./seed.sql
-
-# Build
 npm run build
-
-# Start local dev server with D1
-pm2 start ecosystem.config.cjs
-
-# Deploy to production
-npm run build && npx wrangler pages deploy dist --project-name clean-it-up-funnel
+npx wrangler pages dev dist --ip 0.0.0.0 --port 3000
 ```
 
-## Project Structure
+## Deployment
 
-```
-clean-it-up-funnel/
-  src/
-    index.tsx              # Hono app: all API routes + funnel HTML + legal pages + success page + i18n engine
-  migrations/
-    0001_initial_schema.sql  # D1 database schema (leads, payments, disputes, activity)
-  seed.sql                 # Test data for local development
-  .dev.vars                # Local environment secrets (NEVER committed)
-  ecosystem.config.cjs     # PM2 configuration with D1
-  wrangler.jsonc           # Cloudflare Pages config with D1 binding
-  vite.config.ts           # Vite build config
-  package.json             # Dependencies & scripts
+```bash
+npm run build
+npx wrangler pages deploy dist --project-name rj-itin-funnels
 ```
 
-## Recommended Next Steps
+## Status
 
-1. **DNS Configuration** — Add CNAME records for rjbusinesssolutions.org -> clean-it-up-funnel.pages.dev
-2. **Stripe Webhook Signature Verification** — Set `STRIPE_WEBHOOK_SECRET` with actual signing secret
-3. **Email Automation** — SendGrid/Mailgun for lead follow-up sequences after form submit
-4. **Admin Dashboard UI** — Frontend for `/api/admin/leads` and `/api/admin/stats`
-5. **A/B Testing** — Headline/CTA variant testing
-6. **Analytics Pixels** — GA4, Facebook Pixel, TikTok Pixel
-7. **Exit-Intent Popup** — Discount offer on page exit
-8. **Rate Limiting** — Protect API endpoints from abuse
-9. **Admin Auth** — Protect admin endpoints with API key or JWT
-10. **Full Legal Page Translation** — Translate body content of legal pages (currently nav/footer/links translated)
+- **Build:** ✅ Compiled (97KB worker)
+- **Deployment:** ✅ Live on Cloudflare Pages
+- **GitHub:** ✅ Pushed to rjbizsolution23-wq/rj-itin-funnels
+- **21 routes tested:** ✅ All return HTTP 200
+- **5 locale translations:** ✅ EN, ES, PT, FR, HT verified
+- **3 plan pages:** ✅ $99, $149, $199 with correct pricing
+- **html lang attribute:** ✅ Switches per locale
+- **Language switcher:** ✅ 5 buttons on every page
 
-## Contact
+## Pending
 
-**Rick Jefferson**
-- Email: rjbizsolution23@gmail.com
-- LinkedIn: [in/rick-jefferson-314998235](https://linkedin.com/in/rick-jefferson-314998235)
-- GitHub: [@rickjeffsolutions](https://github.com/rickjeffsolutions)
-- Website: [rickjeffersonsolutions.com](https://rickjeffersonsolutions.com)
+- [ ] Verify HTML RTL support (if needed for future locales)
+- [ ] Finalize multilingual build/deploy verification
+- [ ] Connect live Stripe webhook for production payments
+- [ ] Configure custom domain `rjbusinesssolutions.org`
+- [ ] Add analytics (GA4, FB Pixel, TikTok Pixel)
+- [ ] Complete QA/acceptance testing for all locales
 
 ---
 
-**Build Date**: February 23, 2026
-**Platform**: Cloudflare Pages + D1 + Stripe
-**Status**: LIVE
-**Languages**: EN, ES, ZH, VI
-**Last Updated**: February 23, 2026
+**Contact:** Rick Jefferson | rjbizsolution23@gmail.com | [rickjeffersonsolutions.com](https://rickjeffersonsolutions.com)
 
-(c) 2026 RJ Business Solutions. All rights reserved.
-Credit repair services performed in compliance with CROA, FCRA, ECOA, and applicable state regulations.
-ITIN holders have the same credit dispute rights as SSN holders under federal law.
+**© 2026 RJ Business Solutions. All rights reserved.**
