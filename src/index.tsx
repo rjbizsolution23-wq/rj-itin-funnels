@@ -1361,7 +1361,7 @@ function basicFunnelHTML(stripeKey: string, mfsnUrl: string): string {
 
       <!-- VALUE STACK IMAGE -->
       <div class="sec-img ao s1" style="margin-bottom:3rem">
-        <img src="https://media.rickjeffersonsolutions.com/basic%20%20ITIN/Bilingual_support_split-screen_English_leftSpanis-1771876500803.png" alt="ITIN credit repair bilingual support - English and Spanish split screen showing full service in both languages, $872 total value for $99 monthly, forensic audit, restoration roadmap, disputes, progress reports" title="Bilingual ITIN Credit Repair - English and Spanish Support Included" width="1024" height="1024" loading="lazy">
+        <img src="https://media.rickjeffersonsolutions.com/basic%20%20ITIN/ITIN_Basic_Plan_value_stack_2x3_grid_on_dark_backg-1771876762102.png" alt="ITIN Basic Plan value stack 2x3 grid - forensic 3-bureau ITIN audit, ITIN-specific restoration roadmap, up to 15 statute-specific disputes per month, monthly ITIN credit progress reports, bilingual English and Spanish support, ITIN credit building library" title="ITIN Credit Repair Basic Plan - $872 Value for $99/Month" width="1024" height="1024" loading="lazy">
       </div>
 
       <div class="fg">
