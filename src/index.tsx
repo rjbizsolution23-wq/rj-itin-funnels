@@ -603,21 +603,29 @@ function t(locale: string, key: string): string {
 // IMAGE ASSETS — CDN URLs
 // ═══════════════════════════════════════════════════════════════
 const IMG = {
-  // GenSpark-hosted assets
-  heroBanner: 'https://www.genspark.ai/api/files/s/mWA7EH6o?cache_control=3600',
-  federalBadges: 'https://www.genspark.ai/api/files/s/3V2kEM7D?cache_control=3600',
-  testimonials: 'https://www.genspark.ai/api/files/s/cfAzzT5t?cache_control=3600',
-  rickPortrait: 'https://www.genspark.ai/api/files/s/ZMoCu50W?cache_control=3600',
-  itinVsSsn: 'https://www.genspark.ai/api/files/s/FTXGY2RE?cache_control=3600',
-  valueStack: 'https://www.genspark.ai/api/files/s/eJvgcQXk?cache_control=3600',
-  guaranteeSeal: 'https://www.genspark.ai/api/files/s/CoCUhM1U?cache_control=3600',
-  multiLangFlags: 'https://www.genspark.ai/api/files/s/ldKa1GXy?cache_control=3600',
-  // media.rickjeffersonsolutions.com fallbacks/extras
+  // PRIMARY ASSETS — All verified working (media CDN + local static)
+  // Hero banners — media CDN (verified 200 OK)
+  heroBanner: 'https://media.rickjeffersonsolutions.com/iytin%20funnel/Professional_ITIN_credit_repair_hero_banner_featur-1771888492535.png',
+  heroBanner2: 'https://media.rickjeffersonsolutions.com/iytin%20funnel/Professional_ITIN_credit_repair_hero_banner_featur-1771888492535.png',
+  // Federal Rights Badges — locally hosted (generated 2026-02-24)
+  federalBadges: '/static/images/federal-rights-badges.png',
+  // Testimonials — media CDN (verified 200 OK)
+  testimonials: 'https://media.rickjeffersonsolutions.com/iytin%20funnel/Multi-cultural_ITIN_client_testimonials_showcase_f-1771888510005.png',
   testimonials2: 'https://media.rickjeffersonsolutions.com/iytin%20funnel/Multi-cultural_ITIN_client_testimonials_showcase_f-1771888510005.png',
   testimonials3: 'https://media.rickjeffersonsolutions.com/iytin%20funnel/Multi-cultural_ITIN_client_testimonials_showcase_f-1771888512950.png',
-  heroBanner2: 'https://media.rickjeffersonsolutions.com/iytin%20funnel/Professional_ITIN_credit_repair_hero_banner_featur-1771888492535.png',
-  guaranteeSeal2: 'https://media.rickjeffersonsolutions.com/iytin%20funnel/Universal_90-Day_Money-Back_Guarantee_seal_for_ITI-1771888518407.png',
+  // Rick Portrait — locally hosted (generated 2026-02-24)
+  rickPortrait: '/static/images/rick-jefferson-portrait.png',
+  // ITIN vs SSN Comparison — locally hosted (generated 2026-02-24)
+  itinVsSsn: '/static/images/itin-vs-ssn-comparison.png',
+  // Value Stack — media CDN (verified 200 OK)
+  valueStack: 'https://media.rickjeffersonsolutions.com/iytin%20funnel/Universal_value_stack_grid_for_ITIN_credit_repair_-1771888515624.png',
   valueStack2: 'https://media.rickjeffersonsolutions.com/iytin%20funnel/Universal_value_stack_grid_for_ITIN_credit_repair_-1771888515624.png',
+  // Guarantee Seal — media CDN (verified 200 OK)
+  guaranteeSeal: 'https://media.rickjeffersonsolutions.com/iytin%20funnel/Universal_90-Day_Money-Back_Guarantee_seal_for_ITI-1771888518407.png',
+  guaranteeSeal2: 'https://media.rickjeffersonsolutions.com/iytin%20funnel/Universal_90-Day_Money-Back_Guarantee_seal_for_ITI-1771888518407.png',
+  // Multi-Language Flags — locally hosted (generated 2026-02-24)
+  multiLangFlags: '/static/images/multi-language-flags.png',
+  // Company Logo — media CDN (verified 200 OK)
   logo: 'https://media.rickjeffersonsolutions.com/rj-business-solutions-logo-banner.jpg',
 } as const
 
