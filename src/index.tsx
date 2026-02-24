@@ -600,6 +600,28 @@ function t(locale: string, key: string): string {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// IMAGE ASSETS — CDN URLs
+// ═══════════════════════════════════════════════════════════════
+const IMG = {
+  // GenSpark-hosted assets
+  heroBanner: 'https://www.genspark.ai/api/files/s/mWA7EH6o?cache_control=3600',
+  federalBadges: 'https://www.genspark.ai/api/files/s/3V2kEM7D?cache_control=3600',
+  testimonials: 'https://www.genspark.ai/api/files/s/cfAzzT5t?cache_control=3600',
+  rickPortrait: 'https://www.genspark.ai/api/files/s/ZMoCu50W?cache_control=3600',
+  itinVsSsn: 'https://www.genspark.ai/api/files/s/FTXGY2RE?cache_control=3600',
+  valueStack: 'https://www.genspark.ai/api/files/s/eJvgcQXk?cache_control=3600',
+  guaranteeSeal: 'https://www.genspark.ai/api/files/s/CoCUhM1U?cache_control=3600',
+  multiLangFlags: 'https://www.genspark.ai/api/files/s/ldKa1GXy?cache_control=3600',
+  // media.rickjeffersonsolutions.com fallbacks/extras
+  testimonials2: 'https://media.rickjeffersonsolutions.com/iytin%20funnel/Multi-cultural_ITIN_client_testimonials_showcase_f-1771888510005.png',
+  testimonials3: 'https://media.rickjeffersonsolutions.com/iytin%20funnel/Multi-cultural_ITIN_client_testimonials_showcase_f-1771888512950.png',
+  heroBanner2: 'https://media.rickjeffersonsolutions.com/iytin%20funnel/Professional_ITIN_credit_repair_hero_banner_featur-1771888492535.png',
+  guaranteeSeal2: 'https://media.rickjeffersonsolutions.com/iytin%20funnel/Universal_90-Day_Money-Back_Guarantee_seal_for_ITI-1771888518407.png',
+  valueStack2: 'https://media.rickjeffersonsolutions.com/iytin%20funnel/Universal_value_stack_grid_for_ITIN_credit_repair_-1771888515624.png',
+  logo: 'https://media.rickjeffersonsolutions.com/rj-business-solutions-logo-banner.jpg',
+} as const
+
+// ═══════════════════════════════════════════════════════════════
 // SHARED CSS
 // ═══════════════════════════════════════════════════════════════
 const SHARED_CSS = `
@@ -653,13 +675,36 @@ body{padding-top:34px}
 .btn-secondary:hover{opacity:.9;transform:translateY(-2px)}
 
 /* HERO */
-.hero{position:relative;min-height:85vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0c1445,#1e1b4b 30%,#172554 60%,#0f172a);padding:4rem 0 5rem;overflow:hidden}
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 800px 600px at 20% 50%,rgba(59,130,246,.1),transparent),radial-gradient(ellipse 600px 400px at 80% 30%,rgba(6,182,212,.07),transparent)}
+.hero{position:relative;min-height:85vh;display:flex;align-items:center;justify-content:center;padding:4rem 0 5rem;overflow:hidden}
+.hero-bg{position:absolute;inset:0;z-index:0}
+.hero-bg img{width:100%;height:100%;object-fit:cover;object-position:center}
+.hero-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,7,18,.55) 0%,rgba(12,20,69,.82) 35%,rgba(15,23,42,.92) 100%)}
+.hero-content{position:relative;z-index:2}
 .hero-logo{margin-bottom:1.5rem;animation:fadeInUp .8s ease forwards}
 .hero-logo img{width:280px;height:auto;margin:0 auto;border-radius:.75rem;filter:drop-shadow(0 8px 32px rgba(59,130,246,.2))}
 .hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.4);border-radius:999px;padding:.45rem 1.1rem;margin-bottom:1.25rem;color:#6ee7b7;font-size:.82rem;font-weight:600}
-.hero h1{font-size:clamp(2rem,5vw,3.5rem);font-weight:900;line-height:1.15;margin-bottom:1rem}
-.hero .sub{font-size:clamp(.95rem,2vw,1.15rem);color:#bfdbfe;max-width:700px;margin:0 auto 2rem;line-height:1.7}
+.hero h1{font-size:clamp(2rem,5vw,3.5rem);font-weight:900;line-height:1.15;margin-bottom:1rem;text-shadow:0 2px 12px rgba(0,0,0,.5)}
+.hero .sub{font-size:clamp(.95rem,2vw,1.15rem);color:#bfdbfe;max-width:700px;margin:0 auto 2rem;line-height:1.7;text-shadow:0 1px 4px rgba(0,0,0,.3)}
+
+/* SECTION IMAGES */
+.section-img{border-radius:1rem;border:2px solid rgba(59,130,246,.2);box-shadow:0 12px 40px rgba(0,0,0,.3);margin:0 auto;max-width:100%;height:auto;transition:transform .3s,box-shadow .3s}
+.section-img:hover{transform:scale(1.02);box-shadow:0 16px 48px rgba(59,130,246,.15)}
+.section-img-sm{border-radius:.75rem;border:1px solid rgba(59,130,246,.15);max-width:100%;height:auto}
+
+/* TESTIMONIALS */
+.testimonials{padding:5rem 0;background:linear-gradient(180deg,#0f172a,#0a1128)}
+.testimonials-img-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem;margin-top:2rem}
+.testimonials-img-grid img{border-radius:1rem;border:2px solid rgba(139,92,246,.3);box-shadow:0 8px 32px rgba(139,92,246,.1);width:100%;height:auto;transition:all .4s}
+.testimonials-img-grid img:hover{border-color:rgba(139,92,246,.6);transform:translateY(-4px);box-shadow:0 12px 40px rgba(139,92,246,.2)}
+
+/* ITIN VS SSN */
+.comparison{padding:5rem 0;background:linear-gradient(180deg,#0a1128,#0f172a)}
+
+/* VALUE STACK */
+.value-stack{padding:5rem 0;background:linear-gradient(180deg,#0a0f1f,#0f172a)}
+
+/* LANGUAGE FLAGS */
+.lang-flags{padding:4rem 0;background:rgba(23,37,84,.1);border-top:1px solid rgba(30,58,138,.2);border-bottom:1px solid rgba(30,58,138,.2)}
 
 /* PLAN CARDS */
 .plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin:3rem 0}
@@ -691,7 +736,8 @@ body{padding-top:34px}
 /* BIO */
 .bio{padding:5rem 0;background:linear-gradient(180deg,#0f172a,#0a1128)}
 .bio-card{display:flex;gap:2.5rem;background:#111827;border:1px solid rgba(30,58,138,.3);border-radius:1.25rem;padding:2.5rem;align-items:flex-start}
-.bio-img{width:200px;height:200px;border-radius:1rem;background:linear-gradient(135deg,#1e3a5f,#172554);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:5rem}
+.bio-img{width:220px;height:220px;border-radius:1rem;flex-shrink:0;overflow:hidden;border:2px solid rgba(59,130,246,.3);box-shadow:0 8px 32px rgba(59,130,246,.15)}
+.bio-img img{width:100%;height:100%;object-fit:cover}
 .bio-content h3{font-size:1.5rem;font-weight:800;margin-bottom:.25rem}
 .bio-content .role{color:#60a5fa;font-size:.9rem;font-weight:600;margin-bottom:1rem}
 .bio-content p{color:#9ca3af;font-size:.9rem;line-height:1.7;margin-bottom:.75rem}
@@ -719,6 +765,8 @@ body{padding-top:34px}
 .guarantee-box{background:#111827;border:2px solid rgba(74,222,128,.3);border-radius:1.25rem;padding:2.5rem;text-align:center;max-width:700px;margin:0 auto}
 .guarantee-box h3{font-size:1.5rem;font-weight:800;color:#4ade80;margin-bottom:1rem}
 .guarantee-box p{color:#9ca3af;font-size:1rem;line-height:1.7}
+.guarantee-seal{width:200px;height:200px;margin:0 auto 1.5rem;border-radius:50%;overflow:hidden;border:3px solid rgba(74,222,128,.3);box-shadow:0 0 40px rgba(74,222,128,.15)}
+.guarantee-seal img{width:100%;height:100%;object-fit:cover}
 
 /* CTA */
 .cta-section{padding:5rem 0;background:linear-gradient(180deg,#172554,#030712);text-align:center}
@@ -760,7 +808,9 @@ body{padding-top:34px}
   .plan-card.featured{transform:none}.plan-card.featured:hover{transform:translateY(-6px)}
   .rights-grid{grid-template-columns:1fr}
   .bio-card{flex-direction:column;align-items:center;text-align:center}
-  .bio-img{width:150px;height:150px}
+  .bio-img{width:160px;height:160px}
+  .testimonials-img-grid{grid-template-columns:1fr}
+  .guarantee-seal{width:160px;height:160px}
   .stats-grid{grid-template-columns:repeat(2,1fr)}
   .hero-logo img{width:200px}
   .btn-primary{width:100%;justify-content:center;font-size:1rem;padding:.9rem 1.5rem}
@@ -854,17 +904,27 @@ function mainFunnelHTML(locale: string): string {
   const planNames: Record<string, string> = { basic: T('plan_basic'), professional: T('plan_pro'), premium: T('plan_premium') }
 
   return pageLayout(locale, T('site_title'), `
-  <!-- HERO -->
+  <!-- HERO with Background Banner -->
   <section class="hero">
-    <div class="cx tc" style="position:relative;z-index:2">
+    <div class="hero-bg">
+      <img src="${IMG.heroBanner}" alt="ITIN Credit Repair - Multi-Ethnic Community" width="1365" height="768" loading="eager">
+    </div>
+    <div class="cx tc hero-content">
       <div class="hero-logo">
-        <img src="https://media.rickjeffersonsolutions.com/rj-business-solutions-logo-banner.jpg" alt="RJ Business Solutions" width="280">
+        <img src="${IMG.logo}" alt="RJ Business Solutions" width="280">
       </div>
       <div class="hero-badge">⭐ ${T('hero_badge')}</div>
       <h1>${T('hero_title')}</h1>
       <p class="sub">${T('hero_sub')}</p>
       <a href="#plans" class="btn-primary">${T('hero_cta')} →</a>
-      <p style="color:#6b7280;font-size:.78rem;margin-top:1rem">${T('spots_left')}</p>
+      <p style="color:#bfdbfe;font-size:.78rem;margin-top:1rem;text-shadow:0 1px 3px rgba(0,0,0,.4)">${T('spots_left')}</p>
+    </div>
+  </section>
+
+  <!-- MULTI-LANGUAGE SUPPORT VISUAL -->
+  <section class="lang-flags">
+    <div class="cs tc">
+      <img src="${IMG.multiLangFlags}" alt="Multi-Language Support: English, Spanish, Portuguese, French, Haitian Creole" class="section-img ao" width="1365" height="768" loading="lazy" style="max-width:900px">
     </div>
   </section>
 
@@ -953,11 +1013,19 @@ function mainFunnelHTML(locale: string): string {
     </div>
   </section>
 
-  <!-- ITIN RIGHTS -->
+  <!-- VALUE STACK VISUAL -->
+  <section class="value-stack">
+    <div class="cs tc">
+      <img src="${IMG.valueStack}" alt="Value Stack - Forensic Audit, Restoration Roadmap, Disputes, Progress Reports, Bilingual Support, Credit Library" class="section-img ao" width="1024" height="1024" loading="lazy" style="max-width:700px">
+    </div>
+  </section>
+
+  <!-- ITIN RIGHTS with Federal Badges -->
   <section class="rights">
     <div class="cs tc">
       <h2 class="stt ao">${T('rights_title')}</h2>
       <p class="sts ao">${T('rights_sub')}</p>
+      <img src="${IMG.federalBadges}" alt="Federal Rights Badge Collection - ECOA, FCRA, CROA, FDCPA, TSR, State Law" class="section-img ao" width="1024" height="768" loading="lazy" style="max-width:800px;margin-bottom:2.5rem">
       <div class="rights-grid">
         <div class="right-card ao s1"><h4>ECOA (15 U.S.C. § 1691)</h4><p>${T('rights_ecoa')}</p></div>
         <div class="right-card ao s2"><h4>FCRA (15 U.S.C. § 1681)</h4><p>${T('rights_fcra')}</p></div>
@@ -967,11 +1035,18 @@ function mainFunnelHTML(locale: string): string {
     </div>
   </section>
 
-  <!-- RICK BIO -->
+  <!-- ITIN vs SSN EQUAL RIGHTS -->
+  <section class="comparison">
+    <div class="cs tc">
+      <img src="${IMG.itinVsSsn}" alt="ITIN vs SSN - Equal Credit Rights Under Federal Law" class="section-img ao" width="1365" height="768" loading="lazy" style="max-width:900px">
+    </div>
+  </section>
+
+  <!-- RICK BIO with Portrait -->
   <section class="bio">
     <div class="cs">
       <div class="bio-card ao">
-        <div class="bio-img">👨‍💼</div>
+        <div class="bio-img"><img src="${IMG.rickPortrait}" alt="Rick Jefferson - ITIN Credit Expert" width="220" height="220" loading="lazy"></div>
         <div class="bio-content">
           <h3>${T('bio_title')}</h3>
           <div class="role">${T('bio_role')}</div>
@@ -979,6 +1054,17 @@ function mainFunnelHTML(locale: string): string {
           <p>${T('bio_p2')}</p>
           <blockquote>${T('bio_p3')}</blockquote>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials">
+    <div class="cs tc">
+      <h2 class="stt ao">${T('community_title')}</h2>
+      <div class="testimonials-img-grid ao">
+        <img src="${IMG.testimonials}" alt="Multi-Cultural ITIN Client Testimonials" width="1024" height="1024" loading="lazy">
+        <img src="${IMG.testimonials2}" alt="Client Success Stories" width="1024" height="1024" loading="lazy">
       </div>
     </div>
   </section>
@@ -1001,7 +1087,7 @@ function mainFunnelHTML(locale: string): string {
   <section class="guarantee">
     <div class="cs tc">
       <div class="guarantee-box ao">
-        <div style="font-size:3rem;margin-bottom:.75rem">🛡️</div>
+        <div class="guarantee-seal"><img src="${IMG.guaranteeSeal}" alt="90-Day Money-Back Guarantee Seal" width="200" height="200" loading="lazy"></div>
         <h3>${T('guarantee_title')}</h3>
         <p>${T('guarantee_desc')}</p>
       </div>
@@ -1063,20 +1149,30 @@ function planPageHTML(locale: string, plan: 'basic' | 'professional' | 'premium'
   }
 
   return pageLayout(locale, `${planName} Plan — ${T('site_title')}`, `
-  <!-- PLAN HERO -->
+  <!-- PLAN HERO with Background Banner -->
   <section class="hero" style="min-height:auto;padding:4rem 0">
-    <div class="cx tc" style="position:relative;z-index:2">
+    <div class="hero-bg">
+      <img src="${IMG.heroBanner2}" alt="ITIN Credit Repair" width="1365" height="768" loading="eager">
+    </div>
+    <div class="cx tc hero-content">
       <div class="hero-logo">
-        <img src="https://media.rickjeffersonsolutions.com/rj-business-solutions-logo-banner.jpg" alt="RJ Business Solutions" width="240">
+        <img src="${IMG.logo}" alt="RJ Business Solutions" width="240">
       </div>
       <div style="display:inline-block;background:${cfg.color}22;border:1px solid ${cfg.color}66;padding:.35rem 1rem;border-radius:999px;margin-bottom:1rem">
         <span style="color:${cfg.color};font-weight:700;font-size:.85rem">${T(targetKey)}</span>
       </div>
       <h1 style="font-size:clamp(1.75rem,4vw,3rem)">${planName} <span class="gt">ITIN Credit Repair</span></h1>
       <p class="sub">${T(descKey)}</p>
-      <div style="font-size:3.5rem;font-weight:900;margin:1rem 0">$${cfg.price}<span style="font-size:1rem;color:#9ca3af">${T('plan_per_month')}</span></div>
+      <div style="font-size:3.5rem;font-weight:900;margin:1rem 0;text-shadow:0 2px 8px rgba(0,0,0,.4)">$${cfg.price}<span style="font-size:1rem;color:#bfdbfe">${T('plan_per_month')}</span></div>
       <button class="btn-primary" onclick="document.getElementById('leadModal').classList.add('active')">${T('plan_start')} ${planName} →</button>
-      <p style="color:#6b7280;font-size:.78rem;margin-top:1rem">$${cfg.price} ${T('plan_audit_fee')} + ${T('plan_monitoring')} &bull; ${T('plan_no_pay')}</p>
+      <p style="color:#bfdbfe;font-size:.78rem;margin-top:1rem;text-shadow:0 1px 3px rgba(0,0,0,.3)">$${cfg.price} ${T('plan_audit_fee')} + ${T('plan_monitoring')} &bull; ${T('plan_no_pay')}</p>
+    </div>
+  </section>
+
+  <!-- VALUE STACK VISUAL -->
+  <section class="value-stack">
+    <div class="cs tc">
+      <img src="${IMG.valueStack2}" alt="Value Stack - Complete ITIN Credit Repair Services" class="section-img ao" width="1024" height="1024" loading="lazy" style="max-width:600px">
     </div>
   </section>
 
@@ -1099,6 +1195,7 @@ function planPageHTML(locale: string, plan: 'basic' | 'professional' | 'premium'
     <div class="cs tc">
       <h2 class="stt ao">${T('rights_title')}</h2>
       <p class="sts ao">${T('rights_sub')}</p>
+      <img src="${IMG.federalBadges}" alt="Federal Rights Badges" class="section-img ao" width="1024" height="768" loading="lazy" style="max-width:700px;margin-bottom:2rem">
       <div class="rights-grid">
         <div class="right-card ao s1"><h4>ECOA</h4><p>${T('rights_ecoa')}</p></div>
         <div class="right-card ao s2"><h4>FCRA</h4><p>${T('rights_fcra')}</p></div>
@@ -1108,17 +1205,33 @@ function planPageHTML(locale: string, plan: 'basic' | 'professional' | 'premium'
     </div>
   </section>
 
-  <!-- RICK BIO -->
+  <!-- ITIN vs SSN Comparison -->
+  <section class="comparison">
+    <div class="cs tc">
+      <img src="${IMG.itinVsSsn}" alt="ITIN vs SSN - Equal Credit Rights" class="section-img ao" width="1365" height="768" loading="lazy" style="max-width:800px">
+    </div>
+  </section>
   <section class="bio">
     <div class="cs">
       <div class="bio-card ao">
-        <div class="bio-img">👨‍💼</div>
+        <div class="bio-img"><img src="${IMG.rickPortrait}" alt="Rick Jefferson - ITIN Credit Expert" width="220" height="220" loading="lazy"></div>
         <div class="bio-content">
           <h3>${T('bio_title')}</h3>
           <div class="role">${T('bio_role')}</div>
           <p>${T('bio_p1')}</p>
           <blockquote>${T('bio_p3')}</blockquote>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials">
+    <div class="cs tc">
+      <h2 class="stt ao">${T('community_title')}</h2>
+      <div class="testimonials-img-grid ao">
+        <img src="${IMG.testimonials3}" alt="ITIN Client Success Stories" width="1024" height="1024" loading="lazy">
+        <img src="${IMG.testimonials}" alt="Multi-Cultural ITIN Testimonials" width="1024" height="1024" loading="lazy">
       </div>
     </div>
   </section>
@@ -1141,7 +1254,7 @@ function planPageHTML(locale: string, plan: 'basic' | 'professional' | 'premium'
   <section class="guarantee">
     <div class="cs tc">
       <div class="guarantee-box ao">
-        <div style="font-size:3rem;margin-bottom:.75rem">🛡️</div>
+        <div class="guarantee-seal"><img src="${IMG.guaranteeSeal2}" alt="90-Day Money-Back Guarantee" width="200" height="200" loading="lazy"></div>
         <h3>${T('guarantee_title')}</h3>
         <p>${T('guarantee_desc')}</p>
       </div>
