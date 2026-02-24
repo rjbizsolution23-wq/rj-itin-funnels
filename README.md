@@ -54,7 +54,7 @@ All plans include: Forensic 3-Bureau ITIN Audit, ITIN-Specific Restoration Roadm
 
 ### Custom Image Assets (13 Total)
 
-All custom visuals are integrated via CDN for zero-build-size impact:
+All custom visuals are served from verified-working sources (media CDN + local static):
 
 | Asset | Dimensions | Usage |
 |-------|-----------|-------|
@@ -66,7 +66,11 @@ All custom visuals are integrated via CDN for zero-build-size impact:
 | **Value Stack Grid (6 Icons)** | 1024x1024 (1:1) | Service deliverables in plan comparison sections |
 | **90-Day Guarantee Seal** | 1024x1024 (1:1) | Circular trust badge in guarantee sections |
 | **Multi-Language Support Five Flags** | 1365x768 (16:9) | 5-panel language support visual |
-| +5 media.rickjeffersonsolutions.com alternates | Various | Testimonials, hero, guarantee, value stack variants |
+| **Company Logo** | Various | Navigation and footer branding |
+
+**Image Sources (as of 2026-02-24):**
+- `media.rickjeffersonsolutions.com` — Hero, testimonials, value stack, guarantee seal, logo (verified 200 OK)
+- `/static/images/` — Federal badges, Rick portrait, ITIN vs SSN, multi-language flags (locally hosted)
 
 ### Core Components
 - **LanguageSwitcher** — 5-language bar at top of every page with flag emojis
@@ -112,7 +116,7 @@ All custom visuals are integrated via CDN for zero-build-size impact:
 - **Frontend:** Vanilla HTML/CSS/JS with Inter font
 - **Payments:** Stripe Checkout API
 - **Monitoring:** MyFreeScoreNow API (PID per plan)
-- **Images:** 8 GenSpark CDN + 5 media.rickjeffersonsolutions.com
+- **Images:** 4 local static + 5 media.rickjeffersonsolutions.com CDN (0 GenSpark dependencies)
 - **Build:** Vite SSR -> `dist/_worker.js` (103KB)
 
 ## Environment Variables
@@ -155,9 +159,11 @@ npx wrangler pages deploy dist --project-name rj-itin-funnels
 - **3 plan pages:** $99, $149, $199 with correct pricing
 - **html lang attribute:** Switches per locale
 - **Language switcher:** 5 buttons on every page
-- **Image assets:** 13 custom visuals integrated (8 GenSpark + 5 media CDN)
+- **Image assets:** All images verified working (0 GenSpark URLs — migrated 2026-02-24)
+  - 4 locally hosted in `/static/images/` (federal badges, Rick portrait, ITIN vs SSN, flags)
+  - 5 served from `media.rickjeffersonsolutions.com` CDN (hero, testimonials, value stack, guarantee, logo)
 - **Hero banner:** Full-bleed background on home + plan pages
-- **Rick portrait:** Anime-style trust bio replacing emoji placeholder
+- **Rick portrait:** Professional trust bio portrait in bio sections
 - **Testimonials:** Multi-cultural grid on home + plan pages
 - **Federal badges:** 6-shield collection in rights sections
 - **Guarantee seal:** 90-day circular trust badge
