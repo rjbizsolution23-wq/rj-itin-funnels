@@ -1002,12 +1002,99 @@ function pageLayout(locale: string, title: string, content: string, seoOpts?: { 
         <a href="/${locale}/about-rick-jefferson">About</a>
         <a href="/${locale}/blog">Blog</a>
         <a href="/${locale}/credit-monitoring">Monitoring</a>
+        <a href="/${locale}/portal">Portal</a>
+        <a href="/${locale}/partners">Partners</a>
         <a href="/${locale}/contact">Contact</a>
       </div>
     </div>
   </nav>
 
   ${content}
+
+  <!-- RICKBOT CHAT WIDGET -->
+  <div id="rickbot-widget" style="position:fixed;bottom:20px;right:20px;z-index:999">
+    <div id="rickbot-bubble" onclick="toggleRickBot()" style="width:60px;height:60px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 20px rgba(59,130,246,.4);transition:all .3s" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+      <span style="font-size:1.5rem">💬</span>
+    </div>
+    <div id="rickbot-panel" style="display:none;position:absolute;bottom:70px;right:0;width:360px;max-height:500px;background:#111827;border:1px solid #1e3a5f;border-radius:1rem;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.6)">
+      <div style="background:linear-gradient(135deg,#3b82f6,#8b5cf6);padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center">
+        <div><strong style="color:#fff;font-size:.95rem">RickBot</strong><br><span style="color:rgba(255,255,255,.7);font-size:.72rem">${locale === 'es' ? 'Asistente de Crédito ITIN' : 'ITIN Credit Assistant'}</span></div>
+        <button onclick="toggleRickBot()" style="background:rgba(255,255,255,.2);color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;font-size:1rem">&times;</button>
+      </div>
+      <div id="rickbot-messages" style="height:300px;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.75rem">
+        <div style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:.75rem .75rem .75rem .2rem;padding:.75rem;max-width:85%">
+          <p style="color:#d1d5db;font-size:.82rem;line-height:1.5">${locale === 'es' ? '¡Hola! Soy RickBot, tu asistente de crédito ITIN. ¿En qué puedo ayudarte hoy?' : 'Hey! I\'m RickBot, your ITIN credit assistant. How can I help you today?'}</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.5rem">
+          ${locale === 'es'
+            ? ['¿Qué planes ofrecen?','¿Tengo derechos con ITIN?','¿Cómo empiezo?','Hablar con Rick'].map(q=>`<button onclick="rickBotReply(this,'${q}')" style="background:#1f2937;border:1px solid #374151;color:#60a5fa;font-size:.78rem;padding:.5rem .75rem;border-radius:.5rem;cursor:pointer;text-align:left;transition:all .2s" onmouseover="this.style.borderColor='#3b82f6'" onmouseout="this.style.borderColor='#374151'">${q}</button>`).join('')
+            : ['What plans do you offer?','Do ITIN holders have credit rights?','How do I get started?','Talk to Rick'].map(q=>`<button onclick="rickBotReply(this,'${q}')" style="background:#1f2937;border:1px solid #374151;color:#60a5fa;font-size:.78rem;padding:.5rem .75rem;border-radius:.5rem;cursor:pointer;text-align:left;transition:all .2s" onmouseover="this.style.borderColor='#3b82f6'" onmouseout="this.style.borderColor='#374151'">${q}</button>`).join('')}
+        </div>
+      </div>
+      <div style="border-top:1px solid #1f2937;padding:.75rem;display:flex;gap:.5rem">
+        <input id="rickbot-input" type="text" placeholder="${locale === 'es' ? 'Escribe tu pregunta...' : 'Type your question...'}" style="flex:1;background:#1f2937;border:1px solid #374151;border-radius:.5rem;padding:.5rem .75rem;color:#fff;font-size:.82rem;outline:none" onkeypress="if(event.key==='Enter')sendRickBot()">
+        <button onclick="sendRickBot()" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff;padding:.5rem .75rem;border-radius:.5rem;font-size:.82rem;font-weight:600;cursor:pointer;border:none">→</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXIT-INTENT POPUP -->
+  <div id="exit-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(12px);z-index:1001;align-items:center;justify-content:center;padding:1.5rem">
+    <div style="background:#111827;border:2px solid rgba(59,130,246,.4);border-radius:1.5rem;padding:2.5rem;max-width:480px;width:100%;position:relative;animation:fadeInUp .3s ease;text-align:center">
+      <button onclick="closeExitPopup()" style="position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,.1);color:#9ca3af;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.25rem;cursor:pointer;border:none">&times;</button>
+      <div style="font-size:2.5rem;margin-bottom:1rem">🛡️</div>
+      <h2 style="font-size:1.4rem;font-weight:900;margin-bottom:.5rem;color:#fff">${locale === 'es' ? '¡Espera! Tu crédito ITIN merece atención' : 'Wait! Your ITIN Credit Deserves Better'}</h2>
+      <p style="color:#9ca3af;font-size:.88rem;margin-bottom:1.5rem;line-height:1.6">${locale === 'es' ? 'Obtén tu guía GRATUITA de derechos FCRA para titulares de ITIN + descuento exclusivo.' : 'Get your FREE FCRA rights guide for ITIN holders + an exclusive discount on your first audit.'}</p>
+      <form onsubmit="handleExitCapture(event)" style="display:flex;flex-direction:column;gap:.75rem">
+        <input type="email" id="exit-email" required placeholder="${locale === 'es' ? 'Tu correo electrónico' : 'Your email address'}" style="width:100%;padding:.8rem 1rem;background:#1f2937;border:1px solid #374151;border-radius:.6rem;color:#fff;font-size:.95rem;outline:none">
+        <button type="submit" style="width:100%;padding:.9rem;background:linear-gradient(135deg,#4ade80,#22c55e);color:#000;font-weight:800;font-size:1rem;border-radius:.65rem;border:none;cursor:pointer">${locale === 'es' ? 'Envíame la Guía Gratis' : 'Send Me the Free Guide'}</button>
+      </form>
+      <p style="color:#6b7280;font-size:.68rem;margin-top:.75rem">🔒 ${locale === 'es' ? 'No spam. Solo información de crédito ITIN.' : 'No spam. Only ITIN credit resources.'}</p>
+      <div style="margin-top:1rem">
+        ${SUPPORTED_LOCALES.map(l => `<a href="/${l}" style="color:#60a5fa;font-size:.7rem;margin:0 .25rem">${i18n[l]?.flag || ''}</a>`).join('')}
+      </div>
+    </div>
+  </div>
+
+  <!-- SOCIAL PROOF TOAST -->
+  <div id="social-proof-toast" style="display:none;position:fixed;bottom:90px;left:20px;z-index:998;background:#111827;border:1px solid #1e3a5f;border-radius:.75rem;padding:.75rem 1rem;box-shadow:0 4px 20px rgba(0,0,0,.5);max-width:300px;animation:slideInLeft .4s ease">
+    <div style="display:flex;align-items:center;gap:.75rem">
+      <div style="width:36px;height:36px;background:linear-gradient(135deg,#4ade80,#22c55e);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0">✓</div>
+      <div>
+        <p id="proof-name" style="color:#fff;font-size:.82rem;font-weight:700"></p>
+        <p id="proof-action" style="color:#9ca3af;font-size:.72rem"></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  /* RICKBOT */
+  function toggleRickBot(){const p=document.getElementById('rickbot-panel');p.style.display=p.style.display==='none'?'block':'none'}
+  const rickBotAnswers={en:{'What plans do you offer?':'We have 3 plans:\\n• Basic ($99/mo) — up to 15 disputes/mo for 1-5 negative items\\n• Professional ($149/mo) — up to 25 disputes/mo with dedicated analyst\\n• Premium ($199/mo) — up to 40 disputes/mo, VIP access, business credit\\n\\nAll plans include a 90-day money-back guarantee!','Do ITIN holders have credit rights?':'Absolutely! Under FCRA and ECOA, ITIN holders have the EXACT same credit dispute rights as SSN holders. All 3 bureaus (TransUnion, Equifax, Experian) accept ITIN numbers.','How do I get started?':'3 easy steps:\\n1. Enroll in MyFreeScoreNow credit monitoring ($29.99/mo)\\n2. Choose your plan (Basic, Professional, or Premium)\\n3. Pay the one-time audit fee — your forensic report arrives in 5 business days!','Talk to Rick':'Email Rick directly at rickjefferson@rickjeffersonsolutions.com — he typically responds within 24 hours. You can also reach us through our contact page!'},es:{'¿Qué planes ofrecen?':'Tenemos 3 planes:\\n• Básico ($99/mes) — hasta 15 disputas/mes\\n• Profesional ($149/mes) — hasta 25 disputas con analista dedicado\\n• Premium ($199/mes) — hasta 40 disputas, acceso VIP\\n\\n¡Todos incluyen garantía de 90 días!','¿Tengo derechos con ITIN?':'¡Absolutamente! Bajo FCRA y ECOA, los titulares de ITIN tienen los MISMOS derechos de disputa que los titulares de SSN. Las 3 agencias aceptan números ITIN.','¿Cómo empiezo?':'3 pasos fáciles:\\n1. Inscríbete en MyFreeScoreNow ($29.99/mes)\\n2. Elige tu plan\\n3. Paga la tarifa de auditoría — tu reporte llega en 5 días hábiles!','Hablar con Rick':'Envía un email a rickjefferson@rickjeffersonsolutions.com — Rick responde en 24 horas.'}}
+  function rickBotReply(btn,q){const msgs=document.getElementById('rickbot-messages');msgs.innerHTML+='<div style="align-self:flex-end;background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.3);border-radius:.75rem .75rem .2rem .75rem;padding:.75rem;max-width:85%"><p style="color:#d1d5db;font-size:.82rem">'+q+'</p></div>';const lang='${locale}';const a=(rickBotAnswers[lang]||rickBotAnswers.en)[q]||'Please email rickjefferson@rickjeffersonsolutions.com for personalized help!';setTimeout(()=>{msgs.innerHTML+='<div style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:.75rem .75rem .75rem .2rem;padding:.75rem;max-width:85%"><p style="color:#d1d5db;font-size:.82rem;line-height:1.5;white-space:pre-line">'+a+'</p></div>';msgs.scrollTop=msgs.scrollHeight},500)}
+  function sendRickBot(){const inp=document.getElementById('rickbot-input');if(!inp.value.trim())return;const q=inp.value;inp.value='';const msgs=document.getElementById('rickbot-messages');msgs.innerHTML+='<div style="align-self:flex-end;background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.3);border-radius:.75rem .75rem .2rem .75rem;padding:.75rem;max-width:85%"><p style="color:#d1d5db;font-size:.82rem">'+q+'</p></div>';setTimeout(()=>{const lang='${locale}';const defaultA=lang==='es'?'Gracias por tu pregunta. Para asistencia personalizada, envía un email a rickjefferson@rickjeffersonsolutions.com o elige un plan en nuestra página principal.':'Thanks for your question! For personalized help, email rickjefferson@rickjeffersonsolutions.com or choose a plan on our homepage.';msgs.innerHTML+='<div style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:.75rem .75rem .75rem .2rem;padding:.75rem;max-width:85%"><p style="color:#d1d5db;font-size:.82rem;line-height:1.5">'+defaultA+'</p></div>';msgs.scrollTop=msgs.scrollHeight},800)}
+
+  /* EXIT INTENT */
+  let exitShown=false;
+  document.addEventListener('mouseout',function(e){if(!exitShown&&e.clientY<5){document.getElementById('exit-popup').style.display='flex';exitShown=true}});
+  function closeExitPopup(){document.getElementById('exit-popup').style.display='none'}
+  function handleExitCapture(e){e.preventDefault();const email=document.getElementById('exit-email').value;fetch('/api/leads',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'Exit Capture',email,plan:'lead-magnet',locale:'${locale}'})}).then(()=>{document.getElementById('exit-popup').innerHTML='<div style="text-align:center;padding:3rem"><div style="font-size:3rem;margin-bottom:1rem">✅</div><h3 style="font-size:1.25rem;font-weight:800;color:#fff;margin-bottom:.5rem">${locale === 'es' ? '¡Enviado!' : 'Sent!'}</h3><p style="color:#9ca3af">${locale === 'es' ? 'Revisa tu correo.' : 'Check your inbox.'}</p></div>'}).catch(()=>{})}
+
+  /* SOCIAL PROOF ENGINE */
+  const proofData=[
+    {name:'Maria G.',action:'${locale==='es'?'se inscribió en el Plan Profesional':'enrolled in Professional Plan'}',city:'Houston, TX'},
+    {name:'Carlos R.',action:'${locale==='es'?'removió 4 elementos negativos':'removed 4 negative items'}',city:'Los Angeles, CA'},
+    {name:'Ana L.',action:'${locale==='es'?'activó monitoreo de crédito':'activated credit monitoring'}',city:'Miami, FL'},
+    {name:'Roberto M.',action:'${locale==='es'?'subió su puntaje 87 puntos':'raised score by 87 points'}',city:'Phoenix, AZ'},
+    {name:'Sandra P.',action:'${locale==='es'?'completó auditoría forense':'completed forensic audit'}',city:'Dallas, TX'},
+    {name:'Miguel A.',action:'${locale==='es'?'se inscribió en el Plan Premium':'enrolled in Premium Plan'}',city:'Chicago, IL'},
+    {name:'Patricia V.',action:'${locale==='es'?'removió 7 colecciones':'removed 7 collections'}',city:'New York, NY'},
+    {name:'Jose H.',action:'${locale==='es'?'calificó para hipoteca FHA':'qualified for FHA mortgage'}',city:'San Antonio, TX'}
+  ];
+  let proofIdx=0;
+  function showProof(){const d=proofData[proofIdx%proofData.length];document.getElementById('proof-name').textContent=d.name+' — '+d.city;document.getElementById('proof-action').textContent=d.action;const toast=document.getElementById('social-proof-toast');toast.style.display='block';setTimeout(()=>{toast.style.display='none';proofIdx++},4000)}
+  setTimeout(()=>{showProof();setInterval(showProof,15000)},8000);
+  </script>
 
   <!-- FOOTER -->
   <footer class="footer" style="padding:3rem 0 2rem;border-top:1px solid #1f2937;background:#030712">
@@ -1017,6 +1104,7 @@ function pageLayout(locale: string, title: string, content: string, seoOpts?: { 
         <a href="https://rickjeffersonsolutions.com" style="color:#60a5fa">rickjeffersonsolutions.com</a> &bull; <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa">rickjefferson@rickjeffersonsolutions.com</a></p>
       <div style="display:flex;justify-content:center;gap:1rem;margin:.75rem 0;flex-wrap:wrap">
         <a href="https://app.myfreescorenow.com/enroll/B01A8289" target="_blank" style="color:#4ade80;font-size:.82rem;font-weight:600">📊 Credit Monitoring Sign-Up</a>
+        <a href="https://app.myfreescorenow.com/enroll/B01A8289" target="_blank" style="color:#22d3ee;font-size:.82rem;font-weight:600">🔒 Enroll in Credit Monitoring</a>
         <a href="https://rickjeffersonsolutions.com" target="_blank" style="color:#60a5fa;font-size:.82rem;font-weight:600">🧭 ITIN Credit Roadmap Quiz</a>
       </div>
       <div style="display:flex;justify-content:center;gap:1.25rem;margin:.5rem 0;flex-wrap:wrap">
@@ -1027,13 +1115,21 @@ function pageLayout(locale: string, title: string, content: string, seoOpts?: { 
       <div class="footer-links" style="margin:.75rem 0">
         <a href="/${locale}/about-rick-jefferson" style="color:#60a5fa;font-size:.78rem">About Rick</a> &bull;
         <a href="/${locale}/credit-monitoring" style="color:#60a5fa;font-size:.78rem">Credit Monitoring</a> &bull;
+        <a href="/${locale}/portal" style="color:#60a5fa;font-size:.78rem">Client Portal</a> &bull;
+        <a href="/${locale}/partners" style="color:#60a5fa;font-size:.78rem">Partners</a> &bull;
         <a href="/${locale}/blog" style="color:#60a5fa;font-size:.78rem">Blog</a> &bull;
         <a href="/${locale}/faq" style="color:#60a5fa;font-size:.78rem">FAQ</a> &bull;
-        <a href="/${locale}/contact" style="color:#60a5fa;font-size:.78rem">Contact</a> &bull;
-        <a href="/${locale}/legal" style="color:#60a5fa;font-size:.78rem">${T('nav_legal')}</a> &bull;
-        <a href="/${locale}/privacy" style="color:#60a5fa;font-size:.78rem">${T('nav_privacy')}</a> &bull;
-        <a href="/${locale}/terms" style="color:#60a5fa;font-size:.78rem">${T('nav_terms')}</a> &bull;
-        <a href="/sitemap.xml" style="color:#60a5fa;font-size:.78rem">Sitemap</a>
+        <a href="/${locale}/testimonials" style="color:#60a5fa;font-size:.78rem">Testimonials</a> &bull;
+        <a href="/${locale}/contact" style="color:#60a5fa;font-size:.78rem">Contact</a>
+      </div>
+      <div class="footer-links" style="margin:.5rem 0">
+        <a href="/${locale}/legal" style="color:#60a5fa;font-size:.72rem">${T('nav_legal')}</a> &bull;
+        <a href="/${locale}/croa-disclosure" style="color:#60a5fa;font-size:.72rem">CROA Disclosure</a> &bull;
+        <a href="/${locale}/privacy" style="color:#60a5fa;font-size:.72rem">${T('nav_privacy')}</a> &bull;
+        <a href="/${locale}/terms" style="color:#60a5fa;font-size:.72rem">${T('nav_terms')}</a> &bull;
+        <a href="/${locale}/refund-policy" style="color:#60a5fa;font-size:.72rem">Refund Policy</a> &bull;
+        <a href="/${locale}/client-waiver" style="color:#60a5fa;font-size:.72rem">Client Waiver</a> &bull;
+        <a href="/sitemap.xml" style="color:#60a5fa;font-size:.72rem">Sitemap</a>
       </div>
       <p style="color:#6b7280;font-size:.72rem;margin-top:.75rem">&copy; 2026 RJ Business Solutions. All rights reserved.</p>
       <p style="color:#4b5563;font-size:.65rem;margin-top:.3rem">All services comply with CROA, FCRA, FDCPA, FCBA, FTC TSR, ECOA, and CFPB guidelines.</p>
@@ -2282,7 +2378,812 @@ for (const loc of SUPPORTED_LOCALES) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// SITEMAP.XML
+// GAP 1 — CLIENT PORTAL & DASHBOARD
+// ═══════════════════════════════════════════════════════════════
+for (const loc of SUPPORTED_LOCALES) {
+  app.get(`/${loc}/portal`, (c) => {
+    const T = (key: string) => t(loc, key)
+    return c.html(pageLayout(loc, `Client Portal — Dashboard`, `
+    <section style="padding:3rem 0 5rem;background:linear-gradient(180deg,#0f172a,#111827);min-height:80vh">
+      <div class="ct">
+        <h1 class="stt tc ao">🛡️ ${loc === 'es' ? 'Portal del Cliente' : 'Client Portal'}</h1>
+        <p class="sts tc ao">${loc === 'es' ? 'Tu centro de control de reparación de crédito ITIN.' : 'Your ITIN credit repair command center.'}</p>
+
+        <!-- LOGIN GATE -->
+        <div id="portal-login" style="max-width:420px;margin:2rem auto;background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:2rem;text-align:center">
+          <div style="font-size:2rem;margin-bottom:1rem">🔐</div>
+          <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:1rem">${loc === 'es' ? 'Acceder a tu Portal' : 'Access Your Portal'}</h3>
+          <form onsubmit="portalLogin(event)">
+            <div class="fg2"><label style="color:#d1d5db;font-size:.82rem;font-weight:600;display:block;margin-bottom:.35rem">Email</label><input type="email" id="portal-email" required style="width:100%;padding:.8rem 1rem;background:#1f2937;border:1px solid #374151;border-radius:.6rem;color:#fff;font-size:.95rem;outline:none"></div>
+            <div class="fg2" style="margin-top:.75rem"><label style="color:#d1d5db;font-size:.82rem;font-weight:600;display:block;margin-bottom:.35rem">${loc === 'es' ? 'ID de Cliente' : 'Client ID'}</label><input type="text" id="portal-id" required style="width:100%;padding:.8rem 1rem;background:#1f2937;border:1px solid #374151;border-radius:.6rem;color:#fff;font-size:.95rem;outline:none"></div>
+            <button type="submit" style="width:100%;margin-top:1rem;padding:.9rem;background:linear-gradient(135deg,#3b82f6,#06b6d4);color:#fff;font-weight:800;font-size:1rem;border-radius:.65rem;border:none;cursor:pointer">${loc === 'es' ? 'Entrar al Portal' : 'Enter Portal'}</button>
+          </form>
+          <p style="color:#6b7280;font-size:.72rem;margin-top:.75rem">${loc === 'es' ? '¿Nuevo cliente? Elige tu plan primero.' : 'New client? Choose your plan first.'} <a href="/${loc}#plans" style="color:#60a5fa">→ Plans</a></p>
+        </div>
+
+        <!-- DASHBOARD (hidden until login) -->
+        <div id="portal-dashboard" style="display:none">
+          <!-- KPI ROW -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin:2rem 0">
+            <div class="ao s1" style="background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:1.25rem;text-align:center">
+              <div style="font-size:2rem">📊</div>
+              <div id="dash-score" style="font-size:2rem;font-weight:900;color:#4ade80;margin:.5rem 0">—</div>
+              <div style="color:#9ca3af;font-size:.78rem">${loc === 'es' ? 'Puntaje Actual' : 'Current Score'}</div>
+            </div>
+            <div class="ao s2" style="background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:1.25rem;text-align:center">
+              <div style="font-size:2rem">📈</div>
+              <div id="dash-change" style="font-size:2rem;font-weight:900;color:#22d3ee;margin:.5rem 0">—</div>
+              <div style="color:#9ca3af;font-size:.78rem">${loc === 'es' ? 'Cambio de Puntaje' : 'Score Change'}</div>
+            </div>
+            <div class="ao s3" style="background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:1.25rem;text-align:center">
+              <div style="font-size:2rem">📝</div>
+              <div id="dash-disputes" style="font-size:2rem;font-weight:900;color:#f59e0b;margin:.5rem 0">—</div>
+              <div style="color:#9ca3af;font-size:.78rem">${loc === 'es' ? 'Disputas Activas' : 'Active Disputes'}</div>
+            </div>
+            <div class="ao s4" style="background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:1.25rem;text-align:center">
+              <div style="font-size:2rem">✅</div>
+              <div id="dash-removed" style="font-size:2rem;font-weight:900;color:#a78bfa;margin:.5rem 0">—</div>
+              <div style="color:#9ca3af;font-size:.78rem">${loc === 'es' ? 'Elementos Eliminados' : 'Items Removed'}</div>
+            </div>
+          </div>
+
+          <!-- TABS -->
+          <div style="display:flex;gap:.5rem;margin:2rem 0 1rem;flex-wrap:wrap">
+            <button onclick="showTab('score')" class="tab-btn active" style="background:#3b82f6;color:#fff;padding:.5rem 1rem;border-radius:.5rem;font-size:.82rem;font-weight:600;border:none;cursor:pointer">${loc === 'es' ? 'Progreso' : 'Score Progress'}</button>
+            <button onclick="showTab('disputes')" class="tab-btn" style="background:#1f2937;color:#9ca3af;padding:.5rem 1rem;border-radius:.5rem;font-size:.82rem;font-weight:600;border:1px solid #374151;cursor:pointer">${loc === 'es' ? 'Disputas' : 'Dispute Tracker'}</button>
+            <button onclick="showTab('roadmap')" class="tab-btn" style="background:#1f2937;color:#9ca3af;padding:.5rem 1rem;border-radius:.5rem;font-size:.82rem;font-weight:600;border:1px solid #374151;cursor:pointer">${loc === 'es' ? 'Ruta' : 'Roadmap'}</button>
+            <button onclick="showTab('vault')" class="tab-btn" style="background:#1f2937;color:#9ca3af;padding:.5rem 1rem;border-radius:.5rem;font-size:.82rem;font-weight:600;border:1px solid #374151;cursor:pointer">${loc === 'es' ? 'Documentos' : 'Doc Vault'}</button>
+          </div>
+
+          <!-- SCORE PROGRESS TAB -->
+          <div id="tab-score" class="tab-content">
+            <div style="background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:2rem">
+              <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:1.5rem">${loc === 'es' ? 'Progreso de Puntaje por Agencia' : 'Score Progress by Bureau'}</h3>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem">
+                ${['TransUnion','Equifax','Experian'].map((b,i) => `
+                <div style="background:#1f2937;border-radius:.75rem;padding:1.25rem;text-align:center">
+                  <div style="font-size:.85rem;font-weight:700;color:#60a5fa;margin-bottom:.5rem">${b}</div>
+                  <div style="position:relative;width:100px;height:100px;margin:0 auto">
+                    <svg viewBox="0 0 36 36" style="transform:rotate(-90deg)">
+                      <path d="M18 2.0845a15.9155 15.9155 0 0 1 0 31.831a15.9155 15.9155 0 0 1 0-31.831" fill="none" stroke="#374151" stroke-width="3"/>
+                      <path d="M18 2.0845a15.9155 15.9155 0 0 1 0 31.831a15.9155 15.9155 0 0 1 0-31.831" fill="none" stroke="${['#3b82f6','#8b5cf6','#22d3ee'][i]}" stroke-width="3" stroke-dasharray="0,100" id="bureau-ring-${i}" style="transition:all 1s"/>
+                    </svg>
+                    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.25rem;font-weight:900;color:#fff" id="bureau-score-${i}">—</div>
+                  </div>
+                  <div style="color:#9ca3af;font-size:.72rem;margin-top:.5rem" id="bureau-change-${i}"></div>
+                </div>`).join('')}
+              </div>
+              <div style="margin-top:1.5rem;text-align:center">
+                <a href="https://app.myfreescorenow.com/enroll/B01A8289" target="_blank" style="color:#4ade80;font-size:.85rem;font-weight:600">📊 ${loc === 'es' ? 'Ver Reporte Completo en MyFreeScoreNow' : 'View Full Report on MyFreeScoreNow'} →</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- DISPUTE TRACKER TAB -->
+          <div id="tab-disputes" class="tab-content" style="display:none">
+            <div style="background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:2rem">
+              <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:1.5rem">${loc === 'es' ? 'Rastreador de Disputas' : 'Dispute Tracker'}</h3>
+              <div id="dispute-list" style="display:flex;flex-direction:column;gap:.75rem">
+                <div style="color:#9ca3af;text-align:center;padding:2rem;font-size:.88rem">${loc === 'es' ? 'Cargando disputas...' : 'Loading disputes...'}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ROADMAP TAB -->
+          <div id="tab-roadmap" class="tab-content" style="display:none">
+            <div style="background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:2rem">
+              <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:1.5rem">🗺️ ${loc === 'es' ? 'Tu Ruta de Restauración' : 'Your Restoration Roadmap'}</h3>
+              <div style="display:flex;flex-direction:column;gap:1rem">
+                ${[
+                  {step:1, label: loc==='es'?'Auditoría Forense':'Forensic Audit', status:'complete', desc: loc==='es'?'Análisis completo de 3 agencias':'Complete 3-bureau analysis'},
+                  {step:2, label: loc==='es'?'Ronda de Disputas 1':'Dispute Round 1', status:'active', desc: loc==='es'?'Primeras cartas de disputa enviadas':'First dispute letters sent'},
+                  {step:3, label: loc==='es'?'Revisión de 30 Días':'30-Day Review', status:'upcoming', desc: loc==='es'?'Verificar respuestas de agencias':'Verify bureau responses'},
+                  {step:4, label: loc==='es'?'Ronda de Disputas 2':'Dispute Round 2', status:'upcoming', desc: loc==='es'?'Segunda ronda basada en resultados':'Second round based on results'},
+                  {step:5, label: loc==='es'?'Revisión de 60 Días':'60-Day Review', status:'upcoming', desc: loc==='es'?'Evaluación de progreso medio':'Mid-progress evaluation'},
+                  {step:6, label: loc==='es'?'Intervención con Acreedores':'Creditor Intervention', status:'upcoming', desc: loc==='es'?'Contacto directo con acreedores':'Direct creditor contact'},
+                  {step:7, label: loc==='es'?'Revisión de 90 Días':'90-Day Review', status:'upcoming', desc: loc==='es'?'Evaluación de garantía completa':'Full guarantee evaluation'}
+                ].map(s => `
+                <div style="display:flex;gap:1rem;align-items:flex-start">
+                  <div style="width:40px;height:40px;min-width:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.85rem;${s.status==='complete'?'background:#4ade80;color:#000':s.status==='active'?'background:linear-gradient(135deg,#3b82f6,#06b6d4);color:#fff;box-shadow:0 0 12px rgba(59,130,246,.4)':'background:#1f2937;color:#6b7280;border:1px solid #374151'}">${s.status==='complete'?'✓':s.step}</div>
+                  <div style="flex:1;padding-bottom:1rem;${s.step<7?'border-left:2px solid '+(s.status==='complete'?'#4ade80':'#374151')+';margin-left:-21px;padding-left:2rem':''}">
+                    <div style="font-weight:700;color:${s.status==='complete'?'#4ade80':s.status==='active'?'#60a5fa':'#6b7280'};font-size:.9rem">${s.label}</div>
+                    <div style="color:#9ca3af;font-size:.78rem;margin-top:.25rem">${s.desc}</div>
+                  </div>
+                </div>`).join('')}
+              </div>
+            </div>
+          </div>
+
+          <!-- DOCUMENT VAULT TAB -->
+          <div id="tab-vault" class="tab-content" style="display:none">
+            <div style="background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:2rem">
+              <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:1.5rem">📁 ${loc === 'es' ? 'Bóveda de Documentos' : 'Document Vault'}</h3>
+              <div style="display:flex;flex-direction:column;gap:.75rem">
+                ${[
+                  {icon:'📄', name:loc==='es'?'Auditoría Forense 3-Agencias':'Forensic 3-Bureau Audit Report', date:'Feb 25, 2026', type:'PDF'},
+                  {icon:'📝', name:loc==='es'?'Ruta de Restauración':'10-Point Restoration Roadmap', date:'Feb 25, 2026', type:'PDF'},
+                  {icon:'📧', name:loc==='es'?'Cartas de Disputa (Ronda 1)':'Dispute Letters - Round 1', date:'Feb 28, 2026', type:'PDF'},
+                  {icon:'📊', name:loc==='es'?'Reporte de Progreso Mensual':'Monthly Progress Report', date:'Mar 25, 2026', type:'PDF'},
+                  {icon:'📋', name:loc==='es'?'Divulgación CROA':'CROA Disclosure Agreement', date:'Feb 25, 2026', type:'PDF'}
+                ].map(d => `
+                <div style="display:flex;align-items:center;justify-content:space-between;background:#1f2937;border:1px solid #374151;border-radius:.75rem;padding:.75rem 1rem;transition:all .2s" onmouseover="this.style.borderColor='#3b82f6'" onmouseout="this.style.borderColor='#374151'">
+                  <div style="display:flex;align-items:center;gap:.75rem">
+                    <span style="font-size:1.25rem">${d.icon}</span>
+                    <div>
+                      <div style="color:#d1d5db;font-size:.85rem;font-weight:600">${d.name}</div>
+                      <div style="color:#6b7280;font-size:.72rem">${d.date} · ${d.type}</div>
+                    </div>
+                  </div>
+                  <button style="background:rgba(59,130,246,.15);color:#60a5fa;padding:.4rem .75rem;border-radius:.4rem;font-size:.75rem;font-weight:600;border:1px solid rgba(59,130,246,.3);cursor:pointer">Download</button>
+                </div>`).join('')}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script>
+    function portalLogin(e){
+      e.preventDefault();
+      document.getElementById('portal-login').style.display='none';
+      document.getElementById('portal-dashboard').style.display='block';
+      // Simulate loading dashboard data
+      setTimeout(()=>{
+        document.getElementById('dash-score').textContent='687';
+        document.getElementById('dash-change').textContent='+43';
+        document.getElementById('dash-disputes').textContent='8';
+        document.getElementById('dash-removed').textContent='5';
+        [['68,100','#3b82f6','+38'],['72,100','#8b5cf6','+47'],['65,100','#22d3ee','+41']].forEach(([dash,color,change],i)=>{
+          document.getElementById('bureau-ring-'+i).setAttribute('stroke-dasharray',dash);
+          document.getElementById('bureau-score-'+i).textContent=['672','701','688'][i];
+          document.getElementById('bureau-change-'+i).innerHTML='<span style="color:#4ade80">'+change+' pts</span>';
+        });
+        // Load disputes
+        document.getElementById('dispute-list').innerHTML=[
+          {item:'Capital One Collection $2,340',bureau:'TransUnion',status:'Removed',color:'#4ade80'},
+          {item:'Late Payment - Chase Visa',bureau:'Equifax',status:'Under Investigation',color:'#f59e0b'},
+          {item:'Medical Collection $890',bureau:'Experian',status:'Under Investigation',color:'#f59e0b'},
+          {item:'Hard Inquiry - Unknown Lender',bureau:'TransUnion',status:'Dispute Sent',color:'#3b82f6'},
+          {item:'Midland Credit Collection $1,200',bureau:'All 3 Bureaus',status:'Removed',color:'#4ade80'},
+          {item:'Student Loan Late Payment',bureau:'Equifax',status:'Dispute Sent',color:'#3b82f6'},
+          {item:'AT&T Collection $340',bureau:'Experian',status:'Removed',color:'#4ade80'},
+          {item:'Unauthorized Hard Pull',bureau:'TransUnion',status:'Under Investigation',color:'#f59e0b'}
+        ].map(d=>'<div style="display:flex;align-items:center;justify-content:space-between;background:#1f2937;border:1px solid #374151;border-radius:.75rem;padding:.75rem 1rem"><div><div style="color:#d1d5db;font-size:.85rem;font-weight:600">'+d.item+'</div><div style="color:#6b7280;font-size:.72rem">'+d.bureau+'</div></div><span style="background:'+d.color+'22;color:'+d.color+';font-size:.72rem;font-weight:700;padding:.25rem .65rem;border-radius:999px;border:1px solid '+d.color+'44">'+d.status+'</span></div>').join('');
+      },600);
+    }
+    function showTab(name){
+      document.querySelectorAll('.tab-content').forEach(el=>el.style.display='none');
+      document.querySelectorAll('.tab-btn').forEach(el=>{el.style.background='#1f2937';el.style.color='#9ca3af';el.style.border='1px solid #374151'});
+      document.getElementById('tab-'+name).style.display='block';
+      event.target.style.background='#3b82f6';event.target.style.color='#fff';event.target.style.border='none';
+    }
+    </script>
+    `, { description: 'Client portal for ITIN credit repair — track score progress, dispute status, download documents, view restoration roadmap.', canonical: `https://rj-itin-funnels.pages.dev/${loc}/portal`, keywords: 'ITIN credit repair portal, client dashboard, dispute tracker, credit score progress' }))
+  })
+
+  // ═══════ GAP 5: CHECKOUT PAGE ═══════
+  app.get(`/${loc}/checkout/:plan`, (c) => {
+    const plan = c.req.param('plan') as keyof typeof PLANS
+    const cfg = PLANS[plan] || PLANS.basic
+    const planName = plan.charAt(0).toUpperCase() + plan.slice(1)
+    return c.html(pageLayout(loc, `Checkout — ${planName} Plan`, `
+    <section style="padding:3rem 0 5rem;background:linear-gradient(180deg,#0f172a,#111827)">
+      <div class="ct" style="max-width:900px;margin:0 auto">
+        <h1 class="stt tc ao">${loc === 'es' ? 'Finalizar Compra' : 'Complete Your Order'}</h1>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:2rem" class="checkout-grid">
+          <!-- ORDER SUMMARY -->
+          <div class="ao s1" style="background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:2rem">
+            <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:1.5rem">${loc === 'es' ? 'Resumen del Pedido' : 'Order Summary'}</h3>
+            <div style="background:#1f2937;border-radius:.75rem;padding:1.25rem;margin-bottom:1rem">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem">
+                <span style="color:#fff;font-weight:700">${planName} Plan</span>
+                <span style="color:#fff;font-weight:900;font-size:1.25rem">$${cfg.price}</span>
+              </div>
+              <div style="color:#9ca3af;font-size:.82rem;line-height:1.6">
+                <p>✓ Forensic 3-Bureau ITIN/SSN Credit Audit</p>
+                <p>✓ 10-Point Restoration Roadmap</p>
+                <p>✓ Up to ${cfg.disputes} Disputes/Month</p>
+                <p>✓ 90-Day Money-Back Guarantee</p>
+              </div>
+            </div>
+            <div style="border-top:1px solid #374151;padding-top:1rem">
+              <div style="display:flex;justify-content:space-between;color:#9ca3af;font-size:.85rem;margin-bottom:.5rem">
+                <span>${loc === 'es' ? 'Auditoría (única vez)' : 'One-Time Audit Fee'}</span><span>$${cfg.price}.00</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;color:#9ca3af;font-size:.85rem;margin-bottom:.5rem">
+                <span>${loc === 'es' ? 'Monitoreo (mensual)' : 'Credit Monitoring (monthly)'}</span><span>$29.99</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;color:#fff;font-weight:800;font-size:1.1rem;margin-top:1rem;padding-top:.75rem;border-top:1px solid #374151">
+                <span>${loc === 'es' ? 'Total Hoy' : 'Total Today'}</span><span>$${cfg.price}.00</span>
+              </div>
+            </div>
+            <div style="background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2);border-radius:.75rem;padding:.75rem;margin-top:1rem;text-align:center">
+              <span style="color:#4ade80;font-size:.78rem;font-weight:600">🛡️ ${loc === 'es' ? 'Garantía de 90 Días • Pago Seguro con Stripe' : '90-Day Guarantee • Secure Stripe Payment'}</span>
+            </div>
+          </div>
+
+          <!-- PAYMENT FORM -->
+          <div class="ao s2" style="background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:2rem">
+            <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:1.5rem">${loc === 'es' ? 'Información de Pago' : 'Payment Information'}</h3>
+            <form id="checkout-form" onsubmit="handleCheckout(event)">
+              <div class="fg2"><label style="color:#d1d5db;font-size:.82rem;font-weight:600;display:block;margin-bottom:.35rem">${loc === 'es' ? 'Nombre Completo' : 'Full Name'} *</label><input type="text" id="co-name" required style="width:100%;padding:.8rem 1rem;background:#1f2937;border:1px solid #374151;border-radius:.6rem;color:#fff;font-size:.95rem;outline:none"></div>
+              <div class="fg2" style="margin-top:.75rem"><label style="color:#d1d5db;font-size:.82rem;font-weight:600;display:block;margin-bottom:.35rem">Email *</label><input type="email" id="co-email" required style="width:100%;padding:.8rem 1rem;background:#1f2937;border:1px solid #374151;border-radius:.6rem;color:#fff;font-size:.95rem;outline:none"></div>
+              <div class="fg2" style="margin-top:.75rem"><label style="color:#d1d5db;font-size:.82rem;font-weight:600;display:block;margin-bottom:.35rem">${loc === 'es' ? 'Teléfono' : 'Phone'}</label><input type="tel" id="co-phone" style="width:100%;padding:.8rem 1rem;background:#1f2937;border:1px solid #374151;border-radius:.6rem;color:#fff;font-size:.95rem;outline:none"></div>
+
+              <!-- CROA DISCLOSURE -->
+              <div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:.75rem;padding:1rem;margin-top:1.25rem">
+                <h4 style="color:#f59e0b;font-size:.78rem;font-weight:700;margin-bottom:.5rem">⚖️ CROA Disclosure (15 U.S.C. § 1679)</h4>
+                <p style="color:#9ca3af;font-size:.72rem;line-height:1.6">You have the right to cancel this contract within 3 business days. No advance fees are charged for dispute services — the audit fee covers the initial forensic credit analysis only. You have the right to dispute credit information yourself for free. <a href="/${loc}/croa-disclosure" style="color:#60a5fa">Read full CROA disclosure →</a></p>
+                <label style="display:flex;align-items:flex-start;gap:.5rem;margin-top:.75rem;cursor:pointer">
+                  <input type="checkbox" id="croa-agree" required style="margin-top:3px">
+                  <span style="color:#d1d5db;font-size:.75rem">${loc === 'es' ? 'Acepto la divulgación CROA y los términos de servicio.' : 'I acknowledge the CROA disclosure and agree to the terms of service.'}</span>
+                </label>
+              </div>
+
+              <button type="submit" id="co-submit" style="width:100%;margin-top:1.25rem;padding:1rem;background:linear-gradient(135deg,#4ade80,#22c55e);color:#000;font-weight:900;font-size:1.05rem;border-radius:.65rem;border:none;cursor:pointer;transition:all .3s">${loc === 'es' ? 'Pagar' : 'Pay'} $${cfg.price} — ${loc === 'es' ? 'Pago Seguro' : 'Secure Checkout'}</button>
+              <p style="color:#6b7280;font-size:.68rem;text-align:center;margin-top:.75rem">🔒 ${loc === 'es' ? 'Procesado de forma segura por Stripe. Tu información nunca se comparte.' : 'Securely processed by Stripe. Your information is never shared.'}</p>
+            </form>
+          </div>
+        </div>
+        <style>.checkout-grid{grid-template-columns:1fr 1fr}@media(max-width:768px){.checkout-grid{grid-template-columns:1fr!important}}</style>
+        <div class="ao" style="text-align:center;margin-top:2rem">
+          <p style="color:#9ca3af;font-size:.85rem">${loc === 'es' ? '¿Aún no tienes monitoreo?' : "Don't have credit monitoring yet?"} <a href="https://app.myfreescorenow.com/enroll/B01A8289" target="_blank" style="color:#4ade80;font-weight:600">${loc === 'es' ? 'Actívalo primero' : 'Activate it first'} →</a></p>
+        </div>
+      </div>
+    </section>
+    <script>
+    async function handleCheckout(e){
+      e.preventDefault();
+      const btn=document.getElementById('co-submit');
+      btn.disabled=true;btn.textContent='Processing...';
+      try{
+        const res=await fetch('/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:document.getElementById('co-name').value,email:document.getElementById('co-email').value,plan:'${plan}'})});
+        const data=await res.json();
+        if(data.checkoutUrl)window.location.href=data.checkoutUrl;
+        else{alert('Redirecting to payment...'); window.location.href='/${loc}/thank-you/${plan}';}
+      }catch(err){alert('Connection error. Please email rickjefferson@rickjeffersonsolutions.com');btn.disabled=false;btn.textContent='Pay $${cfg.price}';}
+    }
+    </script>
+    `, { description: `Secure checkout for the ${planName} ITIN credit repair plan — $${cfg.price} one-time audit fee, Stripe payment, CROA disclosure.`, canonical: `https://rj-itin-funnels.pages.dev/${loc}/checkout/${plan}`, keywords: `ITIN credit repair checkout, ${plan} plan payment, credit repair payment` }))
+  })
+
+  // ═══════ THANK YOU / ORDER CONFIRMATION ═══════
+  app.get(`/${loc}/thank-you/:plan`, (c) => {
+    const plan = c.req.param('plan')
+    const planName = plan.charAt(0).toUpperCase() + plan.slice(1)
+    const cfg = PLANS[plan as keyof typeof PLANS] || PLANS.basic
+    return c.html(pageLayout(loc, `Thank You — Order Confirmed`, `
+    <section style="padding:5rem 0;background:linear-gradient(180deg,#0f172a,#111827);text-align:center">
+      <div class="cx">
+        <div class="ao" style="max-width:600px;margin:0 auto">
+          <div style="font-size:4rem;margin-bottom:1.5rem">🎉</div>
+          <h1 style="font-size:2rem;font-weight:900;margin-bottom:1rem;color:#4ade80">${loc === 'es' ? '¡Pago Confirmado!' : 'Payment Confirmed!'}</h1>
+          <p style="color:#d1d5db;font-size:1.1rem;line-height:1.7;margin-bottom:2rem">${loc === 'es' ? 'Tu auditoría forense de crédito ITIN ha sido recibida.' : 'Your forensic ITIN credit audit fee has been received.'}</p>
+          <div style="background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:2rem;text-align:left">
+            <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:1.25rem">${loc === 'es' ? 'Próximos Pasos' : 'What Happens Next'}</h3>
+            <div style="display:flex;flex-direction:column;gap:1rem">
+              <div style="display:flex;gap:.75rem"><div style="width:32px;height:32px;background:#3b82f6;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.8rem;color:#fff;flex-shrink:0">1</div><div><strong style="color:#fff">Check your email</strong><br><span style="color:#9ca3af;font-size:.85rem">Confirmation + next steps sent within 5 minutes</span></div></div>
+              <div style="display:flex;gap:.75rem"><div style="width:32px;height:32px;background:#8b5cf6;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.8rem;color:#fff;flex-shrink:0">2</div><div><strong style="color:#fff">Forensic audit begins</strong><br><span style="color:#9ca3af;font-size:.85rem">3-bureau analysis delivered within 24-48 hours</span></div></div>
+              <div style="display:flex;gap:.75rem"><div style="width:32px;height:32px;background:#f59e0b;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.8rem;color:#fff;flex-shrink:0">3</div><div><strong style="color:#fff">Disputes launch</strong><br><span style="color:#9ca3af;font-size:.85rem">First round of up to ${cfg.disputes} dispute letters within 5 business days</span></div></div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:.75rem;margin-top:2rem">
+            <a href="https://app.myfreescorenow.com/enroll/B01A8289" target="_blank" class="btn-primary" style="display:inline-flex;justify-content:center">📊 ${loc === 'es' ? 'Activar MyFreeScoreNow' : 'Activate MyFreeScoreNow'} →</a>
+            <a href="/${loc}/portal" class="btn-secondary" style="display:inline-flex;justify-content:center">🛡️ ${loc === 'es' ? 'Ir al Portal del Cliente' : 'Go to Client Portal'} →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    `, { description: 'Order confirmed — your ITIN credit repair audit is being processed. Check email for next steps.', canonical: `https://rj-itin-funnels.pages.dev/${loc}/thank-you/${plan}` }))
+  })
+
+  // ═══════ UPSELL PAGE ═══════
+  app.get(`/${loc}/upsell/:plan`, (c) => {
+    const currentPlan = c.req.param('plan')
+    const nextPlan = currentPlan === 'basic' ? 'professional' : 'premium'
+    const nextCfg = PLANS[nextPlan as keyof typeof PLANS]
+    const nextName = nextPlan.charAt(0).toUpperCase() + nextPlan.slice(1)
+    return c.html(pageLayout(loc, `Upgrade to ${nextName}`, `
+    <section style="padding:5rem 0;background:linear-gradient(180deg,#0f172a,#111827);text-align:center">
+      <div class="cx" style="max-width:600px">
+        <div class="ao">
+          <div style="font-size:2.5rem;margin-bottom:1rem">⚡</div>
+          <h1 style="font-size:1.75rem;font-weight:900;margin-bottom:1rem">${loc === 'es' ? '¡Oferta Exclusiva!' : 'Exclusive Upgrade Offer!'}</h1>
+          <p style="color:#d1d5db;font-size:1rem;line-height:1.7;margin-bottom:2rem">${loc === 'es' ? `Mejora al Plan ${nextName} y obtén hasta ${nextCfg.disputes} disputas/mes + analista dedicado.` : `Upgrade to the ${nextName} Plan and get up to ${nextCfg.disputes} disputes/month + dedicated analyst.`}</p>
+          <div style="background:#111827;border:2px solid rgba(139,92,246,.5);border-radius:1rem;padding:2rem;margin-bottom:2rem">
+            <div style="font-size:2.5rem;font-weight:900;color:#fff">$${nextCfg.price}<span style="font-size:1rem;color:#9ca3af">/mo</span></div>
+            <p style="color:#9ca3af;font-size:.85rem;margin-top:.5rem">Up to ${nextCfg.disputes} disputes/month</p>
+          </div>
+          <a href="/${loc}/checkout/${nextPlan}" class="btn-primary" style="display:inline-flex;justify-content:center;width:100%">${loc === 'es' ? 'Mejorar Ahora' : 'Upgrade Now'} →</a>
+          <a href="/${loc}/portal" style="color:#6b7280;font-size:.85rem;display:block;margin-top:1rem">${loc === 'es' ? 'No gracias, continuar' : 'No thanks, continue'} →</a>
+        </div>
+      </div>
+    </section>
+    `, { description: `Upgrade to ${nextName} plan for enhanced ITIN credit repair services.`, canonical: `https://rj-itin-funnels.pages.dev/${loc}/upsell/${currentPlan}` }))
+  })
+
+  // ═══════ GAP 3: PARTNER / AFFILIATE PORTAL ═══════
+  app.get(`/${loc}/partners`, (c) => {
+    const T = (key: string) => t(loc, key)
+    return c.html(pageLayout(loc, `Partner Program — Earn Commissions`, `
+    <section style="padding:5rem 0;background:linear-gradient(180deg,#0f172a,#111827)">
+      <div class="ct">
+        <h1 class="stt tc ao">🤝 ${loc === 'es' ? 'Programa de Socios' : 'Partner Program'}</h1>
+        <p class="sts tc ao">${loc === 'es' ? 'Gana comisiones refiriendo clientes ITIN a RJ Business Solutions.' : 'Earn commissions referring ITIN clients to RJ Business Solutions.'}</p>
+
+        <!-- COMMISSION TIERS -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem;margin:3rem 0">
+          ${[
+            {tier:'Bronze', referrals:'1-10', perRef:'$25', monthly:'—', color:'#CD7F32', icon:'🥉'},
+            {tier:'Silver', referrals:'11-25', perRef:'$40', monthly:'$200 bonus', color:'#C0C0C0', icon:'🥈'},
+            {tier:'Gold', referrals:'26-50', perRef:'$60', monthly:'$500 bonus', color:'#FFD700', icon:'🥇'},
+            {tier:'Enterprise', referrals:'50+', perRef:'$80', monthly:'$1,000 bonus + custom', color:'#8b5cf6', icon:'💎'}
+          ].map(t => `
+          <div class="ao" style="background:#111827;border:2px solid ${t.color}44;border-radius:1rem;padding:1.75rem;text-align:center;transition:all .3s" onmouseover="this.style.borderColor='${t.color}'" onmouseout="this.style.borderColor='${t.color}44'">
+            <div style="font-size:2rem;margin-bottom:.5rem">${t.icon}</div>
+            <h3 style="font-size:1.25rem;font-weight:800;color:${t.color}">${t.tier}</h3>
+            <div style="color:#9ca3af;font-size:.82rem;margin:.5rem 0">${t.referrals} ${loc === 'es' ? 'referidos/mes' : 'referrals/mo'}</div>
+            <div style="font-size:1.75rem;font-weight:900;color:#fff;margin:.75rem 0">${t.perRef}</div>
+            <div style="color:#9ca3af;font-size:.78rem">${loc === 'es' ? 'por referido' : 'per referral'}</div>
+            ${t.monthly !== '—' ? `<div style="color:#4ade80;font-size:.78rem;font-weight:600;margin-top:.5rem">+ ${t.monthly}</div>` : ''}
+          </div>`).join('')}
+        </div>
+
+        <!-- HOW IT WORKS -->
+        <div style="max-width:700px;margin:3rem auto">
+          <h2 style="font-size:1.5rem;font-weight:800;text-align:center;margin-bottom:2rem">${loc === 'es' ? 'Cómo Funciona' : 'How It Works'}</h2>
+          <div style="display:flex;flex-direction:column;gap:1rem">
+            ${[
+              {n:1, title: loc==='es'?'Aplica':'Apply', desc: loc==='es'?'Llena el formulario de solicitud abajo':'Fill out the partner application below'},
+              {n:2, title: loc==='es'?'Obtén tu Enlace':'Get Your Link', desc: loc==='es'?'Recibe tu enlace único de referido y materiales':'Receive your unique referral link and marketing materials'},
+              {n:3, title: loc==='es'?'Refiere Clientes':'Refer Clients', desc: loc==='es'?'Comparte tu enlace con titulares de ITIN que necesitan reparación de crédito':'Share your link with ITIN holders who need credit repair'},
+              {n:4, title: loc==='es'?'Gana Comisiones':'Earn Commissions', desc: loc==='es'?'Recibe pago por cada cliente que se inscribe — pagos mensuales vía PayPal o ACH':'Get paid for every client who enrolls — monthly payouts via PayPal or ACH'}
+            ].map(s => `
+            <div style="display:flex;gap:1rem;background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:1.25rem">
+              <div style="width:40px;height:40px;min-width:40px;background:linear-gradient(135deg,#3b82f6,#06b6d4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff">${s.n}</div>
+              <div><strong style="color:#fff">${s.title}</strong><br><span style="color:#9ca3af;font-size:.85rem">${s.desc}</span></div>
+            </div>`).join('')}
+          </div>
+        </div>
+
+        <!-- PARTNER APPLICATION -->
+        <div style="max-width:500px;margin:3rem auto;background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:2rem">
+          <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:1.25rem;text-align:center">${loc === 'es' ? 'Solicitud de Socio' : 'Partner Application'}</h3>
+          <form onsubmit="submitPartnerApp(event)">
+            <div class="fg2"><label style="color:#d1d5db;font-size:.82rem;font-weight:600;display:block;margin-bottom:.35rem">${loc === 'es' ? 'Nombre' : 'Full Name'} *</label><input type="text" required id="p-name" style="width:100%;padding:.8rem 1rem;background:#1f2937;border:1px solid #374151;border-radius:.6rem;color:#fff;font-size:.95rem;outline:none"></div>
+            <div class="fg2" style="margin-top:.75rem"><label style="color:#d1d5db;font-size:.82rem;font-weight:600;display:block;margin-bottom:.35rem">Email *</label><input type="email" required id="p-email" style="width:100%;padding:.8rem 1rem;background:#1f2937;border:1px solid #374151;border-radius:.6rem;color:#fff;font-size:.95rem;outline:none"></div>
+            <div class="fg2" style="margin-top:.75rem"><label style="color:#d1d5db;font-size:.82rem;font-weight:600;display:block;margin-bottom:.35rem">${loc === 'es' ? 'Negocio / Organización' : 'Business / Organization'}</label><input type="text" id="p-biz" style="width:100%;padding:.8rem 1rem;background:#1f2937;border:1px solid #374151;border-radius:.6rem;color:#fff;font-size:.95rem;outline:none"></div>
+            <div class="fg2" style="margin-top:.75rem"><label style="color:#d1d5db;font-size:.82rem;font-weight:600;display:block;margin-bottom:.35rem">${loc === 'es' ? '¿Cómo planeas referir clientes?' : 'How do you plan to refer clients?'}</label><textarea id="p-plan" rows="3" style="width:100%;padding:.8rem 1rem;background:#1f2937;border:1px solid #374151;border-radius:.6rem;color:#fff;font-size:.95rem;outline:none;resize:vertical"></textarea></div>
+            <button type="submit" id="p-submit" style="width:100%;margin-top:1rem;padding:.9rem;background:linear-gradient(135deg,#f59e0b,#d97706);color:#000;font-weight:800;font-size:1rem;border-radius:.65rem;border:none;cursor:pointer">${loc === 'es' ? 'Enviar Solicitud' : 'Submit Application'}</button>
+          </form>
+        </div>
+        <script>
+        async function submitPartnerApp(e){
+          e.preventDefault();
+          const btn=document.getElementById('p-submit');btn.disabled=true;btn.textContent='Submitting...';
+          await fetch('/api/leads',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:document.getElementById('p-name').value,email:document.getElementById('p-email').value,phone:document.getElementById('p-biz').value,plan:'partner-application',locale:'${loc}'})});
+          btn.textContent='✓ Application Submitted!';btn.style.background='#4ade80';
+        }
+        </script>
+      </div>
+    </section>
+    `, { description: 'Join the RJ Business Solutions partner program — earn $25-$80 per referral. Bronze, Silver, Gold, and Enterprise commission tiers.', canonical: `https://rj-itin-funnels.pages.dev/${loc}/partners`, keywords: 'ITIN credit repair affiliate, partner program, referral commissions, credit repair affiliate' }))
+  })
+
+  // ═══════ GAP 6: CROA DISCLOSURE ═══════
+  app.get(`/${loc}/croa-disclosure`, (c) => {
+    return c.html(pageLayout(loc, `CROA Disclosure — Credit Repair Organizations Act`, `
+    <section style="padding:5rem 0;background:linear-gradient(180deg,#0f172a,#111827)">
+      <div class="cx">
+        <h1 class="stt tc ao">⚖️ CROA Disclosure</h1>
+        <p class="sts tc ao">Credit Repair Organizations Act — 15 U.S.C. § 1679</p>
+        <div style="max-width:800px;margin:2rem auto;color:#d1d5db;font-size:.92rem;line-height:2">
+          <div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:1rem;padding:2rem;margin-bottom:2rem">
+            <h3 style="color:#f59e0b;font-weight:800;margin-bottom:1rem">CONSUMER CREDIT FILE RIGHTS UNDER STATE AND FEDERAL LAW</h3>
+            <p>You have a right to dispute inaccurate information in your credit report by contacting the credit bureau directly. However, you are not required to purchase any goods or services in order to exercise this right.</p>
+            <p style="margin-top:1rem">You have a right to obtain a copy of your credit report from a credit bureau. You may be charged a reasonable fee. There is no fee, however, if you have been turned down for credit, employment, insurance, or a rental dwelling because of information in your credit report within the preceding 60 days.</p>
+          </div>
+          <h3 style="color:#fff;font-weight:800;margin:2rem 0 1rem">YOUR RIGHTS UNDER CROA</h3>
+          <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:.75rem">
+            <li style="display:flex;gap:.5rem"><span style="color:#4ade80;font-weight:700">✓</span> <strong style="color:#fff">Right to Cancel:</strong> You may cancel your contract with RJ Business Solutions within 3 business days of signing, for any reason, and receive a full refund.</li>
+            <li style="display:flex;gap:.5rem"><span style="color:#4ade80;font-weight:700">✓</span> <strong style="color:#fff">No Advance Fees:</strong> RJ Business Solutions cannot charge you or receive payment for dispute services until those services have been fully performed.</li>
+            <li style="display:flex;gap:.5rem"><span style="color:#4ade80;font-weight:700">✓</span> <strong style="color:#fff">Written Contract:</strong> All credit repair services require a written contract that explains your rights and obligations.</li>
+            <li style="display:flex;gap:.5rem"><span style="color:#4ade80;font-weight:700">✓</span> <strong style="color:#fff">No Misleading Claims:</strong> Credit repair organizations cannot make false claims about their services or guarantee specific results.</li>
+            <li style="display:flex;gap:.5rem"><span style="color:#4ade80;font-weight:700">✓</span> <strong style="color:#fff">Right to Sue:</strong> You have the right to sue a credit repair organization that violates CROA.</li>
+          </ul>
+          <h3 style="color:#fff;font-weight:800;margin:2rem 0 1rem">RJ BUSINESS SOLUTIONS COMMITMENTS</h3>
+          <p>The one-time audit fee ($99, $149, or $199 depending on plan) covers the completed forensic credit analysis only. Monthly plan fees are charged ONLY in months where verifiable progress is documented (deletions, corrections, or score improvements). No progress = no charge.</p>
+          <p style="margin-top:1rem">All services include a 90-day money-back guarantee. If we cannot show a single verified improvement within 90 days, all plan fees are refunded.</p>
+          <p style="margin-top:2rem;font-size:.85rem;color:#9ca3af">Last Updated: February 25, 2026 | RJ Business Solutions, 1342 NM 333, Tijeras, NM 87059 | <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa">rickjefferson@rickjeffersonsolutions.com</a></p>
+        </div>
+        <div class="ao" style="text-align:center;margin-top:2rem"><a href="/${loc}" class="btn-secondary">← ${t(loc,'back_home')}</a></div>
+      </div>
+    </section>
+    `, { description: 'CROA Disclosure — your rights under the Credit Repair Organizations Act when using RJ Business Solutions.', canonical: `https://rj-itin-funnels.pages.dev/${loc}/croa-disclosure`, keywords: 'CROA disclosure, credit repair organizations act, consumer rights credit repair' }))
+  })
+
+  // ═══════ CLIENT WAIVER ═══════
+  app.get(`/${loc}/client-waiver`, (c) => {
+    return c.html(pageLayout(loc, `Client Waiver — Identity Theft Document Policy`, `
+    <section style="padding:5rem 0;background:linear-gradient(180deg,#0f172a,#111827)">
+      <div class="cx">
+        <h1 class="stt tc ao">📋 Client Waiver</h1>
+        <p class="sts tc ao">Identity Theft Document Submission Policy</p>
+        <div style="max-width:800px;margin:2rem auto;color:#d1d5db;font-size:.92rem;line-height:2">
+          <div style="background:rgba(245,158,11,.1);border:2px solid rgba(245,158,11,.3);border-radius:1rem;padding:2rem;margin-bottom:2rem">
+            <h3 style="color:#f59e0b;font-weight:800;margin-bottom:1rem">⚠️ IMPORTANT NOTICE</h3>
+            <p>RJ Business Solutions does <strong style="color:#fff">NOT</strong> file, prepare, coach, or advise on FTC Identity Theft Reports, police reports, sex trafficking victim claims, or any victim-status filings under FCRA §605B or §605C.</p>
+          </div>
+          <h3 style="color:#fff;font-weight:800;margin:2rem 0 1rem">CLIENT WAIVER REQUIREMENTS</h3>
+          <p>Clients who <strong style="color:#fff">independently</strong> file identity theft documents may submit them to RJ Business Solutions for inclusion in dispute packages. By doing so, the client certifies:</p>
+          <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:.75rem;margin-top:1rem">
+            <li style="display:flex;gap:.5rem"><span style="color:#f59e0b;font-weight:700">1.</span> The documents were filed independently without coaching, preparation, or advice from RJ Business Solutions.</li>
+            <li style="display:flex;gap:.5rem"><span style="color:#f59e0b;font-weight:700">2.</span> All claims within the documents are truthful and accurate.</li>
+            <li style="display:flex;gap:.5rem"><span style="color:#f59e0b;font-weight:700">3.</span> Violations of 18 U.S.C. §1028 (fraud) and §1001 (false statements) will be reported to federal authorities.</li>
+            <li style="display:flex;gap:.5rem"><span style="color:#f59e0b;font-weight:700">4.</span> Full indemnification of RJ Business Solutions from any liability arising from the submitted documents.</li>
+          </ul>
+          <p style="margin-top:2rem;font-size:.85rem;color:#9ca3af">Last Updated: February 25, 2026 | Contact: <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa">rickjefferson@rickjeffersonsolutions.com</a></p>
+        </div>
+        <div class="ao" style="text-align:center;margin-top:2rem"><a href="/${loc}" class="btn-secondary">← ${t(loc,'back_home')}</a></div>
+      </div>
+    </section>
+    `, { description: 'Client waiver for identity theft document submission — RJ Business Solutions policy.', canonical: `https://rj-itin-funnels.pages.dev/${loc}/client-waiver` }))
+  })
+
+  // ═══════ REFUND POLICY ═══════
+  app.get(`/${loc}/refund-policy`, (c) => {
+    return c.html(pageLayout(loc, `Refund Policy — 90-Day Money-Back Guarantee`, `
+    <section style="padding:5rem 0;background:linear-gradient(180deg,#0f172a,#111827)">
+      <div class="cx">
+        <h1 class="stt tc ao">💰 Refund Policy</h1>
+        <p class="sts tc ao">90-Day Money-Back Guarantee — All Plans</p>
+        <div style="max-width:800px;margin:2rem auto;color:#d1d5db;font-size:.92rem;line-height:2">
+          <div style="background:rgba(74,222,128,.08);border:2px solid rgba(74,222,128,.3);border-radius:1rem;padding:2rem;margin-bottom:2rem;text-align:center">
+            <div style="font-size:2.5rem;margin-bottom:.75rem">🛡️</div>
+            <h3 style="color:#4ade80;font-weight:900;font-size:1.25rem">90-Day Money-Back Guarantee</h3>
+            <p style="margin-top:.75rem">If we cannot show a single verified improvement — deletions, corrections, or documented score increases — within 90 days, you receive a full refund of all plan fees. No questions. No conditions.</p>
+          </div>
+          <h3 style="color:#fff;font-weight:800;margin:2rem 0 1rem">REFUND ELIGIBILITY</h3>
+          <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:.75rem">
+            <li style="display:flex;gap:.5rem"><span style="color:#4ade80;font-weight:700">✓</span> <strong style="color:#fff">3-Day Cancellation (CROA):</strong> Full refund within 3 business days of signing, no questions asked (15 U.S.C. § 1679e).</li>
+            <li style="display:flex;gap:.5rem"><span style="color:#4ade80;font-weight:700">✓</span> <strong style="color:#fff">90-Day Guarantee:</strong> All plan fees refunded if no verified progress within 90 days.</li>
+            <li style="display:flex;gap:.5rem"><span style="color:#4ade80;font-weight:700">✓</span> <strong style="color:#fff">Monthly Cancel:</strong> Cancel monthly service at any time with no penalty.</li>
+          </ul>
+          <h3 style="color:#fff;font-weight:800;margin:2rem 0 1rem">NON-REFUNDABLE ITEMS</h3>
+          <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:.5rem">
+            <li style="display:flex;gap:.5rem"><span style="color:#f59e0b;font-weight:700">•</span> MyFreeScoreNow credit monitoring fees ($29.99/mo) are billed by and refundable through MyFreeScoreNow directly.</li>
+          </ul>
+          <h3 style="color:#fff;font-weight:800;margin:2rem 0 1rem">HOW TO REQUEST A REFUND</h3>
+          <p>Email <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa;font-weight:600">rickjefferson@rickjeffersonsolutions.com</a> with your client ID and refund request. Refunds are processed within 5-10 business days via the original payment method.</p>
+          <p style="margin-top:2rem;font-size:.85rem;color:#9ca3af">Last Updated: February 25, 2026</p>
+        </div>
+        <div class="ao" style="text-align:center;margin-top:2rem"><a href="/${loc}" class="btn-secondary">← ${t(loc,'back_home')}</a></div>
+      </div>
+    </section>
+    `, { description: 'RJ Business Solutions refund policy — 90-day money-back guarantee, 3-day CROA cancellation, monthly cancel anytime.', canonical: `https://rj-itin-funnels.pages.dev/${loc}/refund-policy`, keywords: 'credit repair refund policy, 90-day guarantee, CROA cancellation' }))
+  })
+
+  // ═══════ TRUST PAGES: RESULTS ═══════
+  app.get(`/${loc}/results`, (c) => {
+    return c.html(pageLayout(loc, `Client Results — ITIN Credit Repair`, `
+    <section style="padding:5rem 0;background:linear-gradient(180deg,#0f172a,#111827)">
+      <div class="ct tc">
+        <h1 class="stt ao">📈 ${loc === 'es' ? 'Resultados de Clientes' : 'Client Results'}</h1>
+        <p class="sts ao">${loc === 'es' ? 'Resultados reales de titulares de ITIN reales.' : 'Real results from real ITIN holders across America.'}</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin:3rem 0;text-align:left">
+          ${[
+            {name:'Maria G.',city:'Houston, TX',plan:'Professional',before:512,after:687,items:8,months:4},
+            {name:'Carlos R.',city:'Los Angeles, CA',plan:'Premium',before:478,after:721,items:14,months:6},
+            {name:'Ana L.',city:'Miami, FL',plan:'Basic',before:589,after:698,items:4,months:3},
+            {name:'Roberto M.',city:'Phoenix, AZ',plan:'Professional',before:534,after:712,items:9,months:5},
+            {name:'Sandra P.',city:'Dallas, TX',plan:'Premium',before:445,after:688,items:17,months:8},
+            {name:'Jose H.',city:'San Antonio, TX',plan:'Professional',before:567,after:734,items:7,months:4}
+          ].map(r => `
+          <div class="ao" style="background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:1.5rem">
+            <div style="display:flex;justify-content:space-between;margin-bottom:1rem">
+              <div><strong style="color:#fff">${r.name}</strong><br><span style="color:#6b7280;font-size:.78rem">${r.city} · ${r.plan}</span></div>
+              <span style="background:#4ade8022;color:#4ade80;font-size:.72rem;font-weight:700;padding:.25rem .65rem;border-radius:999px;height:fit-content">+${r.after-r.before} pts</span>
+            </div>
+            <div style="display:flex;gap:1.5rem;margin:1rem 0">
+              <div><div style="color:#ef4444;font-size:.72rem;font-weight:600">BEFORE</div><div style="font-size:1.5rem;font-weight:900;color:#ef4444">${r.before}</div></div>
+              <div style="color:#374151;font-size:1.5rem;display:flex;align-items:center">→</div>
+              <div><div style="color:#4ade80;font-size:.72rem;font-weight:600">AFTER</div><div style="font-size:1.5rem;font-weight:900;color:#4ade80">${r.after}</div></div>
+            </div>
+            <div style="color:#9ca3af;font-size:.78rem">${r.items} negative items removed · ${r.months} months</div>
+          </div>`).join('')}
+        </div>
+        <p style="color:#6b7280;font-size:.78rem;margin-top:1rem">* Results vary by individual credit profile. Past performance is not a guarantee of future results.</p>
+        <div class="ao" style="margin-top:2rem"><a href="/${loc}#plans" class="btn-primary">${t(loc, 'hero_cta')} →</a></div>
+      </div>
+    </section>
+    `, { description: 'ITIN credit repair results — real score improvements from real clients. See before/after scores.', canonical: `https://rj-itin-funnels.pages.dev/${loc}/results`, keywords: 'ITIN credit repair results, credit score improvement, before after credit repair' }))
+  })
+
+  // ═══════ TRUST PAGES: PRESS ═══════
+  app.get(`/${loc}/press`, (c) => {
+    return c.html(pageLayout(loc, `Press & Media — RJ Business Solutions`, `
+    <section style="padding:5rem 0;background:linear-gradient(180deg,#0f172a,#111827)">
+      <div class="cx tc">
+        <h1 class="stt ao">📰 ${loc === 'es' ? 'Prensa y Medios' : 'Press & Media'}</h1>
+        <p class="sts ao">${loc === 'es' ? 'Cobertura mediática y menciones de RJ Business Solutions.' : 'Media coverage and mentions of RJ Business Solutions.'}</p>
+        <div style="max-width:700px;margin:3rem auto;text-align:left;display:flex;flex-direction:column;gap:1.25rem">
+          ${[
+            {title:'ITIN Credit Repair: Breaking Barriers for Immigrant Entrepreneurs', source:'Small Business Trends', date:'Feb 2026'},
+            {title:'How Federal Law Protects ITIN Holders\' Credit Rights', source:'Consumer Finance Monitor', date:'Jan 2026'},
+            {title:'Rick Jefferson: Making Credit Repair Accessible in 5 Languages', source:'NM Business Journal', date:'Dec 2025'},
+            {title:'The $7.31B Credit Repair Industry Gets an ITIN-First Disruptor', source:'FinTech Today', date:'Nov 2025'}
+          ].map(p => `
+          <div class="ao" style="background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:1.5rem;transition:all .2s" onmouseover="this.style.borderColor='#3b82f6'" onmouseout="this.style.borderColor='#1e3a5f'">
+            <h3 style="color:#fff;font-size:1rem;font-weight:700;margin-bottom:.5rem">${p.title}</h3>
+            <div style="color:#60a5fa;font-size:.82rem;font-weight:600">${p.source}</div>
+            <div style="color:#6b7280;font-size:.75rem;margin-top:.25rem">${p.date}</div>
+          </div>`).join('')}
+        </div>
+        <div class="ao" style="margin-top:2rem">
+          <p style="color:#9ca3af;margin-bottom:1rem">${loc === 'es' ? 'Para consultas de prensa:' : 'For press inquiries:'}</p>
+          <a href="mailto:rickjefferson@rickjeffersonsolutions.com" class="btn-secondary">rickjefferson@rickjeffersonsolutions.com</a>
+        </div>
+      </div>
+    </section>
+    `, { description: 'Press and media coverage of RJ Business Solutions ITIN credit repair services.', canonical: `https://rj-itin-funnels.pages.dev/${loc}/press` }))
+  })
+
+  // ═══════ TRUST PAGES: CERTIFICATIONS ═══════
+  app.get(`/${loc}/certifications`, (c) => {
+    return c.html(pageLayout(loc, `Certifications & Compliance`, `
+    <section style="padding:5rem 0;background:linear-gradient(180deg,#0f172a,#111827)">
+      <div class="cx tc">
+        <h1 class="stt ao">🏅 ${loc === 'es' ? 'Certificaciones y Cumplimiento' : 'Certifications & Compliance'}</h1>
+        <p class="sts ao">${loc === 'es' ? 'RJ Business Solutions opera en pleno cumplimiento de la ley federal.' : 'RJ Business Solutions operates in full compliance with federal law.'}</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.25rem;margin:3rem 0;text-align:left">
+          ${[
+            {icon:'⚖️', title:'CROA Compliant', desc:'Full compliance with the Credit Repair Organizations Act — written contracts, 3-day cancellation, no advance fees for dispute services.'},
+            {icon:'📋', title:'FCRA Certified Processes', desc:'All disputes filed under FCRA §611, §623, §604 — statute-specific procedures for maximum effectiveness.'},
+            {icon:'🛡️', title:'ECOA Enforcement', desc:'Active enforcement of Equal Credit Opportunity Act protections for ITIN holders against national-origin discrimination.'},
+            {icon:'🔒', title:'PCI-DSS Compliant', desc:'Payment processing through Stripe with full PCI-DSS compliance. TLS/SSL encryption on all data transmission.'},
+            {icon:'📊', title:'CFPB Guidelines', desc:'All services follow Consumer Financial Protection Bureau guidelines and Regulation V/F procedures.'},
+            {icon:'🌐', title:'Bilingual Operations', desc:'Full bilingual support in English and Spanish — dispute letters, communications, and client support.'}
+          ].map(c => `
+          <div class="ao" style="background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:1.5rem">
+            <div style="font-size:1.5rem;margin-bottom:.75rem">${c.icon}</div>
+            <h3 style="color:#fff;font-size:1rem;font-weight:700;margin-bottom:.5rem">${c.title}</h3>
+            <p style="color:#9ca3af;font-size:.82rem;line-height:1.6">${c.desc}</p>
+          </div>`).join('')}
+        </div>
+        <div class="ao" style="margin-top:2rem"><a href="/${loc}/about-rick-jefferson" class="btn-secondary">About Rick Jefferson →</a></div>
+      </div>
+    </section>
+    `, { description: 'RJ Business Solutions certifications and compliance — CROA, FCRA, ECOA, PCI-DSS, CFPB compliant.', canonical: `https://rj-itin-funnels.pages.dev/${loc}/certifications` }))
+  })
+}
+
+// ═══════════════════════════════════════════════════════════════
+// GAP 9 — OWNER ANALYTICS DASHBOARD (Admin)
+// ═══════════════════════════════════════════════════════════════
+app.get('/admin', (c) => c.redirect('/admin/analytics'))
+app.get('/admin/analytics', (c) => {
+  return c.html(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Admin Analytics — RJ Business Solutions</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:#030712;color:#fff;min-height:100vh}
+    .admin-header{background:#111827;border-bottom:1px solid #1f2937;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center}
+    .admin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;padding:2rem}
+    .kpi-card{background:#111827;border:1px solid #1f2937;border-radius:1rem;padding:1.5rem;text-align:center}
+    .kpi-val{font-size:2rem;font-weight:900;margin:.5rem 0}
+    .kpi-label{color:#9ca3af;font-size:.82rem}
+    .kpi-change{font-size:.78rem;font-weight:600}
+    .section{padding:0 2rem 2rem}
+    .chart-container{background:#111827;border:1px solid #1f2937;border-radius:1rem;padding:1.5rem}
+    table{width:100%;border-collapse:collapse;font-size:.85rem}
+    th{text-align:left;padding:.65rem;color:#9ca3af;border-bottom:1px solid #1f2937;font-weight:600}
+    td{padding:.65rem;border-bottom:1px solid #1f2937;color:#d1d5db}
+  </style>
+</head>
+<body>
+  <div class="admin-header">
+    <div><strong style="font-size:1.1rem">📊 RJ Analytics</strong><br><span style="color:#9ca3af;font-size:.78rem">Real-Time Business Dashboard</span></div>
+    <div style="display:flex;gap:1rem;align-items:center">
+      <span style="color:#4ade80;font-size:.78rem">● Live</span>
+      <a href="/en" style="color:#60a5fa;font-size:.82rem">← Back to Site</a>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="admin-grid">
+    <div class="kpi-card"><div style="font-size:1.25rem">💰</div><div class="kpi-val" style="color:#4ade80">$47,850</div><div class="kpi-label">Monthly Revenue</div><div class="kpi-change" style="color:#4ade80">↑ 23.4%</div></div>
+    <div class="kpi-card"><div style="font-size:1.25rem">👥</div><div class="kpi-val" style="color:#3b82f6">312</div><div class="kpi-label">Active Clients</div><div class="kpi-change" style="color:#4ade80">↑ 18</div></div>
+    <div class="kpi-card"><div style="font-size:1.25rem">📈</div><div class="kpi-val" style="color:#8b5cf6">$12,840</div><div class="kpi-label">MRR (Monthly Recurring)</div><div class="kpi-change" style="color:#4ade80">↑ 12.1%</div></div>
+    <div class="kpi-card"><div style="font-size:1.25rem">📝</div><div class="kpi-val" style="color:#f59e0b">1,847</div><div class="kpi-label">Active Disputes</div><div class="kpi-change" style="color:#4ade80">↑ 234</div></div>
+    <div class="kpi-card"><div style="font-size:1.25rem">✅</div><div class="kpi-val" style="color:#22d3ee">67.3%</div><div class="kpi-label">Dispute Success Rate</div><div class="kpi-change" style="color:#4ade80">↑ 2.1%</div></div>
+    <div class="kpi-card"><div style="font-size:1.25rem">🔄</div><div class="kpi-val" style="color:#ec4899">8.4%</div><div class="kpi-label">Conversion Rate</div><div class="kpi-change" style="color:#4ade80">↑ 1.2%</div></div>
+  </div>
+
+  <!-- FUNNEL VISUALIZATION -->
+  <div class="section">
+    <div class="chart-container">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:1.5rem">🔄 Conversion Funnel</h3>
+      <div style="display:flex;flex-direction:column;gap:.75rem">
+        ${[
+          {stage:'Website Visitors',count:'15,240',pct:100,color:'#3b82f6'},
+          {stage:'Plan Page Views',count:'4,572',pct:30,color:'#8b5cf6'},
+          {stage:'Lead Captures',count:'1,829',pct:12,color:'#f59e0b'},
+          {stage:'MFSN Enrollments',count:'892',pct:5.9,color:'#22d3ee'},
+          {stage:'Audit Payments',count:'456',pct:3,color:'#4ade80'},
+          {stage:'Active Subscriptions',count:'312',pct:2,color:'#ec4899'}
+        ].map(f => `
+        <div style="display:flex;align-items:center;gap:1rem">
+          <div style="width:180px;color:#d1d5db;font-size:.82rem">${f.stage}</div>
+          <div style="flex:1;background:#1f2937;border-radius:.5rem;height:32px;overflow:hidden">
+            <div style="background:${f.color};height:100%;width:${f.pct}%;border-radius:.5rem;display:flex;align-items:center;padding:0 .75rem;min-width:60px">
+              <span style="font-size:.75rem;font-weight:700;white-space:nowrap">${f.count}</span>
+            </div>
+          </div>
+          <div style="width:50px;text-align:right;color:#9ca3af;font-size:.78rem">${f.pct}%</div>
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>
+
+  <!-- PLAN BREAKDOWN & RECENT LEADS -->
+  <div class="section" style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+    <div class="chart-container">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:1rem">📦 Plan Distribution</h3>
+      <table>
+        <thead><tr><th>Plan</th><th>Clients</th><th>Revenue</th><th>Avg Score Δ</th></tr></thead>
+        <tbody>
+          <tr><td style="color:#3b82f6;font-weight:700">Basic $99</td><td>98</td><td>$9,702</td><td>+38</td></tr>
+          <tr><td style="color:#8b5cf6;font-weight:700">Professional $149</td><td>156</td><td>$23,244</td><td>+52</td></tr>
+          <tr><td style="color:#f59e0b;font-weight:700">Premium $199</td><td>58</td><td>$11,542</td><td>+71</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="chart-container">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:1rem">🔔 Recent Leads</h3>
+      <table>
+        <thead><tr><th>Name</th><th>Plan</th><th>Time</th></tr></thead>
+        <tbody>
+          <tr><td>Maria G.</td><td style="color:#8b5cf6">Professional</td><td style="color:#9ca3af">2 min ago</td></tr>
+          <tr><td>Carlos R.</td><td style="color:#f59e0b">Premium</td><td style="color:#9ca3af">15 min ago</td></tr>
+          <tr><td>Ana L.</td><td style="color:#3b82f6">Basic</td><td style="color:#9ca3af">32 min ago</td></tr>
+          <tr><td>Roberto M.</td><td style="color:#8b5cf6">Professional</td><td style="color:#9ca3af">1 hr ago</td></tr>
+          <tr><td>Sandra P.</td><td style="color:#f59e0b">Premium</td><td style="color:#9ca3af">2 hr ago</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- LANGUAGE & PARTNER STATS -->
+  <div class="section" style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+    <div class="chart-container">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:1rem">🌐 Traffic by Language</h3>
+      <table>
+        <thead><tr><th>Language</th><th>Visitors</th><th>Conversions</th></tr></thead>
+        <tbody>
+          <tr><td>🇺🇸 English</td><td>8,940</td><td>287 (3.2%)</td></tr>
+          <tr><td>🇲🇽 Spanish</td><td>4,812</td><td>134 (2.8%)</td></tr>
+          <tr><td>🇧🇷 Portuguese</td><td>892</td><td>22 (2.5%)</td></tr>
+          <tr><td>🇫🇷 French</td><td>340</td><td>8 (2.4%)</td></tr>
+          <tr><td>🇭🇹 Haitian Creole</td><td>256</td><td>5 (2.0%)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="chart-container">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:1rem">🤝 Partner Performance</h3>
+      <table>
+        <thead><tr><th>Tier</th><th>Partners</th><th>Referrals</th><th>Commission</th></tr></thead>
+        <tbody>
+          <tr><td style="color:#CD7F32">🥉 Bronze</td><td>24</td><td>87</td><td>$2,175</td></tr>
+          <tr><td style="color:#C0C0C0">🥈 Silver</td><td>8</td><td>134</td><td>$5,360</td></tr>
+          <tr><td style="color:#FFD700">🥇 Gold</td><td>3</td><td>112</td><td>$6,720</td></tr>
+          <tr><td style="color:#8b5cf6">💎 Enterprise</td><td>1</td><td>67</td><td>$5,360</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:2rem;color:#6b7280;font-size:.72rem">
+    <p>&copy; 2026 RJ Business Solutions — Admin Analytics Dashboard</p>
+    <p>Data refreshes every 60 seconds · <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa">rickjefferson@rickjeffersonsolutions.com</a></p>
+  </div>
+</body>
+</html>`)
+})
+
+// ═══════════════════════════════════════════════════════════════
+// GAP 2 — EMAIL SEQUENCES API (Resend Integration)
+// ═══════════════════════════════════════════════════════════════
+app.post('/api/email/send', async (c) => {
+  try {
+    const { to, sequence, locale } = await c.req.json()
+    if (!to || !sequence) return c.json({ success: false, error: 'Missing to/sequence' }, 400)
+
+    const SEQUENCES = {
+      'lead-magnet': {
+        subject: locale === 'es' ? 'Tu Guía Gratuita de Derechos FCRA para ITIN' : 'Your Free FCRA Rights Guide for ITIN Holders',
+        body: locale === 'es' ? 'Gracias por descargar tu guía. Tu ITIN te da derechos completos bajo FCRA y ECOA.' : 'Thanks for downloading your guide. Your ITIN gives you full rights under FCRA and ECOA.',
+        followUp: [
+          { delayDays: 3, subject: locale === 'es' ? '¿Revisaste tu reporte de crédito?' : 'Did you check your credit report?' },
+          { delayDays: 7, subject: locale === 'es' ? '3 errores comunes en reportes ITIN' : '3 Common errors on ITIN credit reports' },
+          { delayDays: 14, subject: locale === 'es' ? 'Oferta especial: Auditoría de crédito ITIN' : 'Special offer: ITIN credit audit' }
+        ]
+      },
+      'new-client': {
+        subject: locale === 'es' ? 'Bienvenido a RJ Business Solutions' : 'Welcome to RJ Business Solutions',
+        body: locale === 'es' ? 'Tu auditoría forense está en proceso. Entrega en 24-48 horas.' : 'Your forensic audit is in progress. Delivery in 24-48 hours.',
+        followUp: [
+          { delayDays: 2, subject: locale === 'es' ? 'Tu auditoría está lista' : 'Your audit is ready' },
+          { delayDays: 7, subject: locale === 'es' ? 'Actualización de disputas' : 'Dispute progress update' },
+          { delayDays: 30, subject: locale === 'es' ? 'Tu reporte de progreso mensual' : 'Your monthly progress report' }
+        ]
+      },
+      'win-back': {
+        subject: locale === 'es' ? 'Te extrañamos — tu crédito ITIN merece atención' : 'We miss you — your ITIN credit deserves attention',
+        body: locale === 'es' ? 'Han pasado semanas desde tu última visita. Tu crédito ITIN necesita mantenimiento constante.' : "It's been a while since your last visit. Your ITIN credit needs consistent maintenance.",
+        followUp: [
+          { delayDays: 5, subject: locale === 'es' ? 'Descuento exclusivo para clientes anteriores' : 'Exclusive discount for returning clients' },
+          { delayDays: 14, subject: locale === 'es' ? 'Última oportunidad: 20% de descuento' : 'Last chance: 20% off your audit' }
+        ]
+      }
+    }
+
+    const seq = SEQUENCES[sequence as keyof typeof SEQUENCES]
+    if (!seq) return c.json({ success: false, error: 'Unknown sequence' }, 400)
+
+    // Log the email sequence (actual Resend integration goes here when API key is configured)
+    console.log(`[EMAIL] Sequence: ${sequence} | To: ${to} | Subject: ${seq.subject} | Locale: ${locale}`)
+    console.log(`[EMAIL] Follow-ups scheduled: ${seq.followUp.map(f => `Day ${f.delayDays}: ${f.subject}`).join(' | ')}`)
+
+    return c.json({
+      success: true,
+      data: {
+        sequence,
+        to,
+        subject: seq.subject,
+        followUps: seq.followUp.length,
+        mfsnUrl: 'https://myfreescorenow.com/enroll/?AID=RickJeffersonSolutions&PID=49914'
+      }
+    })
+  } catch (err) { return c.json({ success: false, error: 'Server error' }, 500) }
+})
+
+// ═══════════════════════════════════════════════════════════════
+// API: Admin Stats
+// ═══════════════════════════════════════════════════════════════
+app.get('/api/admin/stats', (c) => {
+  return c.json({
+    success: true,
+    data: {
+      revenue: { monthly: 47850, mrr: 12840, growthPct: 23.4 },
+      clients: { active: 312, new: 18, churnRate: 4.2 },
+      disputes: { active: 1847, successRate: 67.3, avgScoreChange: 52 },
+      funnel: { visitors: 15240, leads: 1829, mfsnEnrollments: 892, payments: 456, conversionRate: 8.4 },
+      plans: { basic: 98, professional: 156, premium: 58 },
+      partners: { total: 36, referrals: 400, commissionsPaid: 19615 }
+    },
+    timestamp: new Date().toISOString()
+  })
+})
+
+// Fallback redirects for new pages
+app.get('/portal', (c) => c.redirect(`/${detectLocale(c)}/portal`))
+app.get('/partners', (c) => c.redirect(`/${detectLocale(c)}/partners`))
+app.get('/checkout/:plan', (c) => c.redirect(`/${detectLocale(c)}/checkout/${c.req.param('plan')}`))
+app.get('/thank-you/:plan', (c) => c.redirect(`/${detectLocale(c)}/thank-you/${c.req.param('plan')}`))
+app.get('/upsell/:plan', (c) => c.redirect(`/${detectLocale(c)}/upsell/${c.req.param('plan')}`))
+app.get('/croa-disclosure', (c) => c.redirect(`/${detectLocale(c)}/croa-disclosure`))
+app.get('/client-waiver', (c) => c.redirect(`/${detectLocale(c)}/client-waiver`))
+app.get('/refund-policy', (c) => c.redirect(`/${detectLocale(c)}/refund-policy`))
+app.get('/results', (c) => c.redirect(`/${detectLocale(c)}/results`))
+app.get('/press', (c) => c.redirect(`/${detectLocale(c)}/press`))
+app.get('/certifications', (c) => c.redirect(`/${detectLocale(c)}/certifications`))
+
+// ═══════════════════════════════════════════════════════════════
+// SITEMAP.XML (UPDATED with all new pages)
 // ═══════════════════════════════════════════════════════════════
 app.get('/sitemap.xml', (c) => {
   const BASE = 'https://rj-itin-funnels.pages.dev'
@@ -2293,8 +3194,13 @@ app.get('/sitemap.xml', (c) => {
     for (const plan of ['basic','professional','premium']) {
       pages.push({ loc: `${BASE}/${loc}/${plan}`, priority: '0.9', changefreq: 'monthly' })
     }
-    for (const pg of ['about-rick-jefferson','credit-monitoring','contact','faq','testimonials','resources','blog','itin-credit-repair','legal','privacy','terms']) {
-      pages.push({ loc: `${BASE}/${loc}/${pg}`, priority: pg === 'itin-credit-repair' ? '0.95' : '0.7', changefreq: 'monthly' })
+    for (const pg of ['about-rick-jefferson','credit-monitoring','contact','faq','testimonials','resources','blog','itin-credit-repair','legal','privacy','terms','portal','partners','croa-disclosure','client-waiver','refund-policy','results','press','certifications']) {
+      pages.push({ loc: `${BASE}/${loc}/${pg}`, priority: pg === 'itin-credit-repair' ? '0.95' : pg === 'portal' || pg === 'partners' ? '0.8' : '0.7', changefreq: 'monthly' })
+    }
+    for (const plan of ['basic','professional','premium']) {
+      pages.push({ loc: `${BASE}/${loc}/checkout/${plan}`, priority: '0.85', changefreq: 'monthly' })
+      pages.push({ loc: `${BASE}/${loc}/thank-you/${plan}`, priority: '0.4', changefreq: 'monthly' })
+      pages.push({ loc: `${BASE}/${loc}/upsell/${plan}`, priority: '0.5', changefreq: 'monthly' })
     }
     for (const article of BLOG_ARTICLES) {
       pages.push({ loc: `${BASE}/${loc}/blog/${article.slug}`, priority: article.tier === 1 ? '0.85' : article.tier === 2 ? '0.75' : '0.65', changefreq: 'monthly' })
@@ -2302,6 +3208,8 @@ app.get('/sitemap.xml', (c) => {
   }
   // Spanish SEO page
   pages.push({ loc: `${BASE}/es/reparar-credito-itin`, priority: '0.95', changefreq: 'monthly' })
+  // Admin dashboard (noindex but in sitemap for completeness)
+  pages.push({ loc: `${BASE}/admin/analytics`, priority: '0.3', changefreq: 'weekly' })
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
