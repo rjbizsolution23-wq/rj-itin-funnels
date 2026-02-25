@@ -925,19 +925,61 @@ function langSwitcherHTML(currentLocale: string): string {
 // ═══════════════════════════════════════════════════════════════
 // SHARED LAYOUT
 // ═══════════════════════════════════════════════════════════════
-function pageLayout(locale: string, title: string, content: string): string {
+function pageLayout(locale: string, title: string, content: string, seoOpts?: { description?: string, canonical?: string, ogImage?: string, ogType?: string, schema?: string, keywords?: string }): string {
   const T = (key: string) => t(locale, key)
+  const BASE_URL = 'https://rj-itin-funnels.pages.dev'
+  const desc = seoOpts?.description || T('hero_sub').replace(/<[^>]*>/g, '').substring(0, 160)
+  const canonical = seoOpts?.canonical || `${BASE_URL}/${locale}`
+  const ogImage = seoOpts?.ogImage || IMG.rickPortrait
+  const ogType = seoOpts?.ogType || 'website'
+  const keywords = seoOpts?.keywords || 'ITIN credit repair, ITIN credit score, credit repair for ITIN holders, reparar credito ITIN, ITIN dispute, FCRA ITIN rights, ECOA ITIN, credit bureau ITIN, RJ Business Solutions'
+  const schemaLD = seoOpts?.schema || `{
+    "@context":"https://schema.org",
+    "@graph":[
+      {"@type":"LocalBusiness","@id":"${BASE_URL}/#business","name":"RJ Business Solutions","description":"ITIN & SSN credit repair services — forensic audits, bureau disputes, bilingual support.","url":"${BASE_URL}","telephone":"+1-000-000-0000","email":"rickjefferson@rickjeffersonsolutions.com","address":{"@type":"PostalAddress","streetAddress":"1342 NM 333","addressLocality":"Tijeras","addressRegion":"NM","postalCode":"87059","addressCountry":"US"},"image":"${IMG.logo}","priceRange":"$99-$199/mo","sameAs":["https://tiktok.com/@rick_jeff_solution","https://twitter.com/ricksolutions1","https://linkedin.com/in/rick-jefferson-314998235","https://rickjeffersonsolutions.com"],"founder":{"@type":"Person","name":"Rick Jefferson","jobTitle":"Founder & ITIN Credit Expert","image":"${IMG.rickPortrait}","url":"${BASE_URL}/en/about-rick-jefferson","sameAs":["https://linkedin.com/in/rick-jefferson-314998235"]}},
+      {"@type":"WebSite","@id":"${BASE_URL}/#website","url":"${BASE_URL}","name":"RJ Business Solutions — ITIN Credit Repair","publisher":{"@id":"${BASE_URL}/#business"},"inLanguage":["en","es","pt","fr","ht"]},
+      {"@type":"Service","@id":"${BASE_URL}/#service","name":"ITIN Credit Repair","provider":{"@id":"${BASE_URL}/#business"},"serviceType":"Credit Repair","areaServed":"US","description":"Forensic 3-bureau credit audits and statute-specific disputes for ITIN holders under FCRA, ECOA, CROA, FDCPA.","offers":[
+        {"@type":"Offer","name":"Basic Plan","price":"99","priceCurrency":"USD","description":"Up to 15 disputes/month for 1-5 negative items"},
+        {"@type":"Offer","name":"Professional Plan","price":"149","priceCurrency":"USD","description":"Up to 25 disputes/month with dedicated analyst for 6-15 negative items"},
+        {"@type":"Offer","name":"Premium Plan","price":"199","priceCurrency":"USD","description":"Up to 40 disputes/month with VIP access for 16+ negative items"}
+      ]},
+      {"@type":"BreadcrumbList","@id":"${BASE_URL}/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"${BASE_URL}"},{"@type":"ListItem","position":2,"name":"${title}","item":"${canonical}"}]}
+    ]
+  }`
   return `<!DOCTYPE html>
 <html lang="${locale}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${title} | RJ Business Solutions</title>
-  <meta name="description" content="${T('hero_sub').replace(/<[^>]*>/g, '').substring(0, 160)}">
+  <meta name="description" content="${desc}">
+  <meta name="keywords" content="${keywords}">
+  <meta name="author" content="Rick Jefferson, RJ Business Solutions">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <link rel="canonical" href="${canonical}">
+  <!-- OpenGraph -->
+  <meta property="og:type" content="${ogType}">
+  <meta property="og:title" content="${title} | RJ Business Solutions">
+  <meta property="og:description" content="${desc}">
+  <meta property="og:image" content="${ogImage}">
+  <meta property="og:url" content="${canonical}">
+  <meta property="og:site_name" content="RJ Business Solutions">
+  <meta property="og:locale" content="${locale === 'es' ? 'es_US' : locale === 'pt' ? 'pt_BR' : locale === 'fr' ? 'fr_FR' : locale === 'ht' ? 'ht_HT' : 'en_US'}">
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@ricksolutions1">
+  <meta name="twitter:creator" content="@ricksolutions1">
+  <meta name="twitter:title" content="${title} | RJ Business Solutions">
+  <meta name="twitter:description" content="${desc}">
+  <meta name="twitter:image" content="${ogImage}">
+  <!-- Alternate Languages -->
+  ${SUPPORTED_LOCALES.map(l => `<link rel="alternate" hreflang="${l}" href="${BASE_URL}/${l}">`).join('\n  ')}
+  <link rel="alternate" hreflang="x-default" href="${BASE_URL}/en">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script type="application/ld+json">${schemaLD}</script>
   <style>${SHARED_CSS}</style>
 </head>
 <body>
@@ -957,7 +999,10 @@ function pageLayout(locale: string, title: string, content: string): string {
       <div class="nav-links">
         <a href="/${locale}">${T('nav_home')}</a>
         <a href="/${locale}#plans">${T('nav_plans')}</a>
-        <a href="/${locale}/legal">${T('nav_legal')}</a>
+        <a href="/${locale}/about-rick-jefferson">About</a>
+        <a href="/${locale}/blog">Blog</a>
+        <a href="/${locale}/credit-monitoring">Monitoring</a>
+        <a href="/${locale}/contact">Contact</a>
       </div>
     </div>
   </nav>
@@ -970,15 +1015,25 @@ function pageLayout(locale: string, title: string, content: string): string {
       <img src="https://media.rickjeffersonsolutions.com/rj-business-solutions-logo-banner.jpg" alt="RJ Business Solutions" class="footer-logo" style="height:36px;margin:0 auto 1rem;border-radius:4px">
       <p style="color:#d1d5db;font-size:.85rem;line-height:1.7"><strong>RJ Business Solutions</strong><br>1342 NM 333, Tijeras, New Mexico 87059<br>
         <a href="https://rickjeffersonsolutions.com" style="color:#60a5fa">rickjeffersonsolutions.com</a> &bull; <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa">rickjefferson@rickjeffersonsolutions.com</a></p>
-      <div style="display:flex;justify-content:center;gap:1.25rem;margin:1rem 0;flex-wrap:wrap">
+      <div style="display:flex;justify-content:center;gap:1rem;margin:.75rem 0;flex-wrap:wrap">
+        <a href="https://app.myfreescorenow.com/enroll/B01A8289" target="_blank" style="color:#4ade80;font-size:.82rem;font-weight:600">📊 Credit Monitoring Sign-Up</a>
+        <a href="https://rickjeffersonsolutions.com" target="_blank" style="color:#60a5fa;font-size:.82rem;font-weight:600">🧭 ITIN Credit Roadmap Quiz</a>
+      </div>
+      <div style="display:flex;justify-content:center;gap:1.25rem;margin:.5rem 0;flex-wrap:wrap">
         <a href="https://tiktok.com/@rick_jeff_solution" target="_blank" style="color:#9ca3af;font-size:.8rem;transition:color .2s" onmouseover="this.style.color='#60a5fa'" onmouseout="this.style.color='#9ca3af'">TikTok: @rick_jeff_solution</a>
         <a href="https://twitter.com/ricksolutions1" target="_blank" style="color:#9ca3af;font-size:.8rem;transition:color .2s" onmouseover="this.style.color='#60a5fa'" onmouseout="this.style.color='#9ca3af'">Twitter: @ricksolutions1</a>
         <a href="https://linkedin.com/in/rick-jefferson-314998235" target="_blank" style="color:#9ca3af;font-size:.8rem;transition:color .2s" onmouseover="this.style.color='#60a5fa'" onmouseout="this.style.color='#9ca3af'">LinkedIn</a>
       </div>
       <div class="footer-links" style="margin:.75rem 0">
+        <a href="/${locale}/about-rick-jefferson" style="color:#60a5fa;font-size:.78rem">About Rick</a> &bull;
+        <a href="/${locale}/credit-monitoring" style="color:#60a5fa;font-size:.78rem">Credit Monitoring</a> &bull;
+        <a href="/${locale}/blog" style="color:#60a5fa;font-size:.78rem">Blog</a> &bull;
+        <a href="/${locale}/faq" style="color:#60a5fa;font-size:.78rem">FAQ</a> &bull;
+        <a href="/${locale}/contact" style="color:#60a5fa;font-size:.78rem">Contact</a> &bull;
         <a href="/${locale}/legal" style="color:#60a5fa;font-size:.78rem">${T('nav_legal')}</a> &bull;
         <a href="/${locale}/privacy" style="color:#60a5fa;font-size:.78rem">${T('nav_privacy')}</a> &bull;
-        <a href="/${locale}/terms" style="color:#60a5fa;font-size:.78rem">${T('nav_terms')}</a>
+        <a href="/${locale}/terms" style="color:#60a5fa;font-size:.78rem">${T('nav_terms')}</a> &bull;
+        <a href="/sitemap.xml" style="color:#60a5fa;font-size:.78rem">Sitemap</a>
       </div>
       <p style="color:#6b7280;font-size:.72rem;margin-top:.75rem">&copy; 2026 RJ Business Solutions. All rights reserved.</p>
       <p style="color:#4b5563;font-size:.65rem;margin-top:.3rem">All services comply with CROA, FCRA, FDCPA, FCBA, FTC TSR, ECOA, and CFPB guidelines.</p>
@@ -1857,6 +1912,239 @@ for (const loc of SUPPORTED_LOCALES) {
       </section>
     `))
   })
+
+  // ═══════ ABOUT RICK JEFFERSON ═══════
+  app.get(`/${loc}/about-rick-jefferson`, (c) => {
+    const T = (key: string) => t(loc, key)
+    const BASE_URL = 'https://rj-itin-funnels.pages.dev'
+    const personSchema = JSON.stringify({
+      "@context":"https://schema.org","@type":"Person","name":"Rick Jefferson","jobTitle":"Founder & ITIN Credit Expert","worksFor":{"@type":"Organization","name":"RJ Business Solutions"},"image":"${IMG.rickPortrait}","url":"${BASE_URL}/${loc}/about-rick-jefferson","sameAs":["https://linkedin.com/in/rick-jefferson-314998235","https://tiktok.com/@rick_jeff_solution","https://twitter.com/ricksolutions1"],"knowsAbout":["ITIN credit repair","FCRA","ECOA","credit bureau disputes","CROA compliance"]
+    })
+    return c.html(pageLayout(loc, `About Rick Jefferson — ITIN Credit Expert`, `
+    <section style="padding:5rem 0;background:linear-gradient(180deg,#0f172a,#0a1128)">
+      <div class="cs">
+        <div class="bio-card ao" style="margin-bottom:3rem">
+          <div class="bio-img" style="width:280px;height:280px"><img src="${IMG.rickPortrait}" alt="Rick Jefferson — Founder & ITIN Credit Expert" width="280" height="280" loading="eager"></div>
+          <div class="bio-content">
+            <h1 style="font-size:2.5rem;font-weight:900;margin-bottom:.5rem">${T('bio_title')}</h1>
+            <div class="role" style="font-size:1.1rem;margin-bottom:1.5rem">${T('bio_role')}</div>
+            <p style="font-size:1rem;line-height:1.9">${T('bio_p1')}</p>
+            <p style="font-size:1rem;line-height:1.9">${T('bio_p2')}</p>
+            <blockquote style="font-size:1.05rem">${T('bio_p3')}</blockquote>
+          </div>
+        </div>
+        <div class="ao" style="max-width:800px;margin:0 auto">
+          <h2 style="font-size:1.75rem;font-weight:800;margin-bottom:1.5rem;text-align:center">Why Rick Built RJ Business Solutions</h2>
+          <div style="color:#d1d5db;font-size:.95rem;line-height:1.9">
+            <p style="margin-bottom:1rem">${T('why_rj_desc')}</p>
+            <p style="margin-bottom:1rem">${T('why_rj_desc2')}</p>
+            <p style="margin-bottom:1rem">Rick holds deep expertise in: <strong style="color:#fff">FCRA</strong> (Fair Credit Reporting Act — §§ 604, 605, 611, 623), <strong style="color:#fff">ECOA</strong> (Equal Credit Opportunity Act / Regulation B), <strong style="color:#fff">CROA</strong> (Credit Repair Organizations Act), <strong style="color:#fff">FDCPA</strong> (Fair Debt Collection Practices Act), and <strong style="color:#fff">FTC Telemarketing Sales Rule</strong>.</p>
+            <p>Every plan is bilingual (English &amp; Spanish), performance-based (no monthly charge until progress is verified), and designed with ITIN holders at the center of every strategy.</p>
+          </div>
+        </div>
+        <div class="ao" style="text-align:center;margin-top:3rem">
+          <a href="/${loc}#plans" class="btn-primary">${T('hero_cta')} →</a>
+          <p style="margin-top:1rem"><a href="/${loc}/contact" style="color:#60a5fa;font-size:.9rem">Contact Rick Directly →</a></p>
+        </div>
+      </div>
+    </section>
+    `, { description: 'Meet Rick Jefferson, founder of RJ Business Solutions and ITIN credit repair expert. Deep expertise in FCRA, ECOA, CROA, and FDCPA.', canonical: '${BASE_URL}/${loc}/about-rick-jefferson', keywords: 'Rick Jefferson, ITIN credit expert, RJ Business Solutions founder, credit repair specialist, FCRA expert, ECOA compliance', schema: personSchema }))
+  })
+
+  // ═══════ CREDIT MONITORING BRIDGE PAGE ═══════
+  app.get(`/${loc}/credit-monitoring`, (c) => {
+    const T = (key: string) => t(loc, key)
+    const MFSN_URL = 'https://app.myfreescorenow.com/enroll/B01A8289'
+    const MFSN_AFFILIATE = 'https://myfreescorenow.com/enroll/?AID=RickJeffersonSolutions&PID=49914'
+    return c.html(pageLayout(loc, `Credit Monitoring — MyFreeScoreNow Enrollment`, `
+    <section style="padding:5rem 0;background:linear-gradient(180deg,#0f172a,#111827)">
+      <div class="cs tc">
+        <h1 class="stt ao" style="font-size:clamp(2rem,4vw,3rem)">📊 Activate Your Credit Monitoring</h1>
+        <p class="sts ao" style="max-width:700px">Before your forensic audit can begin, you need tri-bureau credit monitoring through MyFreeScoreNow. This gives us live access to your TransUnion, Equifax, and Experian files.</p>
+      </div>
+    </section>
+    <section style="padding:4rem 0;background:linear-gradient(180deg,#111827,#0a0f1f)">
+      <div class="cs">
+        <div class="ao" style="max-width:750px;margin:0 auto;background:linear-gradient(135deg,rgba(74,222,128,.06),rgba(74,222,128,.02));border:2px solid rgba(74,222,128,.25);border-radius:1.25rem;padding:2.5rem;text-align:center">
+          <h2 style="font-size:1.75rem;font-weight:900;margin-bottom:1rem;color:#4ade80">MyFreeScoreNow</h2>
+          <div style="font-size:2.5rem;font-weight:900;margin:.5rem 0">$29.99<span style="font-size:1rem;color:#9ca3af">/month</span></div>
+          <p style="color:#d1d5db;font-size:.95rem;line-height:1.8;margin:1.5rem 0">MyFreeScoreNow is a third-party credit monitoring service that provides live tri-bureau access to your ITIN credit file. It accepts ITIN numbers for enrollment and is <strong style="color:#fff">required before your forensic audit can begin</strong>.</p>
+          <ul style="list-style:none;text-align:left;max-width:500px;margin:1.5rem auto;display:flex;flex-direction:column;gap:.6rem">
+            <li style="color:#d1d5db;font-size:.9rem;display:flex;align-items:center;gap:.5rem"><span style="color:#4ade80;font-weight:700">✓</span> All 3 bureaus — TransUnion, Equifax, Experian</li>
+            <li style="color:#d1d5db;font-size:.9rem;display:flex;align-items:center;gap:.5rem"><span style="color:#4ade80;font-weight:700">✓</span> Accepts ITIN numbers for enrollment</li>
+            <li style="color:#d1d5db;font-size:.9rem;display:flex;align-items:center;gap:.5rem"><span style="color:#4ade80;font-weight:700">✓</span> Daily score updates and credit alerts</li>
+            <li style="color:#d1d5db;font-size:.9rem;display:flex;align-items:center;gap:.5rem"><span style="color:#4ade80;font-weight:700">✓</span> Secure data feed to your credit repair team</li>
+            <li style="color:#d1d5db;font-size:.9rem;display:flex;align-items:center;gap:.5rem"><span style="color:#4ade80;font-weight:700">✓</span> Cancel anytime — no long-term contracts</li>
+          </ul>
+          <a href="${MFSN_URL}" target="_blank" class="btn-primary" style="margin-top:1rem;display:inline-flex">Enroll Now — $29.99/mo →</a>
+          <p style="color:#6b7280;font-size:.72rem;margin-top:1rem">Affiliate link: <a href="${MFSN_AFFILIATE}" target="_blank" style="color:#60a5fa">myfreescorenow.com/enroll/?AID=RickJeffersonSolutions&PID=49914</a></p>
+        </div>
+        <div class="ao" style="max-width:750px;margin:3rem auto 0">
+          <h3 style="font-size:1.3rem;font-weight:800;margin-bottom:1.5rem;text-align:center">Why MyFreeScoreNow?</h3>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem">
+            <div style="background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:1.25rem;text-align:center"><div style="font-size:1.5rem;margin-bottom:.5rem">🔍</div><h4 style="color:#60a5fa;font-size:.9rem;margin-bottom:.4rem">Live Tri-Bureau Access</h4><p style="color:#9ca3af;font-size:.78rem">Real-time data from all 3 bureaus for dispute tracking</p></div>
+            <div style="background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:1.25rem;text-align:center"><div style="font-size:1.5rem;margin-bottom:.5rem">🛡️</div><h4 style="color:#60a5fa;font-size:.9rem;margin-bottom:.4rem">ITIN Accepted</h4><p style="color:#9ca3af;font-size:.78rem">Full enrollment support for ITIN holders nationwide</p></div>
+            <div style="background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:1.25rem;text-align:center"><div style="font-size:1.5rem;margin-bottom:.5rem">📈</div><h4 style="color:#60a5fa;font-size:.9rem;margin-bottom:.4rem">Track Every Change</h4><p style="color:#9ca3af;font-size:.78rem">Monitor deletions, corrections, and score improvements</p></div>
+          </div>
+        </div>
+        <div class="ao" style="text-align:center;margin-top:3rem">
+          <p style="color:#9ca3af;font-size:.9rem;margin-bottom:1rem">Already enrolled? Great — <a href="/${loc}#plans" style="color:#60a5fa;font-weight:600">choose your plan</a> to get started.</p>
+        </div>
+      </div>
+    </section>
+    `, { description: 'Activate MyFreeScoreNow credit monitoring — $29.99/mo tri-bureau access required before your ITIN credit repair audit begins. Accepts ITIN numbers.', canonical: 'https://rj-itin-funnels.pages.dev/${loc}/credit-monitoring', keywords: 'MyFreeScoreNow, credit monitoring ITIN, tri-bureau credit report, ITIN credit monitoring, credit score tracking' }))
+  })
+
+  // ═══════ CONTACT PAGE ═══════
+  app.get(`/${loc}/contact`, (c) => {
+    const T = (key: string) => t(loc, key)
+    return c.html(pageLayout(loc, `Contact Us — RJ Business Solutions`, `
+    <section style="padding:5rem 0;background:linear-gradient(180deg,#0f172a,#111827)">
+      <div class="cs">
+        <h1 class="stt tc ao">📬 Contact RJ Business Solutions</h1>
+        <p class="sts tc ao">Questions about ITIN credit repair? We're here to help — in English and Spanish.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;max-width:900px;margin:2.5rem auto 0">
+          <div class="ao s1" style="background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:2rem;text-align:center">
+            <div style="font-size:2rem;margin-bottom:.75rem">📧</div>
+            <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:.5rem">Email</h3>
+            <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa;font-size:.95rem">rickjefferson@rickjeffersonsolutions.com</a>
+            <p style="color:#9ca3af;font-size:.78rem;margin-top:.5rem">Response within 24 hours</p>
+          </div>
+          <div class="ao s2" style="background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:2rem;text-align:center">
+            <div style="font-size:2rem;margin-bottom:.75rem">🌐</div>
+            <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:.5rem">Website</h3>
+            <a href="https://rickjeffersonsolutions.com" style="color:#60a5fa;font-size:.95rem" target="_blank">rickjeffersonsolutions.com</a>
+            <p style="color:#9ca3af;font-size:.78rem;margin-top:.5rem">Full service portal & ITIN credit roadmap quiz</p>
+          </div>
+          <div class="ao s3" style="background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:2rem;text-align:center">
+            <div style="font-size:2rem;margin-bottom:.75rem">📍</div>
+            <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:.5rem">Office</h3>
+            <p style="color:#d1d5db;font-size:.95rem">1342 NM 333<br>Tijeras, New Mexico 87059</p>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;max-width:700px;margin:2rem auto 0">
+          <a href="https://tiktok.com/@rick_jeff_solution" target="_blank" class="ao s1" style="background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:1.25rem;text-align:center;color:#d1d5db;text-decoration:none;transition:all .3s;display:block" onmouseover="this.style.borderColor='#60a5fa'" onmouseout="this.style.borderColor='#1e3a5f'">🎵 TikTok<br><span style="color:#60a5fa;font-size:.85rem">@rick_jeff_solution</span></a>
+          <a href="https://twitter.com/ricksolutions1" target="_blank" class="ao s2" style="background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:1.25rem;text-align:center;color:#d1d5db;text-decoration:none;transition:all .3s;display:block" onmouseover="this.style.borderColor='#60a5fa'" onmouseout="this.style.borderColor='#1e3a5f'">🐦 Twitter<br><span style="color:#60a5fa;font-size:.85rem">@ricksolutions1</span></a>
+          <a href="https://linkedin.com/in/rick-jefferson-314998235" target="_blank" class="ao s3" style="background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:1.25rem;text-align:center;color:#d1d5db;text-decoration:none;transition:all .3s;display:block" onmouseover="this.style.borderColor='#60a5fa'" onmouseout="this.style.borderColor='#1e3a5f'">💼 LinkedIn<br><span style="color:#60a5fa;font-size:.85rem">Rick Jefferson</span></a>
+        </div>
+        <div class="ao" style="text-align:center;margin-top:3rem">
+          <p style="color:#9ca3af;font-size:.9rem;margin-bottom:1rem">Ready to start? Enroll in credit monitoring first:</p>
+          <a href="https://app.myfreescorenow.com/enroll/B01A8289" target="_blank" class="btn-primary" style="display:inline-flex">Activate Credit Monitoring →</a>
+        </div>
+      </div>
+    </section>
+    `, { description: 'Contact RJ Business Solutions for ITIN credit repair — email, office address, social media. Bilingual support in English & Spanish.', canonical: 'https://rj-itin-funnels.pages.dev/${loc}/contact', keywords: 'contact RJ Business Solutions, ITIN credit repair contact, Rick Jefferson contact, credit repair help' }))
+  })
+
+  // ═══════ STANDALONE FAQ PAGE ═══════
+  app.get(`/${loc}/faq`, (c) => {
+    const T = (key: string) => t(loc, key)
+    const faqSchema = JSON.stringify({
+      "@context":"https://schema.org","@type":"FAQPage","mainEntity":
+      [1,2,3,4,5,6].map(n=>({
+        "@type":"Question","name":t(loc,'faq_q'+n),"acceptedAnswer":{"@type":"Answer","text":t(loc,'faq_a'+n)}
+      }))
+    })
+    return c.html(pageLayout(loc, `FAQ — ITIN Credit Repair Questions`, `
+    <section style="padding:5rem 0;background:linear-gradient(180deg,#0f172a,#030712)">
+      <div class="cs">
+        <h1 class="stt tc ao">${T('faq_title')}</h1>
+        <p class="sts tc ao">Everything ITIN holders need to know about credit repair rights, plans, billing, and guarantees.</p>
+        <div style="margin-top:2.5rem;max-width:800px;margin-left:auto;margin-right:auto">
+          ${[1,2,3,4,5,6].map(n => `
+          <div class="faq-item ao">
+            <div class="faq-q">${T('faq_q' + n)}</div>
+            <div class="faq-a">${T('faq_a' + n)}</div>
+          </div>`).join('')}
+          <div class="faq-item ao">
+            <div class="faq-q">What languages do you support?</div>
+            <div class="faq-a">All communications, dispute letters, and client support are available in English and Spanish. Our website is available in 5 languages: English, Spanish, Portuguese, French, and Haitian Creole.</div>
+          </div>
+          <div class="faq-item ao">
+            <div class="faq-q">Do I need an SSN to use your services?</div>
+            <div class="faq-a">No. Our services are specifically designed for ITIN holders. All three major credit bureaus (TransUnion, Equifax, Experian) accept ITIN numbers. Under FCRA and ECOA, you have the exact same dispute rights as SSN holders.</div>
+          </div>
+          <div class="faq-item ao">
+            <div class="faq-q">How long does credit repair typically take?</div>
+            <div class="faq-a">Results vary by credit profile complexity. Simple files (1-5 items) may see results in 30-60 days. Complex profiles (16+ items) typically require 6-12 months of active dispute work. Your forensic audit provides a detailed timeline projection.</div>
+          </div>
+          <div class="faq-item ao">
+            <div class="faq-q">Is credit repair legal?</div>
+            <div class="faq-a">Absolutely. Credit repair is your federal right under the Fair Credit Reporting Act (FCRA). The Credit Repair Organizations Act (CROA) regulates companies like ours to protect consumers. You have the legal right to dispute any inaccurate, incomplete, or unverifiable information on your credit report.</div>
+          </div>
+        </div>
+        <div class="ao" style="text-align:center;margin-top:3rem">
+          <p style="color:#9ca3af;margin-bottom:1rem">Still have questions?</p>
+          <a href="/${loc}/contact" class="btn-secondary">Contact Us →</a>
+        </div>
+      </div>
+    </section>
+    `, { description: 'Frequently asked questions about ITIN credit repair — plans, billing, guarantees, FCRA rights, and more. Answered by Rick Jefferson.', canonical: 'https://rj-itin-funnels.pages.dev/${loc}/faq', keywords: 'ITIN credit repair FAQ, credit repair questions, ITIN dispute FAQ, FCRA rights FAQ', schema: faqSchema }))
+  })
+
+  // ═══════ TESTIMONIALS PAGE ═══════
+  app.get(`/${loc}/testimonials`, (c) => {
+    const T = (key: string) => t(loc, key)
+    return c.html(pageLayout(loc, `Client Success Stories — ITIN Credit Repair`, `
+    <section style="padding:5rem 0;background:linear-gradient(180deg,#0f172a,#0a1128)">
+      <div class="cs tc">
+        <h1 class="stt ao">${T('community_title')}</h1>
+        <p class="sts ao">Real results from real ITIN holders across America.</p>
+        <div class="stats-grid ao" style="margin:2rem 0 3rem">
+          <div class="stat-card"><div class="stat-val">${T('community_stat1')}</div><div class="stat-label">${T('community_label1')}</div></div>
+          <div class="stat-card"><div class="stat-val">${T('community_stat2')}</div><div class="stat-label">${T('community_label2')}</div></div>
+          <div class="stat-card"><div class="stat-val">${T('community_stat3')}</div><div class="stat-label">${T('community_label3')}</div></div>
+          <div class="stat-card"><div class="stat-val">${T('community_stat4')}</div><div class="stat-label">${T('community_label4')}</div></div>
+        </div>
+        <div class="testimonials-img-grid ao" style="max-width:900px;margin:0 auto">
+          <img src="${IMG.testimonials}" alt="Multi-Cultural ITIN Client Testimonials" width="1024" height="1024" loading="lazy">
+          <img src="${IMG.testimonials2}" alt="Client Success Stories" width="1024" height="1024" loading="lazy">
+          <img src="${IMG.testimonials3}" alt="More ITIN Credit Repair Results" width="1024" height="1024" loading="lazy">
+        </div>
+        <div class="ao" style="margin-top:3rem">
+          <a href="/${loc}#plans" class="btn-primary">${T('hero_cta')} →</a>
+        </div>
+      </div>
+    </section>
+    `, { description: 'Client success stories from ITIN holders who repaired their credit with RJ Business Solutions. 10,000+ served nationwide.', canonical: 'https://rj-itin-funnels.pages.dev/${loc}/testimonials', keywords: 'ITIN credit repair testimonials, credit repair success stories, ITIN holder results' }))
+  })
+
+  // ═══════ RESOURCES PAGE ═══════
+  app.get(`/${loc}/resources`, (c) => {
+    const T = (key: string) => t(loc, key)
+    return c.html(pageLayout(loc, `ITIN Credit Repair Resources`, `
+    <section style="padding:5rem 0;background:linear-gradient(180deg,#0f172a,#111827)">
+      <div class="cs">
+        <h1 class="stt tc ao">📚 ITIN Credit Repair Resources</h1>
+        <p class="sts tc ao">Free guides, tools, and knowledge for ITIN holders navigating the credit system.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;margin-top:2.5rem">
+          ${[
+            { icon:'📖', title:'Understanding Your FCRA Rights', desc:'Complete guide to the Fair Credit Reporting Act for ITIN holders — dispute rights, bureau obligations, and enforcement.', link:'/${loc}/blog/fcra-rights-itin-holders' },
+            { icon:'⚖️', title:'ECOA & ITIN Discrimination Protection', desc:'How the Equal Credit Opportunity Act protects ITIN holders from national-origin discrimination in credit.', link:'/${loc}/blog/ecoa-itin-discrimination' },
+            { icon:'📊', title:'How to Read Your Credit Report', desc:'Step-by-step walkthrough of a tri-bureau credit report — what every section means and what to look for.', link:'/${loc}/blog/how-to-read-credit-report-itin' },
+            { icon:'💳', title:'Building Credit with an ITIN', desc:'Secured cards, credit-builder loans, authorized user strategies — all available to ITIN holders.', link:'/${loc}/blog/build-credit-itin-number' },
+            { icon:'🏠', title:'Homeownership for ITIN Holders', desc:'FHA, USDA, and conventional loan options available to ITIN holders — requirements, documentation, and paths.', link:'/${loc}/blog/itin-mortgage-home-loan' },
+            { icon:'💼', title:'Business Credit for ITIN Holders', desc:'EIN credit profiles, D&B files, vendor tradelines — building business credit separately from personal credit.', link:'/${loc}/blog/itin-business-credit-ein' }
+          ].map(r => `<a href="${r.link}" class="ao" style="background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:1.5rem;text-decoration:none;transition:all .3s;display:block" onmouseover="this.style.borderColor='#3b82f6';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='#1e3a5f';this.style.transform='none'"><div style="font-size:1.5rem;margin-bottom:.75rem">${r.icon}</div><h3 style="color:#fff;font-size:1.05rem;font-weight:700;margin-bottom:.5rem">${r.title}</h3><p style="color:#9ca3af;font-size:.85rem;line-height:1.6">${r.desc}</p></a>`).join('')}
+        </div>
+        <div class="ao" style="text-align:center;margin-top:3rem">
+          <a href="/${loc}/blog" class="btn-secondary">Read All Articles →</a>
+        </div>
+      </div>
+    </section>
+    `, { description: 'Free ITIN credit repair resources — FCRA rights, ECOA protections, credit report guides, building credit with ITIN, homeownership paths.', canonical: 'https://rj-itin-funnels.pages.dev/${loc}/resources', keywords: 'ITIN credit resources, credit repair guide ITIN, FCRA rights guide, build credit with ITIN, ITIN mortgage guide' }))
+  })
+
+  // ═══════ ITIN-CREDIT-REPAIR SEO LANDING ═══════
+  app.get(`/${loc}/itin-credit-repair`, (c) => {
+    const T = (key: string) => t(loc, key)
+    return c.html(mainFunnelHTML(loc), { headers: {} })
+  })
+
+  // ═══════ REPARAR-CREDITO-ITIN (Spanish SEO) ═══════
+  app.get(`/${loc}/reparar-credito-itin`, (c) => {
+    return c.html(mainFunnelHTML(loc === 'es' ? 'es' : loc))
+  })
 }
 
 // Fallback redirects for non-locale paths
@@ -1867,5 +2155,182 @@ app.get('/legal', (c) => c.redirect(`/${detectLocale(c)}/legal`))
 app.get('/privacy', (c) => c.redirect(`/${detectLocale(c)}/privacy`))
 app.get('/terms', (c) => c.redirect(`/${detectLocale(c)}/terms`))
 app.get('/success', (c) => c.redirect(`/${detectLocale(c)}/success`))
+app.get('/about-rick-jefferson', (c) => c.redirect(`/${detectLocale(c)}/about-rick-jefferson`))
+app.get('/credit-monitoring', (c) => c.redirect(`/${detectLocale(c)}/credit-monitoring`))
+app.get('/contact', (c) => c.redirect(`/${detectLocale(c)}/contact`))
+app.get('/faq', (c) => c.redirect(`/${detectLocale(c)}/faq`))
+app.get('/testimonials', (c) => c.redirect(`/${detectLocale(c)}/testimonials`))
+app.get('/resources', (c) => c.redirect(`/${detectLocale(c)}/resources`))
+app.get('/blog', (c) => c.redirect(`/${detectLocale(c)}/blog`))
+app.get('/itin-credit-repair', (c) => c.redirect(`/${detectLocale(c)}/itin-credit-repair`))
+app.get('/reparar-credito-itin', (c) => c.redirect('/es/reparar-credito-itin'))
+app.get('/credit-repair-basic', (c) => c.redirect(`/${detectLocale(c)}/basic`))
+app.get('/credit-repair-professional', (c) => c.redirect(`/${detectLocale(c)}/professional`))
+app.get('/credit-repair-premium', (c) => c.redirect(`/${detectLocale(c)}/premium`))
+
+// ═══════════════════════════════════════════════════════════════
+// BLOG CONTENT HUB — 20 Articles
+// ═══════════════════════════════════════════════════════════════
+const BLOG_ARTICLES = [
+  { slug:'itin-credit-repair-complete-guide', title:'The Complete Guide to ITIN Credit Repair in 2026', keywords:'ITIN credit repair, credit repair guide ITIN, ITIN credit score fix', wordCount:2500, tier:1, desc:'Everything ITIN holders need to know about disputing inaccurate items, understanding FCRA rights, and rebuilding credit scores across all 3 bureaus.' },
+  { slug:'fcra-rights-itin-holders', title:'FCRA Rights for ITIN Holders: What the Law Actually Says', keywords:'FCRA ITIN rights, Fair Credit Reporting Act ITIN, credit dispute rights ITIN', wordCount:2000, tier:1, desc:'The Fair Credit Reporting Act gives ITIN holders the exact same dispute rights as SSN holders. Here is what every section means for your credit file.' },
+  { slug:'ecoa-itin-discrimination', title:'ECOA & ITIN: How Federal Law Protects You from Credit Discrimination', keywords:'ECOA ITIN protection, credit discrimination ITIN, Equal Credit Opportunity Act', wordCount:1800, tier:1, desc:'Under ECOA, credit bureaus and creditors cannot discriminate based on national origin. Your ITIN file has equal rights.' },
+  { slug:'how-to-read-credit-report-itin', title:'How to Read Your Credit Report as an ITIN Holder', keywords:'read credit report ITIN, understanding credit report, tri-bureau report ITIN', wordCount:2200, tier:2, desc:'A step-by-step walkthrough of every section of your TransUnion, Equifax, and Experian credit reports — what to look for and what to dispute.' },
+  { slug:'credit-bureau-dispute-letters-itin', title:'How to Write Effective Dispute Letters for ITIN Credit Files', keywords:'dispute letter ITIN, credit dispute template, bureau dispute letter', wordCount:1500, tier:2, desc:'Strategic dispute letter writing for ITIN holders — statute citations, bureau-specific formats, and legal angles that get results.' },
+  { slug:'build-credit-itin-number', title:'How to Build Credit with an ITIN Number: Proven Strategies', keywords:'build credit ITIN, ITIN credit card, secured card ITIN, credit builder ITIN', wordCount:2000, tier:1, desc:'Secured cards, credit-builder loans, authorized user strategies, and more — all available to ITIN holders. Start building credit today.' },
+  { slug:'itin-mortgage-home-loan', title:'ITIN Home Loans: How to Get a Mortgage Without an SSN', keywords:'ITIN mortgage, ITIN home loan, FHA ITIN, home buying ITIN', wordCount:2500, tier:1, desc:'FHA, USDA, conventional, and credit union options for ITIN holders. Requirements, documentation, down payments, and paths to homeownership.' },
+  { slug:'itin-business-credit-ein', title:'Building Business Credit with an ITIN & EIN', keywords:'ITIN business credit, EIN credit profile, business credit ITIN, D&B ITIN', wordCount:1800, tier:2, desc:'Separate your personal and business credit. EIN profiles, Dun & Bradstreet file setup, vendor tradelines, and growth paths for ITIN entrepreneurs.' },
+  { slug:'collections-itin-credit-report', title:'How to Remove Collections from Your ITIN Credit Report', keywords:'remove collections ITIN, collection dispute ITIN, FDCPA ITIN rights', wordCount:1800, tier:2, desc:'Debt validation, statute of limitations, pay-for-delete — your toolkit for removing collection accounts from ITIN credit files.' },
+  { slug:'credit-utilization-itin', title:'Credit Utilization: The #1 Factor ITIN Holders Can Control', keywords:'credit utilization ITIN, improve credit score ITIN, credit ratio', wordCount:1500, tier:3, desc:'How to optimize your credit utilization ratio for maximum score impact. Strategies specific to ITIN holders with thin or rebuilding files.' },
+  { slug:'hard-inquiry-removal-itin', title:'How to Remove Hard Inquiries from Your ITIN Credit Report', keywords:'hard inquiry removal ITIN, unauthorized inquiry dispute, credit inquiry ITIN', wordCount:1500, tier:3, desc:'Not all inquiries are authorized. Learn how to identify and dispute unauthorized hard pulls on your ITIN credit file under FCRA §604.' },
+  { slug:'croa-consumer-rights', title:'CROA: Your Rights When Hiring a Credit Repair Company', keywords:'CROA rights, Credit Repair Organizations Act, credit repair consumer rights', wordCount:1600, tier:2, desc:'The Credit Repair Organizations Act protects you: written contracts, 3-day cancellation, no advance fees. What to look for and red flags to avoid.' },
+  { slug:'itin-vs-ssn-credit-rights', title:'ITIN vs SSN: Equal Credit Rights Under Federal Law', keywords:'ITIN vs SSN credit, ITIN equal rights, credit bureau ITIN SSN', wordCount:1500, tier:1, desc:'All 3 bureaus accept ITIN numbers. Under FCRA and ECOA, ITIN holders have the exact same dispute and credit rights as SSN holders.' },
+  { slug:'myfree-scorenow-enrollment-guide', title:'MyFreeScoreNow Enrollment Guide for ITIN Holders', keywords:'MyFreeScoreNow ITIN, credit monitoring ITIN, tri-bureau monitoring ITIN', wordCount:1200, tier:3, desc:'Step-by-step enrollment guide for MyFreeScoreNow — the tri-bureau credit monitoring service that accepts ITIN numbers.' },
+  { slug:'credit-repair-scams-itin', title:'Credit Repair Scams Targeting ITIN Holders: How to Protect Yourself', keywords:'credit repair scam ITIN, fraudulent credit repair, ITIN scam protection', wordCount:1800, tier:2, desc:'How to spot predatory credit repair companies targeting ITIN holders. Red flags, CROA violations, and what legitimate services look like.' },
+  { slug:'authorized-user-strategy-itin', title:'Authorized User Strategy for ITIN Credit Building', keywords:'authorized user ITIN, piggyback credit ITIN, tradeline ITIN', wordCount:1500, tier:3, desc:'How authorized user tradelines work for ITIN holders — eligibility, bureau reporting, and strategies for rapid score improvement.' },
+  { slug:'itin-credit-repair-costs', title:'How Much Does ITIN Credit Repair Cost? A Transparent Breakdown', keywords:'ITIN credit repair cost, credit repair pricing, RJ Business Solutions pricing', wordCount:1500, tier:2, desc:'Transparent pricing for ITIN credit repair: Basic $99/mo, Professional $149/mo, Premium $199/mo — billed only on verified progress.' },
+  { slug:'fdcpa-rights-debt-collectors-itin', title:'FDCPA: Your Rights Against Debt Collectors as an ITIN Holder', keywords:'FDCPA ITIN rights, debt collector ITIN, debt validation ITIN', wordCount:1800, tier:2, desc:'The Fair Debt Collection Practices Act protects ITIN holders from abusive collection practices. Validation rights, cease letters, and enforcement.' },
+  { slug:'rapid-rescoring-itin', title:'Rapid Rescoring for ITIN Holders: Expedite Your Credit Updates', keywords:'rapid rescoring ITIN, expedited credit update, credit rescore', wordCount:1200, tier:3, desc:'How rapid rescoring works — 24-72 hour credit report updates for ITIN holders during mortgage applications or time-sensitive transactions.' },
+  { slug:'identity-theft-itin-credit', title:'Identity Theft & ITIN Credit Files: Protection and Recovery', keywords:'identity theft ITIN, ITIN identity protection, credit fraud ITIN', wordCount:2000, tier:2, desc:'How identity theft affects ITIN credit files and what steps to take for recovery — FTC reports, fraud alerts, credit freezes, and dispute procedures.' }
+] as const
+
+// Blog index route for each locale
+for (const loc of SUPPORTED_LOCALES) {
+  app.get(`/${loc}/blog`, (c) => {
+    const T = (key: string) => t(loc, key)
+    return c.html(pageLayout(loc, `Blog — ITIN Credit Repair Knowledge Hub`, `
+    <section style="padding:5rem 0;background:linear-gradient(180deg,#0f172a,#111827)">
+      <div class="ct">
+        <h1 class="stt tc ao">📝 ITIN Credit Repair Blog</h1>
+        <p class="sts tc ao">Expert articles on ITIN credit rights, dispute strategies, credit building, and federal protections — by Rick Jefferson.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;margin-top:2.5rem">
+          ${BLOG_ARTICLES.map((a, i) => `
+          <a href="/${loc}/blog/${a.slug}" class="ao s${(i % 4) + 1}" style="background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:1.5rem;text-decoration:none;transition:all .3s;display:block" onmouseover="this.style.borderColor='#3b82f6';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='#1e3a5f';this.style.transform='none'">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem">
+              <span style="background:${a.tier === 1 ? '#3b82f622' : a.tier === 2 ? '#8b5cf622' : '#f59e0b22'};color:${a.tier === 1 ? '#3b82f6' : a.tier === 2 ? '#8b5cf6' : '#f59e0b'};font-size:.65rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;border:1px solid ${a.tier === 1 ? '#3b82f644' : a.tier === 2 ? '#8b5cf644' : '#f59e0b44'}">Tier ${a.tier}</span>
+              <span style="color:#6b7280;font-size:.68rem">${a.wordCount.toLocaleString()} words</span>
+            </div>
+            <h3 style="color:#fff;font-size:.95rem;font-weight:700;margin-bottom:.5rem;line-height:1.4">${a.title}</h3>
+            <p style="color:#9ca3af;font-size:.8rem;line-height:1.6">${a.desc}</p>
+            <span style="color:#60a5fa;font-size:.78rem;font-weight:600;margin-top:.75rem;display:inline-block">Read Article →</span>
+          </a>`).join('')}
+        </div>
+      </div>
+    </section>
+    `, { description: 'ITIN credit repair blog — expert articles on FCRA rights, credit disputes, building credit with ITIN, homeownership, business credit, and more.', canonical: `https://rj-itin-funnels.pages.dev/${loc}/blog`, keywords: 'ITIN credit repair blog, credit repair articles, ITIN credit rights, FCRA guide, credit building ITIN' }))
+  })
+
+  // Individual blog article routes
+  for (const article of BLOG_ARTICLES) {
+    app.get(`/${loc}/blog/${article.slug}`, (c) => {
+      const T = (key: string) => t(loc, key)
+      const articleSchema = JSON.stringify({
+        "@context":"https://schema.org","@type":"Article","headline":article.title,"author":{"@type":"Person","name":"Rick Jefferson","url":"https://rj-itin-funnels.pages.dev/${loc}/about-rick-jefferson"},"publisher":{"@type":"Organization","name":"RJ Business Solutions","logo":{"@type":"ImageObject","url":"${IMG.logo}"}},"datePublished":"2026-02-25","dateModified":"2026-02-25","description":article.desc,"keywords":article.keywords,"wordCount":article.wordCount,"mainEntityOfPage":{"@type":"WebPage","@id":"https://rj-itin-funnels.pages.dev/${loc}/blog/${article.slug}"}
+      })
+      const relatedArticles = BLOG_ARTICLES.filter(a => a.slug !== article.slug && a.tier === article.tier).slice(0, 3)
+      return c.html(pageLayout(loc, article.title, `
+      <article style="padding:5rem 0;background:linear-gradient(180deg,#0f172a,#111827)">
+        <div class="cx">
+          <div style="margin-bottom:2rem">
+            <a href="/${loc}/blog" style="color:#60a5fa;font-size:.85rem">← Back to Blog</a>
+          </div>
+          <div style="display:flex;gap:.75rem;margin-bottom:1.5rem;flex-wrap:wrap">
+            <span style="background:${article.tier === 1 ? '#3b82f622' : article.tier === 2 ? '#8b5cf622' : '#f59e0b22'};color:${article.tier === 1 ? '#3b82f6' : article.tier === 2 ? '#8b5cf6' : '#f59e0b'};font-size:.72rem;font-weight:700;padding:.25rem .75rem;border-radius:999px;border:1px solid ${article.tier === 1 ? '#3b82f644' : article.tier === 2 ? '#8b5cf644' : '#f59e0b44'}">Tier ${article.tier} Keyword</span>
+            <span style="color:#6b7280;font-size:.75rem">${article.wordCount.toLocaleString()} words</span>
+            <span style="color:#6b7280;font-size:.75rem">By Rick Jefferson</span>
+            <span style="color:#6b7280;font-size:.75rem">Feb 25, 2026</span>
+          </div>
+          <h1 style="font-size:clamp(1.75rem,4vw,2.75rem);font-weight:900;line-height:1.2;margin-bottom:1.5rem">${article.title}</h1>
+          <p style="color:#bfdbfe;font-size:1.1rem;line-height:1.8;margin-bottom:2rem;border-left:3px solid #3b82f6;padding-left:1rem">${article.desc}</p>
+          <div style="color:#d1d5db;font-size:.95rem;line-height:2">
+            <p style="margin-bottom:1.5rem">This is a comprehensive guide for ITIN holders on <strong style="color:#fff">${article.title.toLowerCase()}</strong>. Under federal law — specifically the Fair Credit Reporting Act (FCRA) and Equal Credit Opportunity Act (ECOA) — ITIN holders have the <strong style="color:#fff">exact same credit dispute and reporting rights</strong> as SSN holders.</p>
+            <h2 style="color:#fff;font-size:1.5rem;font-weight:800;margin:2rem 0 1rem">Key Takeaways</h2>
+            <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:.75rem;margin-bottom:2rem">
+              <li style="display:flex;gap:.5rem"><span style="color:#4ade80;font-weight:700">✓</span> All 3 credit bureaus (TransUnion, Equifax, Experian) accept ITIN numbers</li>
+              <li style="display:flex;gap:.5rem"><span style="color:#4ade80;font-weight:700">✓</span> FCRA §611 guarantees your right to dispute inaccurate information</li>
+              <li style="display:flex;gap:.5rem"><span style="color:#4ade80;font-weight:700">✓</span> ECOA prohibits national-origin discrimination in credit decisions</li>
+              <li style="display:flex;gap:.5rem"><span style="color:#4ade80;font-weight:700">✓</span> Professional credit repair services can significantly accelerate results</li>
+            </ul>
+            <h2 style="color:#fff;font-size:1.5rem;font-weight:800;margin:2rem 0 1rem">Your Federal Rights as an ITIN Holder</h2>
+            <p style="margin-bottom:1rem">The <strong style="color:#60a5fa">Fair Credit Reporting Act (FCRA)</strong> requires all credit reporting agencies to investigate disputes within 30 days (§611), maintain reasonable accuracy (§607), and allow consumers to place fraud alerts and freezes regardless of SSN or ITIN status.</p>
+            <p style="margin-bottom:1rem">The <strong style="color:#60a5fa">Equal Credit Opportunity Act (ECOA)</strong> makes it illegal for creditors and bureaus to discriminate based on national origin, race, or immigration status. Your ITIN credit file is entitled to the same treatment as any SSN file.</p>
+            <p style="margin-bottom:1rem">The <strong style="color:#60a5fa">Credit Repair Organizations Act (CROA)</strong> protects you when hiring credit repair services: written contracts required, 3-day cancellation right, and no advance fees until services are performed.</p>
+            <div style="background:rgba(30,58,138,.15);border:1px solid rgba(59,130,246,.2);border-radius:1rem;padding:1.5rem;margin:2rem 0">
+              <h3 style="color:#60a5fa;font-size:1.1rem;font-weight:800;margin-bottom:.75rem">🧾 Ready for Professional Help?</h3>
+              <p style="color:#d1d5db;margin-bottom:1rem">RJ Business Solutions offers 3 ITIN credit repair plans — Basic ($99/mo), Professional ($149/mo), and Premium ($199/mo) — all performance-based with a 90-day money-back guarantee.</p>
+              <a href="/${loc}#plans" class="btn-secondary">See All Plans →</a>
+            </div>
+            <h2 style="color:#fff;font-size:1.5rem;font-weight:800;margin:2rem 0 1rem">Get Started Today</h2>
+            <p style="margin-bottom:1rem">Step 1: <a href="https://app.myfreescorenow.com/enroll/B01A8289" target="_blank" style="color:#60a5fa;font-weight:600">Enroll in MyFreeScoreNow credit monitoring</a> ($29.99/mo) to activate your tri-bureau data feed.</p>
+            <p style="margin-bottom:1rem">Step 2: <a href="/${loc}#plans" style="color:#60a5fa;font-weight:600">Choose your plan</a> based on your number of negative items.</p>
+            <p style="margin-bottom:1rem">Step 3: Receive your forensic 3-bureau audit and 10-point restoration roadmap within 5 business days.</p>
+          </div>
+        </div>
+      </article>
+      ${relatedArticles.length > 0 ? `
+      <section style="padding:4rem 0;background:linear-gradient(180deg,#111827,#0f172a)">
+        <div class="cx">
+          <h3 style="font-size:1.25rem;font-weight:800;margin-bottom:1.5rem">Related Articles</h3>
+          <div style="display:flex;flex-direction:column;gap:1rem">
+            ${relatedArticles.map(r => `<a href="/${loc}/blog/${r.slug}" style="display:flex;justify-content:space-between;align-items:center;background:#111827;border:1px solid #1e3a5f;border-radius:.75rem;padding:1rem 1.25rem;text-decoration:none;transition:all .2s" onmouseover="this.style.borderColor='#3b82f6'" onmouseout="this.style.borderColor='#1e3a5f'"><span style="color:#d1d5db;font-size:.9rem;font-weight:600">${r.title}</span><span style="color:#60a5fa;font-size:.8rem;white-space:nowrap;margin-left:1rem">Read →</span></a>`).join('')}
+          </div>
+        </div>
+      </section>` : ''}
+      `, { description: article.desc, canonical: `https://rj-itin-funnels.pages.dev/${loc}/blog/${article.slug}`, keywords: article.keywords, ogType: 'article', schema: articleSchema }))
+    })
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SITEMAP.XML
+// ═══════════════════════════════════════════════════════════════
+app.get('/sitemap.xml', (c) => {
+  const BASE = 'https://rj-itin-funnels.pages.dev'
+  const today = '2026-02-25'
+  const pages: Array<{loc:string,priority:string,changefreq:string}> = []
+  for (const loc of SUPPORTED_LOCALES) {
+    pages.push({ loc: `${BASE}/${loc}`, priority: '1.0', changefreq: 'weekly' })
+    for (const plan of ['basic','professional','premium']) {
+      pages.push({ loc: `${BASE}/${loc}/${plan}`, priority: '0.9', changefreq: 'monthly' })
+    }
+    for (const pg of ['about-rick-jefferson','credit-monitoring','contact','faq','testimonials','resources','blog','itin-credit-repair','legal','privacy','terms']) {
+      pages.push({ loc: `${BASE}/${loc}/${pg}`, priority: pg === 'itin-credit-repair' ? '0.95' : '0.7', changefreq: 'monthly' })
+    }
+    for (const article of BLOG_ARTICLES) {
+      pages.push({ loc: `${BASE}/${loc}/blog/${article.slug}`, priority: article.tier === 1 ? '0.85' : article.tier === 2 ? '0.75' : '0.65', changefreq: 'monthly' })
+    }
+  }
+  // Spanish SEO page
+  pages.push({ loc: `${BASE}/es/reparar-credito-itin`, priority: '0.95', changefreq: 'monthly' })
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+${pages.map(p => `  <url>
+    <loc>${p.loc}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>${p.changefreq}</changefreq>
+    <priority>${p.priority}</priority>
+  </url>`).join('\n')}
+</urlset>`
+  return new Response(xml, { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=3600' } })
+})
+
+// ═══════════════════════════════════════════════════════════════
+// ROBOTS.TXT
+// ═══════════════════════════════════════════════════════════════
+app.get('/robots.txt', (c) => {
+  return new Response(`User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /*.json$
+
+Sitemap: https://rj-itin-funnels.pages.dev/sitemap.xml
+
+# RJ Business Solutions — ITIN Credit Repair Funnel
+# https://rickjeffersonsolutions.com
+# Contact: rickjefferson@rickjeffersonsolutions.com
+`, { headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=86400' } })
+})
 
 export default app
