@@ -1497,11 +1497,6 @@ function mainFunnelHTML(locale: string): string {
     </div>
   </footer>
 
-  <script>
-  document.querySelectorAll('.faq-q').forEach(q=>{q.addEventListener('click',()=>{const a=q.nextElementSibling;const isOpen=a.style.maxHeight&&a.style.maxHeight!=='0px';document.querySelectorAll('.faq-a').forEach(x=>{x.style.maxHeight='0px';x.style.padding='0 1.5rem';x.previousElementSibling.classList.remove('open')});if(!isOpen){a.style.maxHeight=a.scrollHeight+'px';a.style.padding='1rem 1.5rem';q.classList.add('open')}})});
-  const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}})},{threshold:.1});
-  document.querySelectorAll('.ao').forEach(el=>obs.observe(el));
-  </script>
   `)
 }
 // ═══════════════════════════════════════════════════════════════
