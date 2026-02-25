@@ -691,9 +691,9 @@ function t(locale: string, key: string): string {
 // ═══════════════════════════════════════════════════════════════
 const IMG = {
   // PRIMARY ASSETS — All verified working (media CDN + local static)
-  // Hero banners — media CDN (verified 200 OK)
-  heroBanner: 'https://media.rickjeffersonsolutions.com/iytin%20funnel/Professional_ITIN_credit_repair_hero_banner_featur-1771888492535.png',
-  heroBanner2: 'https://media.rickjeffersonsolutions.com/iytin%20funnel/Professional_ITIN_credit_repair_hero_banner_featur-1771888492535.png',
+  // Hero background — Rick Jefferson professional headshot
+  heroBanner: 'https://media.rickjeffersonsolutions.com/Rick/Professional_corporate_headshot_of_Rick_Jefferson-1772050939311.png',
+  heroBanner2: 'https://media.rickjeffersonsolutions.com/Rick/Professional_corporate_headshot_of_Rick_Jefferson-1772050939311.png',
   // Federal Rights Badges — locally hosted (generated 2026-02-24)
   federalBadges: '/static/images/federal-rights-badges.png',
   // Testimonials — media CDN (verified 200 OK)
@@ -772,11 +772,10 @@ body{padding-top:34px}
 /* HERO */
 .hero{position:relative;min-height:85vh;display:flex;align-items:center;justify-content:center;padding:4rem 0 5rem;overflow:hidden}
 .hero-bg{position:absolute;inset:0;z-index:0}
-.hero-bg img{width:100%;height:100%;object-fit:cover;object-position:center}
-.hero-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,7,18,.55) 0%,rgba(12,20,69,.82) 35%,rgba(15,23,42,.92) 100%)}
+.hero-bg img{width:100%;height:100%;object-fit:cover;object-position:top center}
+.hero-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,7,18,.3) 0%,rgba(12,20,69,.65) 40%,rgba(15,23,42,.88) 100%)}
 .hero-content{position:relative;z-index:2}
-.hero-logo{margin-bottom:1.5rem;animation:fadeInUp .8s ease forwards}
-.hero-logo img{width:280px;height:auto;margin:0 auto;border-radius:.75rem;filter:drop-shadow(0 8px 32px rgba(59,130,246,.2))}
+
 .hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.4);border-radius:999px;padding:.45rem 1.1rem;margin-bottom:1.25rem;color:#6ee7b7;font-size:.82rem;font-weight:600}
 .hero h1{font-size:clamp(2rem,5vw,3.5rem);font-weight:900;line-height:1.15;margin-bottom:1rem;text-shadow:0 2px 12px rgba(0,0,0,.5)}
 .hero .sub{font-size:clamp(.95rem,2vw,1.15rem);color:#bfdbfe;max-width:700px;margin:0 auto 2rem;line-height:1.7;text-shadow:0 1px 4px rgba(0,0,0,.3)}
@@ -907,7 +906,6 @@ body{padding-top:34px}
   .testimonials-img-grid{grid-template-columns:1fr}
   .guarantee-seal{width:160px;height:160px}
   .stats-grid{grid-template-columns:repeat(2,1fr)}
-  .hero-logo img{width:200px}
   .btn-primary{width:100%;justify-content:center;font-size:1rem;padding:.9rem 1.5rem}
 }
 `
@@ -1003,7 +1001,7 @@ function mainFunnelHTML(locale: string): string {
   <!-- HERO with Background Banner -->
   <section class="hero">
     <div class="hero-bg">
-      <img src="${IMG.heroBanner}" alt="ITIN Credit Repair - Multi-Ethnic Community" width="1365" height="768" loading="eager">
+      <img src="${IMG.heroBanner}" alt="Rick Jefferson - ITIN Credit Repair Expert" width="1365" height="768" loading="eager">
     </div>
     <div class="cx tc hero-content">
       <div class="hero-badge">⭐ ${T('hero_badge')}</div>
@@ -1367,7 +1365,7 @@ function planPageHTML(locale: string, plan: 'basic' | 'professional' | 'premium'
   <!-- PLAN HERO with Background Banner -->
   <section class="hero" style="min-height:auto;padding:4rem 0">
     <div class="hero-bg">
-      <img src="${IMG.heroBanner2}" alt="ITIN Credit Repair" width="1365" height="768" loading="eager">
+      <img src="${IMG.heroBanner2}" alt="Rick Jefferson - ITIN Credit Repair Expert" width="1365" height="768" loading="eager">
     </div>
     <div class="cx tc hero-content">
       <div style="display:inline-block;background:${cfg.color}22;border:1px solid ${cfg.color}66;padding:.35rem 1rem;border-radius:999px;margin-bottom:1rem">
