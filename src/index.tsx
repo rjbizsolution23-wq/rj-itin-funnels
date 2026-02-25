@@ -965,16 +965,23 @@ function pageLayout(locale: string, title: string, content: string): string {
   ${content}
 
   <!-- FOOTER -->
-  <footer class="footer">
-    <div class="cx">
+  <footer class="footer" style="padding:3rem 0 2rem;border-top:1px solid #1f2937;background:#030712">
+    <div class="cx" style="text-align:center">
       <img src="https://media.rickjeffersonsolutions.com/rj-business-solutions-logo-banner.jpg" alt="RJ Business Solutions" class="footer-logo" style="height:36px;margin:0 auto 1rem;border-radius:4px">
-      <p><strong style="color:#d1d5db">RJ Business Solutions</strong><br>1342 NM 333, Tijeras, New Mexico 87059<br><a href="https://rickjeffersonsolutions.com">rickjeffersonsolutions.com</a> &bull; <a href="mailto:rickjefferson@rickjeffersonsolutions.com">rickjefferson@rickjeffersonsolutions.com</a></p>
-      <div class="footer-links">
-        <a href="/${locale}/legal">${T('nav_legal')}</a> &bull;
-        <a href="/${locale}/privacy">${T('nav_privacy')}</a> &bull;
-        <a href="/${locale}/terms">${T('nav_terms')}</a>
+      <p style="color:#d1d5db;font-size:.85rem;line-height:1.7"><strong>RJ Business Solutions</strong><br>1342 NM 333, Tijeras, New Mexico 87059<br>
+        <a href="https://rickjeffersonsolutions.com" style="color:#60a5fa">rickjeffersonsolutions.com</a> &bull; <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa">rickjefferson@rickjeffersonsolutions.com</a></p>
+      <div style="display:flex;justify-content:center;gap:1.25rem;margin:1rem 0;flex-wrap:wrap">
+        <a href="https://tiktok.com/@rick_jeff_solution" target="_blank" style="color:#9ca3af;font-size:.8rem;transition:color .2s" onmouseover="this.style.color='#60a5fa'" onmouseout="this.style.color='#9ca3af'">TikTok: @rick_jeff_solution</a>
+        <a href="https://twitter.com/ricksolutions1" target="_blank" style="color:#9ca3af;font-size:.8rem;transition:color .2s" onmouseover="this.style.color='#60a5fa'" onmouseout="this.style.color='#9ca3af'">Twitter: @ricksolutions1</a>
+        <a href="https://linkedin.com/in/rick-jefferson-314998235" target="_blank" style="color:#9ca3af;font-size:.8rem;transition:color .2s" onmouseover="this.style.color='#60a5fa'" onmouseout="this.style.color='#9ca3af'">LinkedIn</a>
       </div>
-      <p style="margin-top:.5rem">&copy; 2026 RJ Business Solutions. All rights reserved.</p>
+      <div class="footer-links" style="margin:.75rem 0">
+        <a href="/${locale}/legal" style="color:#60a5fa;font-size:.78rem">${T('nav_legal')}</a> &bull;
+        <a href="/${locale}/privacy" style="color:#60a5fa;font-size:.78rem">${T('nav_privacy')}</a> &bull;
+        <a href="/${locale}/terms" style="color:#60a5fa;font-size:.78rem">${T('nav_terms')}</a>
+      </div>
+      <p style="color:#6b7280;font-size:.72rem;margin-top:.75rem">&copy; 2026 RJ Business Solutions. All rights reserved.</p>
+      <p style="color:#4b5563;font-size:.65rem;margin-top:.3rem">All services comply with CROA, FCRA, FDCPA, FCBA, FTC TSR, ECOA, and CFPB guidelines.</p>
     </div>
   </footer>
 
@@ -1301,9 +1308,13 @@ function mainFunnelHTML(locale: string): string {
   <!-- COMPLIANCE FOOTER -->
   <section class="comp-footer">
     <div class="ct">
-      <h3 style="text-align:center;font-size:1rem;font-weight:700;color:#9ca3af;margin-bottom:1rem">${T('comp_title')}</h3>
-      <p style="text-align:center;color:#6b7280;font-size:.75rem;margin-bottom:1rem">${T('comp_notice')}</p>
-      <div class="comp-grid">
+      <h3 style="text-align:center;font-size:1.1rem;font-weight:700;color:#9ca3af;margin-bottom:1.25rem">⚖️ Legal Compliance Statement</h3>
+      <div class="ao" style="max-width:850px;margin:0 auto;background:rgba(30,58,138,.08);border:1px solid rgba(59,130,246,.15);border-radius:1rem;padding:1.5rem">
+        <p style="color:#9ca3af;font-size:.78rem;line-height:1.8;margin-bottom:1rem">RJ Business Solutions operates in full compliance with the Credit Repair Organizations Act (CROA), Fair Credit Reporting Act (FCRA — §§ 604, 605, 605B, 605C, 611, 616, 617, 623), Fair Debt Collection Practices Act (FDCPA), Fair Credit Billing Act (FCBA), FTC Telemarketing Sales Rule (TSR), Equal Credit Opportunity Act (ECOA) / Regulation B, and CFPB guidelines.</p>
+        <p style="color:#9ca3af;font-size:.78rem;line-height:1.8;margin-bottom:1rem">RJ Business Solutions is not a law firm and does not provide legal advice. Results vary by individual credit profile. No specific outcome is guaranteed. ITIN holders possess identical consumer rights under FCRA and ECOA regardless of immigration or SSN status.</p>
+        <p style="color:#f59e0b;font-size:.78rem;line-height:1.8;font-weight:600">Identity-Theft Policy: RJ Business Solutions does not file, prepare, coach, or advise on FTC Identity Theft Reports, police reports, sex trafficking victim claims, or any victim-status filings under FCRA §605B or §605C. Clients who independently file such documents may submit them with a signed waiver confirming independent filing, truthfulness of all claims (violations of 18 U.S.C. §1028 and §1001 will be reported to federal authorities), and full indemnification of RJ Business Solutions.</p>
+      </div>
+      <div class="comp-grid" style="margin-top:1.5rem">
         <div class="comp-item"><h4>CROA</h4><p>${T('comp_croa')}</p></div>
         <div class="comp-item"><h4>FCRA</h4><p>${T('comp_fcra')}</p></div>
         <div class="comp-item"><h4>ECOA</h4><p>${T('comp_ecoa')}</p></div>
@@ -1315,16 +1326,23 @@ function mainFunnelHTML(locale: string): string {
     </div>
   </section>
 
-  <footer style="padding:2rem 0;border-top:1px solid #1f2937;text-align:center">
+  <footer style="padding:3rem 0 2rem;border-top:1px solid #1f2937;text-align:center;background:#030712">
     <div class="ct">
       <img src="${IMG.logo}" alt="RJ Business Solutions" width="180" style="margin:0 auto .75rem;border-radius:6px">
-      <p style="color:#6b7280;font-size:.75rem">© 2026 RJ Business Solutions. 1342 NM 333, Tijeras, New Mexico 87059</p>
-      <p style="color:#4b5563;font-size:.68rem;margin-top:.3rem">All services comply with CROA, FCRA, FDCPA, FCBA, FTC TSR, ECOA, and CFPB guidelines.</p>
-      <div style="display:flex;justify-content:center;gap:1rem;margin-top:.75rem;flex-wrap:wrap">
+      <p style="color:#d1d5db;font-size:.82rem;line-height:1.7"><strong>RJ Business Solutions</strong><br>1342 NM 333, Tijeras, New Mexico 87059<br>
+        <a href="https://rickjeffersonsolutions.com" style="color:#60a5fa">rickjeffersonsolutions.com</a> &bull; <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa">rickjefferson@rickjeffersonsolutions.com</a></p>
+      <div style="display:flex;justify-content:center;gap:1.25rem;margin:.75rem 0;flex-wrap:wrap">
+        <a href="https://tiktok.com/@rick_jeff_solution" target="_blank" style="color:#9ca3af;font-size:.78rem">TikTok: @rick_jeff_solution</a>
+        <a href="https://twitter.com/ricksolutions1" target="_blank" style="color:#9ca3af;font-size:.78rem">Twitter: @ricksolutions1</a>
+        <a href="https://linkedin.com/in/rick-jefferson-314998235" target="_blank" style="color:#9ca3af;font-size:.78rem">LinkedIn</a>
+      </div>
+      <div style="display:flex;justify-content:center;gap:1rem;margin-top:.5rem;flex-wrap:wrap">
         <a href="/${locale}/legal" style="color:#60a5fa;font-size:.72rem">${T('nav_legal')}</a>
         <a href="/${locale}/privacy" style="color:#60a5fa;font-size:.72rem">${T('nav_privacy')}</a>
         <a href="/${locale}/terms" style="color:#60a5fa;font-size:.72rem">${T('nav_terms')}</a>
       </div>
+      <p style="color:#6b7280;font-size:.72rem;margin-top:.75rem">&copy; 2026 RJ Business Solutions. All rights reserved.</p>
+      <p style="color:#4b5563;font-size:.65rem;margin-top:.3rem">All services comply with CROA, FCRA, FDCPA, FCBA, FTC TSR, ECOA, and CFPB guidelines.</p>
     </div>
   </footer>
 
@@ -1345,20 +1363,110 @@ function planPageHTML(locale: string, plan: 'basic' | 'professional' | 'premium'
   const planName = T(planNameKey)
   const targetKey = plan === 'basic' ? 'plan_basic_target' : plan === 'professional' ? 'plan_pro_target' : 'plan_premium_target'
   const descKey = plan === 'basic' ? 'plan_basic_desc' : plan === 'professional' ? 'plan_pro_desc' : 'plan_premium_desc'
+  const MFSN_URL = 'https://app.myfreescorenow.com/enroll/B01A8289'
 
-  const features = [
-    T('feat_audit'),
-    T('feat_roadmap'),
-    `${T('up_to')} ${cfg.disputes} ${T('feat_disputes')}`,
-    T('feat_reports'),
-    T('feat_support'),
-    T('feat_library'),
-  ]
-  if (plan === 'professional' || plan === 'premium') {
-    features.push(T('feat_analyst'), T('feat_creditor'))
-  }
-  if (plan === 'premium') {
-    features.push(T('feat_priority'), T('feat_goodwill'))
+  // Build the detailed plan description based on plan type
+  let planDetailHTML = ''
+
+  if (plan === 'basic') {
+    planDetailHTML = `
+    <!-- WHAT YOU GET EVERY MONTH -->
+    <section style="padding:5rem 0;background:linear-gradient(180deg,#0a0f1f,#0f172a)">
+      <div class="cs">
+        <h2 class="stt tc ao">✅ ${planName} Plan — $${cfg.price}/month</h2>
+        <p class="sts tc ao">One-Time Audit: $${cfg.price} | Monitoring: $29.99/mo | Designed for: ${T(targetKey)}</p>
+        <div class="ao" style="max-width:850px;margin:2rem auto 0;background:linear-gradient(135deg,rgba(59,130,246,.06),rgba(59,130,246,.02));border:1px solid rgba(59,130,246,.15);border-radius:1rem;padding:2rem">
+          <h3 style="color:#60a5fa;font-size:1.1rem;font-weight:800;margin-bottom:1.5rem">What You Get Every Single Month:</h3>
+          <div style="display:flex;flex-direction:column;gap:1.25rem;color:#d1d5db;font-size:.9rem;line-height:1.8">
+            <p>The heart of the Basic Plan is <strong style="color:#fff">up to 15 statute-backed dispute letters per month</strong>, drafted with precision under FCRA §611 (right to reinvestigation), §623 (furnisher accuracy obligations), and §604 (permissible purpose challenges). These aren't generic templates — each letter is tailored to the specific account, bureau, and legal angle identified in your audit.</p>
+            <p>You receive a <strong style="color:#fff">comprehensive monthly progress report</strong> detailing every dispute filed, every bureau response received, every item removed or updated, and your score trajectory across all three bureaus. Transparency is non-negotiable here.</p>
+            <p><strong style="color:#fff">Bilingual support (English &amp; Spanish)</strong> is included — not an upgrade, not a fee. It's built in because Rick built this for communities that have historically been underserved by an industry that only speaks one language.</p>
+            <p>The <strong style="color:#fff">Credit Education Library</strong> gives you access to guides, tools, and resources covering credit-building strategies, understanding your rights as an ITIN holder, how to read your credit report, secured card strategies, and more.</p>
+            <p><strong style="color:#fff">Full Compliance Coverage:</strong> CROA, FCRA (§§ 604, 605, 611, 623), FDCPA, FCBA, FTC Telemarketing Sales Rule, CFPB guidelines, ECOA/Regulation B (ITIN anti-discrimination protections).</p>
+          </div>
+        </div>
+        <div class="ao" style="max-width:850px;margin:1.5rem auto 0;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.2);border-radius:1rem;padding:1.5rem">
+          <h4 style="color:#4ade80;font-weight:700;margin-bottom:.5rem">💰 Billing Rule:</h4>
+          <p style="color:#d1d5db;font-size:.88rem;line-height:1.7">The $${cfg.price} monthly fee is charged only when verifiable progress is documented — a deletion, a correction, a score increase, or a substantive bureau/creditor response. <strong style="color:#4ade80">No progress = no charge. Period.</strong></p>
+        </div>
+        <div class="ao" style="max-width:850px;margin:1.5rem auto 0;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.2);border-radius:1rem;padding:1.5rem">
+          <h4 style="color:#f87171;font-weight:700;margin-bottom:.5rem">❌ What Basic Does NOT Include:</h4>
+          <p style="color:#9ca3af;font-size:.85rem;line-height:1.7">Creditor negotiations, goodwill letter campaigns, pay-for-delete negotiations, credit-building guidance, identity-theft document handling, mortgage-ready program, rapid rescoring, or VIP concierge access. Those live in Professional and Premium.</p>
+        </div>
+        <div class="ao" style="max-width:850px;margin:1.5rem auto 0;background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.15);border-radius:1rem;padding:1.5rem">
+          <h4 style="color:#60a5fa;font-weight:700;margin-bottom:.5rem">📊 Competitor Comparison:</h4>
+          <p style="color:#9ca3af;font-size:.85rem;line-height:1.7">Most credit repair companies charge $79–$129/month for similar tier services — but they charge you upfront, lock you into contracts, and send the same boilerplate letters to every client. RJ Business Solutions charges nothing until you see results and tailors every dispute to your specific legal situation.</p>
+        </div>
+      </div>
+    </section>`
+  } else if (plan === 'professional') {
+    planDetailHTML = `
+    <!-- PRO PLAN DETAIL -->
+    <section style="padding:5rem 0;background:linear-gradient(180deg,#0a0f1f,#0f172a)">
+      <div class="cs">
+        <h2 class="stt tc ao">⭐ ${planName} Plan — $${cfg.price}/month <span style="color:#8b5cf6;font-size:.7em">(Most Popular)</span></h2>
+        <p class="sts tc ao">One-Time Audit: $${cfg.price} | Monitoring: $29.99/mo | Designed for: ${T(targetKey)}</p>
+        <p class="ao" style="text-align:center;color:#a78bfa;font-weight:700;margin-top:1rem;font-size:.95rem">This is where 73% of RJ clients land — and for good reason.</p>
+        <div class="ao" style="max-width:850px;margin:2rem auto 0;background:linear-gradient(135deg,rgba(139,92,246,.06),rgba(139,92,246,.02));border:1px solid rgba(139,92,246,.15);border-radius:1rem;padding:2rem">
+          <h3 style="color:#a78bfa;font-size:1.1rem;font-weight:800;margin-bottom:1.5rem">Everything in Basic, Plus:</h3>
+          <div style="display:flex;flex-direction:column;gap:1.25rem;color:#d1d5db;font-size:.9rem;line-height:1.8">
+            <p><strong style="color:#fff">Up to 25 disputes per month</strong> — more negative items means more angles of attack, and the Professional Plan covers them all. Each round of disputes is strategically sequenced to maximize removal probability based on bureau response patterns and account age.</p>
+            <p>A <strong style="color:#fff">Dedicated Credit Analyst</strong> is assigned to your file. This is a real human being who knows your credit profile, tracks every open dispute, monitors creditor responses, and escalates strategically. You're not a ticket number. You're a client with a named specialist.</p>
+            <p><strong style="color:#fff">Direct Creditor Intervention</strong> is the game-changer that separates Professional from Basic. Your analyst contacts creditors and data furnishers directly — not just the bureaus. Under FCRA §623, furnishers have independent accuracy obligations. When we contact them directly with documented discrepancies, removal rates increase significantly.</p>
+            <p><strong style="color:#fff">Priority Phone Support</strong> gives you direct access during business hours. Questions, updates, strategy — you call, someone answers who actually knows your file.</p>
+            <p><strong style="color:#fff">Credit-Building Guidance</strong> is built into the plan: secured card recommendations, authorized user placement strategies, credit-builder loan options, and utilization management advice — all calibrated to your current profile and restoration goals.</p>
+            <p><strong style="color:#fff">Goodwill Letter Campaigns</strong> are personalized letters sent to original creditors requesting removal of accurately reported but paid negative items based on your customer history and goodwill. These are relationship-based, not dispute-based, and when done right, they work.</p>
+            <p><strong style="color:#fff">Pay-for-Delete Negotiations</strong> — when a collection is valid and settlement is the path forward, your analyst negotiates directly with collectors to remove the tradeline entirely in exchange for payment. Every agreement is documented and verified before payment is made.</p>
+            <p><strong style="color:#fff">Bi-Weekly Progress Updates</strong> keep you in the loop every two weeks with a full status report — disputes pending, responses received, items removed, score changes, and next steps.</p>
+            <p><strong style="color:#fff">Enhanced 10-Point Roadmap</strong> — at the Professional tier, your roadmap is more granular, includes creditor-specific strategies, and maps out a 6-12 month restoration arc with specific score targets at each checkpoint.</p>
+          </div>
+        </div>
+        <div class="ao" style="max-width:850px;margin:1.5rem auto 0;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.2);border-radius:1rem;padding:1.5rem">
+          <h4 style="color:#4ade80;font-weight:700;margin-bottom:.5rem">💰 Billing Rule:</h4>
+          <p style="color:#d1d5db;font-size:.88rem;line-height:1.7"><strong style="color:#4ade80">$${cfg.price}/month charged only when verified progress is documented.</strong> Same standard, higher output.</p>
+        </div>
+        <div class="ao" style="max-width:850px;margin:1.5rem auto 0;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.2);border-radius:1rem;padding:1.5rem">
+          <h4 style="color:#f87171;font-weight:700;margin-bottom:.5rem">❌ What Professional Does NOT Include:</h4>
+          <p style="color:#9ca3af;font-size:.85rem;line-height:1.7">Identity-theft document handling, mortgage-ready program, rapid rescoring, business credit building, or VIP/Rick Jefferson direct access. Those are Premium.</p>
+        </div>
+        <div class="ao" style="max-width:850px;margin:1.5rem auto 0;background:rgba(139,92,246,.05);border:1px solid rgba(139,92,246,.15);border-radius:1rem;padding:1.5rem">
+          <h4 style="color:#a78bfa;font-weight:700;margin-bottom:.5rem">📊 Competitor Comparison:</h4>
+          <p style="color:#9ca3af;font-size:.85rem;line-height:1.7">Lexington Law's comparable tier runs $139.95/month — charged upfront, no performance guarantee, no bilingual support, no ITIN specialization. Sky Blue Credit charges $99/month with a 90-day guarantee but no direct creditor intervention and no dedicated analyst. RJ Business Solutions delivers more, protects more, and only charges when results happen.</p>
+        </div>
+      </div>
+    </section>`
+  } else {
+    planDetailHTML = `
+    <!-- PREMIUM PLAN DETAIL -->
+    <section style="padding:5rem 0;background:linear-gradient(180deg,#0a0f1f,#0f172a)">
+      <div class="cs">
+        <h2 class="stt tc ao">👑 ${planName} Plan — $${cfg.price}/month</h2>
+        <p class="sts tc ao">One-Time Audit: $${cfg.price} | Monitoring: $29.99/mo | Designed for: ${T(targetKey)}, identity-theft cases, mortgage goals, or business credit needs</p>
+        <div class="ao" style="max-width:850px;margin:2rem auto 0;background:linear-gradient(135deg,rgba(245,158,11,.06),rgba(245,158,11,.02));border:1px solid rgba(245,158,11,.15);border-radius:1rem;padding:2rem">
+          <h3 style="color:#fbbf24;font-size:1.1rem;font-weight:800;margin-bottom:1.5rem">Everything in Professional, Plus:</h3>
+          <div style="display:flex;flex-direction:column;gap:1.25rem;color:#d1d5db;font-size:.9rem;line-height:1.8">
+            <p><strong style="color:#fff">Up to 40 disputes per month</strong> — maximum firepower for complex, multi-item credit profiles. Every dispute is strategically timed and escalated based on bureau reinvestigation patterns.</p>
+            <p><strong style="color:#fff">Priority Service &amp; Escalation</strong> means your file gets first-queue treatment. When a bureau issues a suspicious verification response or a creditor fails to respond within FCRA §611's 30-day reinvestigation window, your case is immediately escalated — to legal demand letters, regulatory complaints, or CFPB submissions as appropriate.</p>
+            <p><strong style="color:#fff">Expanded Goodwill Letter Campaigns</strong> are more extensive at the Premium tier — covering more accounts, multiple rounds, and personalized narratives that speak directly to each creditor's customer retention interests.</p>
+            <p><strong style="color:#fff">Legal Demand Letters</strong> — when a bureau or furnisher violates FCRA reinvestigation requirements (§611), fails to correct inaccurate information (§623), or continues reporting after a verified dispute, we send formal legal demand letters citing specific statutory violations, damages exposure under FCRA §616 (civil liability), and escalation timelines.</p>
+            <p><strong style="color:#fff">Identity-Theft Document Submission Handling</strong> — if you have independently filed an FTC Identity Theft Report or police report yourself (without our involvement), and you provide those documents to us with a signed client waiver, we will submit them as supporting documentation in your disputes. The signed waiver must confirm: (1) you filed independently; (2) RJ had zero involvement; (3) all information is truthful; (4) you release RJ Business Solutions from all liability.</p>
+            <p><strong style="color:#fff">Mortgage-Ready Program</strong> — if homeownership is the goal, Premium includes a loan-type-specific preparation roadmap (FHA, VA, USDA, Conventional), coordination with lenders on score requirements, and milestone checkpoints tied to specific score thresholds.</p>
+            <p><strong style="color:#fff">Rapid Rescoring Services</strong> — after a verified deletion or correction, we coordinate with lenders to expedite credit report updates within 24–72 hours. Critical for clients mid-purchase contract or loan application.</p>
+            <p><strong style="color:#fff">Business Credit Building</strong> — EIN credit profile establishment, Dun &amp; Bradstreet (D&amp;B) file setup, vendor tradeline activation, and guidance on building business credit separately from personal credit.</p>
+            <p><strong style="color:#fff">VIP Concierge &amp; Direct Rick Jefferson Access</strong> — weekly strategy calls available, direct email/text line to Rick, and first-priority scheduling for any escalations or strategy sessions.</p>
+            <p><strong style="color:#fff">Weekly Progress Updates</strong> — every seven days, a full report: disputes filed, responses received, items removed, score changes, escalations triggered, and upcoming action items.</p>
+          </div>
+        </div>
+        <div class="ao" style="max-width:850px;margin:1.5rem auto 0;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.2);border-radius:1rem;padding:1.5rem">
+          <h4 style="color:#4ade80;font-weight:700;margin-bottom:.5rem">💰 Billing Rule:</h4>
+          <p style="color:#d1d5db;font-size:.88rem;line-height:1.7"><strong style="color:#4ade80">$${cfg.price}/month charged only when verified progress is documented.</strong> Same zero-risk standard.</p>
+        </div>
+        <div class="ao" style="max-width:850px;margin:1.5rem auto 0;background:rgba(245,158,11,.05);border:1px solid rgba(245,158,11,.15);border-radius:1rem;padding:1.5rem">
+          <h4 style="color:#fbbf24;font-weight:700;margin-bottom:.5rem">📊 Competitor Comparison:</h4>
+          <p style="color:#9ca3af;font-size:.85rem;line-height:1.7">Credit Saint's "Platinum" tier runs $179.99/month — charged upfront, no ITIN focus, no bilingual support, no business credit, no mortgage program, no direct founder access. The Credit Pros charges $149/month with an upfront $149 setup fee — same week you sign. RJ Premium charges the audit fee once, nothing more until you see results, and delivers a service architecture no competitor in this tier comes close to matching.</p>
+        </div>
+      </div>
+    </section>`
   }
 
   return pageLayout(locale, `${planName} Plan — ${T('site_title')}`, `
@@ -1379,6 +1487,26 @@ function planPageHTML(locale: string, plan: 'basic' | 'professional' | 'premium'
     </div>
   </section>
 
+  <!-- FORENSIC AUDIT — EVERY PLAN STARTS HERE -->
+  <section style="padding:5rem 0;background:linear-gradient(180deg,#111827,#0a0f1f)">
+    <div class="cs">
+      <h2 class="stt tc ao">🧾 ${T('audit_title')}</h2>
+      <p class="sts tc ao" style="max-width:800px;margin:0 auto">${T('audit_desc')}</p>
+      <div class="ao" style="max-width:750px;margin:2.5rem auto 0;background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:2rem">
+        <h3 style="color:#60a5fa;font-size:1.15rem;font-weight:800;margin-bottom:1.5rem;text-align:center">${T('audit_roadmap')}</h3>
+        <div style="display:flex;flex-direction:column;gap:.75rem">
+          ${[1,2,3,4,5,6,7,8,9,10].map(n => `<div style="display:flex;align-items:flex-start;gap:.75rem"><div style="width:28px;height:28px;min-width:28px;background:linear-gradient(135deg,#3b82f6,#06b6d4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.72rem;color:#fff">${n}</div><span style="color:#d1d5db;font-size:.88rem;line-height:1.5">${T('roadmap_' + n)}</span></div>`).join('')}
+        </div>
+      </div>
+      <div class="ao" style="text-align:center;margin-top:2rem">
+        <p style="color:#fbbf24;font-weight:700;font-size:.95rem">📊 $29.99/mo Monitoring Required — Enroll before audit begins</p>
+        <a href="${MFSN_URL}" target="_blank" class="btn-primary" style="margin-top:1rem;display:inline-block">${T('mfsn_enroll')} →</a>
+      </div>
+    </div>
+  </section>
+
+  ${planDetailHTML}
+
   <!-- VALUE STACK VISUAL -->
   <section class="value-stack">
     <div class="cs tc">
@@ -1386,15 +1514,22 @@ function planPageHTML(locale: string, plan: 'basic' | 'professional' | 'premium'
     </div>
   </section>
 
-  <!-- FEATURES -->
-  <section style="padding:4rem 0;background:linear-gradient(180deg,#0a0f1f,#0f172a)">
+  <!-- HOW TO GET STARTED -->
+  <section style="padding:5rem 0;background:linear-gradient(180deg,#111827,#0f172a)">
     <div class="cs">
-      <h2 class="stt tc ao">${T('includes')}</h2>
-      <div style="margin-top:2rem">
-        ${features.map((f, i) => `
-        <div class="ao s${Math.min(i+1,4)}" style="display:flex;align-items:center;gap:1rem;background:#111827;border:1px solid #1f2937;border-radius:.75rem;padding:1rem 1.5rem;margin-bottom:.75rem">
-          <span style="color:#4ade80;font-weight:700;font-size:1.25rem">✓</span>
-          <span style="font-size:.95rem;font-weight:600">${f}</span>
+      <h2 class="stt tc ao">🚀 ${T('steps_title')}</h2>
+      <div style="max-width:700px;margin:2.5rem auto 0;display:flex;flex-direction:column;gap:1rem">
+        ${[
+          {n:1, icon:'📊', text: T('step_1'), link: MFSN_URL, linkText: T('mfsn_enroll')},
+          {n:2, icon:'📦', text: T('step_2')},
+          {n:3, icon:'💳', text: T('step_3')},
+          {n:4, icon:'🚀', text: T('step_4')}
+        ].map(s => `<div class="ao s${s.n}" style="display:flex;gap:1.25rem;background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:1.25rem 1.5rem;align-items:flex-start">
+          <div style="width:48px;height:48px;min-width:48px;background:linear-gradient(135deg,#3b82f6,#06b6d4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.1rem;color:#fff">${s.n}</div>
+          <div>
+            <p style="color:#d1d5db;font-size:.92rem;line-height:1.6">${s.icon} ${s.text}</p>
+            ${s.link ? '<a href="' + s.link + '" target="_blank" style="color:#60a5fa;font-size:.85rem;font-weight:600;margin-top:.5rem;display:inline-block">' + s.linkText + ' →</a>' : ''}
+          </div>
         </div>`).join('')}
       </div>
     </div>
@@ -1421,6 +1556,8 @@ function planPageHTML(locale: string, plan: 'basic' | 'professional' | 'premium'
       <img src="${IMG.itinVsSsn}" alt="ITIN vs SSN - Equal Credit Rights" class="section-img ao" width="1365" height="768" loading="lazy" style="max-width:800px">
     </div>
   </section>
+
+  <!-- RICK BIO -->
   <section class="bio">
     <div class="cs">
       <div class="bio-card ao">
@@ -1429,6 +1566,7 @@ function planPageHTML(locale: string, plan: 'basic' | 'professional' | 'premium'
           <h3>${T('bio_title')}</h3>
           <div class="role">${T('bio_role')}</div>
           <p>${T('bio_p1')}</p>
+          <p>${T('bio_p2')}</p>
           <blockquote>${T('bio_p3')}</blockquote>
         </div>
       </div>
@@ -1451,7 +1589,7 @@ function planPageHTML(locale: string, plan: 'basic' | 'professional' | 'premium'
     <div class="cs">
       <h2 class="stt tc ao">${T('faq_title')}</h2>
       <div style="margin-top:2rem">
-        ${[1,2,3,5,6].map(n => `
+        ${[1,2,3,4,5,6].map(n => `
         <div class="faq-item ao">
           <div class="faq-q">${T(`faq_q${n}`)}</div>
           <div class="faq-a">${T(`faq_a${n}`)}</div>
@@ -1481,20 +1619,38 @@ function planPageHTML(locale: string, plan: 'basic' | 'professional' | 'premium'
     </div>
   </section>
 
-  <!-- COMPLIANCE FOOTER -->
+  <!-- COMPLIANCE -->
   <section class="comp-footer">
     <div class="ct">
-      <h3 style="text-align:center;font-size:1rem;font-weight:700;color:#9ca3af;margin-bottom:1rem">${T('comp_title')}</h3>
-      <p style="text-align:center;color:#6b7280;font-size:.75rem;margin-bottom:1rem">${T('comp_notice')}</p>
-      <div class="comp-grid">
-        <div class="comp-item"><h4>CROA</h4><p>${T('comp_croa')}</p></div>
-        <div class="comp-item"><h4>FCRA</h4><p>${T('comp_fcra')}</p></div>
-        <div class="comp-item"><h4>ECOA</h4><p>${T('comp_ecoa')}</p></div>
-        <div class="comp-item"><h4>FDCPA</h4><p>${T('comp_fdcpa')}</p></div>
+      <h3 style="text-align:center;font-size:1.1rem;font-weight:700;color:#9ca3af;margin-bottom:1.25rem">⚖️ Legal Compliance Statement</h3>
+      <div class="ao" style="max-width:850px;margin:0 auto;background:rgba(30,58,138,.08);border:1px solid rgba(59,130,246,.15);border-radius:1rem;padding:1.5rem">
+        <p style="color:#9ca3af;font-size:.78rem;line-height:1.8;margin-bottom:1rem">RJ Business Solutions operates in full compliance with CROA, FCRA (§§ 604, 605, 605B, 605C, 611, 616, 617, 623), FDCPA, FCBA, FTC TSR, ECOA / Regulation B, and CFPB guidelines.</p>
+        <p style="color:#9ca3af;font-size:.78rem;line-height:1.8;margin-bottom:1rem">RJ Business Solutions is not a law firm and does not provide legal advice. Results vary by individual credit profile. No specific outcome is guaranteed. ITIN holders possess identical consumer rights under FCRA and ECOA regardless of immigration or SSN status.</p>
+        <p style="color:#f59e0b;font-size:.78rem;line-height:1.8;font-weight:600">Identity-Theft Policy: RJ Business Solutions does not file, prepare, coach, or advise on FTC Identity Theft Reports, police reports, or any victim-status filings under FCRA §605B or §605C. Clients who independently file such documents may submit them with a signed waiver.</p>
       </div>
       <p style="text-align:center;color:#6b7280;font-size:.72rem;margin-top:1rem">${T('comp_contact')} <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa">rickjefferson@rickjeffersonsolutions.com</a></p>
     </div>
   </section>
+
+  <footer style="padding:3rem 0 2rem;border-top:1px solid #1f2937;text-align:center;background:#030712">
+    <div class="ct">
+      <img src="${IMG.logo}" alt="RJ Business Solutions" width="180" style="margin:0 auto .75rem;border-radius:6px">
+      <p style="color:#d1d5db;font-size:.82rem;line-height:1.7"><strong>RJ Business Solutions</strong><br>1342 NM 333, Tijeras, New Mexico 87059<br>
+        <a href="https://rickjeffersonsolutions.com" style="color:#60a5fa">rickjeffersonsolutions.com</a> &bull; <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa">rickjefferson@rickjeffersonsolutions.com</a></p>
+      <div style="display:flex;justify-content:center;gap:1.25rem;margin:.75rem 0;flex-wrap:wrap">
+        <a href="https://tiktok.com/@rick_jeff_solution" target="_blank" style="color:#9ca3af;font-size:.78rem">TikTok: @rick_jeff_solution</a>
+        <a href="https://twitter.com/ricksolutions1" target="_blank" style="color:#9ca3af;font-size:.78rem">Twitter: @ricksolutions1</a>
+        <a href="https://linkedin.com/in/rick-jefferson-314998235" target="_blank" style="color:#9ca3af;font-size:.78rem">LinkedIn</a>
+      </div>
+      <div style="display:flex;justify-content:center;gap:1rem;margin-top:.5rem;flex-wrap:wrap">
+        <a href="/${locale}/legal" style="color:#60a5fa;font-size:.72rem">${T('nav_legal')}</a>
+        <a href="/${locale}/privacy" style="color:#60a5fa;font-size:.72rem">${T('nav_privacy')}</a>
+        <a href="/${locale}/terms" style="color:#60a5fa;font-size:.72rem">${T('nav_terms')}</a>
+      </div>
+      <p style="color:#6b7280;font-size:.72rem;margin-top:.75rem">&copy; 2026 RJ Business Solutions. All rights reserved.</p>
+      <p style="color:#4b5563;font-size:.65rem;margin-top:.3rem">All services comply with CROA, FCRA, FDCPA, FCBA, FTC TSR, ECOA, and CFPB guidelines.</p>
+    </div>
+  </footer>
 
   <!-- LEAD MODAL -->
   <div class="mo" id="leadModal">
