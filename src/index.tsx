@@ -53,9 +53,7 @@ function detectLocale(c: any): Locale {
 }
 
 function getMfsnUrl(c: any, plan: string): string {
-  const pid = PLANS[plan as keyof typeof PLANS]?.mfsnPid || '49914'
-  const aid = c.env?.MFSN_AID || 'RickJeffersonSolutions'
-  return `https://myfreescorenow.com/enroll/?AID=${aid}&PID=${pid}`
+  return 'https://app.myfreescorenow.com/enroll/B01A8289'
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -179,6 +177,95 @@ const i18n: Record<string, Record<string, string>> = {
     plus: 'Plus everything in',
     per_mo: '/mo',
     spots_left: 'Only 12 spots remaining this month',
+    // ENHANCED PACKAGE CONTENT
+    why_rj: 'Why RJ Business Solutions Hits Different',
+    why_rj_desc: 'The credit repair industry is a $7.31 billion space crawling with companies that charge you upfront, ghost you after month one, speak zero Spanish, and have never heard the word "ITIN." Rick Jefferson built RJ Business Solutions specifically to flip that script.',
+    why_rj_desc2: 'Every package is performance-based (you don\'t pay monthly fees until progress is verified), fully FCRA + ECOA compliant, bilingual, and designed with ITIN holders at the center of the strategy — not as an afterthought.',
+    audit_title: 'The Forensic Audit — Every Plan Starts Here',
+    audit_desc: 'Before a single dispute letter goes out, you get a deep-dive forensic audit of all three bureaus (TransUnion, Equifax, Experian). This isn\'t a printout from Credit Karma. We\'re talking a line-by-line teardown of every tradeline, inquiry, collection, public record, and account status — cross-referenced against FCRA §§ 604, 605, 611, 623, FDCPA requirements, and ECOA protections.',
+    audit_roadmap: 'Your 10-Point Restoration Roadmap',
+    roadmap_1: 'Baseline score documentation across all 3 bureaus',
+    roadmap_2: 'Negative item prioritization by credit impact',
+    roadmap_3: 'Bureau-specific dispute strategy tailored to each bureau',
+    roadmap_4: 'FCRA violation identification (§611, §623, §604)',
+    roadmap_5: 'ECOA / ITIN discrimination flag review',
+    roadmap_6: 'Collection account strategy (validation, SOL, FDCPA leverage)',
+    roadmap_7: 'Hard inquiry removal eligibility analysis',
+    roadmap_8: 'Credit utilization and mix optimization targets',
+    roadmap_9: 'Creditor engagement timeline and escalation path',
+    roadmap_10: '90-day milestone checkpoints with measurable KPIs',
+    // BASIC PLAN DETAILS
+    basic_detail_disputes: 'Up to 15 statute-backed dispute letters per month, drafted with precision under FCRA §611, §623, and §604',
+    basic_detail_reports: 'Comprehensive monthly progress report — every dispute filed, every response received, every item removed',
+    basic_detail_bilingual: 'Bilingual support (English & Spanish) — built in, not an upgrade',
+    basic_detail_library: 'Credit Education Library — guides, tools, and resources for ITIN holders',
+    basic_detail_compliance: 'Full Compliance: CROA, FCRA, FDCPA, FCBA, FTC TSR, CFPB, ECOA',
+    basic_billing: 'The $99 monthly fee is charged only when verifiable progress is documented. No progress = no charge. Period.',
+    basic_not_included: 'Does NOT include: Creditor negotiations, goodwill campaigns, pay-for-delete, identity-theft handling, mortgage-ready program, rapid rescoring, or VIP access.',
+    // PRO PLAN DETAILS
+    pro_why: 'This is where 73% of RJ clients land.',
+    pro_detail_disputes: 'Up to 25 disputes per month — strategically sequenced to maximize removal probability',
+    pro_detail_analyst: 'Dedicated Credit Analyst assigned to your file — a real human who knows your profile',
+    pro_detail_creditor: 'Direct Creditor Intervention under FCRA §623 — contacting creditors and data furnishers directly',
+    pro_detail_priority: 'Priority Phone Support — direct access during business hours',
+    pro_detail_building: 'Credit-Building Guidance — secured cards, authorized user strategies, credit-builder loans',
+    pro_detail_goodwill: 'Goodwill Letter Campaigns — personalized letters to original creditors requesting removal',
+    pro_detail_paydelete: 'Pay-for-Delete Negotiations — documented agreements before payment is made',
+    pro_detail_biweekly: 'Bi-Weekly Progress Updates — full status report every two weeks',
+    pro_billing: '$149/month charged only when verified progress is documented. Same standard, higher output.',
+    pro_not_included: 'Does NOT include: Identity-theft document handling, mortgage-ready program, rapid rescoring, business credit building, or VIP/Rick Jefferson direct access.',
+    // PREMIUM PLAN DETAILS
+    premium_detail_disputes: 'Up to 40 disputes per month — maximum firepower for complex, multi-item credit profiles',
+    premium_detail_escalation: 'Priority Service & Escalation — first-queue treatment, CFPB submissions when appropriate',
+    premium_detail_goodwill: 'Expanded Goodwill Letter Campaigns — more accounts, multiple rounds, personalized narratives',
+    premium_detail_legal: 'Legal Demand Letters — formal statutory notices citing FCRA §616 civil liability',
+    premium_detail_identity: 'Identity-Theft Document Submission Handling — with signed client waiver',
+    premium_detail_mortgage: 'Mortgage-Ready Program — FHA, VA, USDA, Conventional preparation',
+    premium_detail_rescore: 'Rapid Rescoring Services — expedited updates within 24–72 hours',
+    premium_detail_business: 'Business Credit Building — EIN profile, D&B file setup, vendor tradelines',
+    premium_detail_vip: 'VIP Concierge & Direct Rick Jefferson Access — weekly strategy calls, direct line',
+    premium_detail_weekly: 'Weekly Progress Updates — every seven days, full report',
+    premium_billing: '$199/month charged only when verified progress is documented. Same zero-risk standard.',
+    // STEPS
+    steps_title: 'How to Get Started — Four Steps',
+    step_1: 'Enroll in MyFreeScoreNow credit monitoring — activates your tri-bureau data feed',
+    step_2: 'Select your package (Basic, Professional, or Premium) based on your negative items',
+    step_3: 'Pay the one-time audit fee — $99, $149, or $199 depending on your plan',
+    step_4: 'Within 5 business days — receive your full audit report and roadmap, disputes begin',
+    // COMPARISON TABLE
+    compare_title: 'Side-by-Side Comparison',
+    compare_feature: 'Feature',
+    compare_neg_items: 'Negative Items',
+    compare_disputes: 'Disputes/Month',
+    compare_audit: 'One-Time Audit',
+    compare_monitoring: 'Monitoring (Required)',
+    compare_forensic: 'Forensic 3-Bureau Audit',
+    compare_roadmap: '10-Point Roadmap',
+    compare_reports: 'Progress Reports',
+    compare_bilingual: 'Bilingual Support',
+    compare_analyst: 'Dedicated Credit Analyst',
+    compare_creditor: 'Direct Creditor Intervention',
+    compare_goodwill: 'Goodwill Letter Campaigns',
+    compare_paydelete: 'Pay-for-Delete Negotiations',
+    compare_legal: 'Legal Demand Letters',
+    compare_identity: 'Identity-Theft Doc Submission',
+    compare_mortgage: 'Mortgage-Ready Program',
+    compare_rescore: 'Rapid Rescoring',
+    compare_business: 'Business Credit Building',
+    compare_vip: 'VIP Concierge / Rick Access',
+    compare_guarantee: '90-Day Money-Back Guarantee',
+    compare_pay_only: 'Pay Only When Progress Verified',
+    compare_monthly: 'Monthly',
+    compare_biweekly: 'Bi-Weekly',
+    compare_weekly: 'Weekly',
+    compare_enhanced: 'Enhanced',
+    compare_full: 'Full',
+    compare_en_es: 'EN/ES',
+    compare_all_lang: 'EN/ES/PT/HT',
+    compare_expanded: 'Expanded',
+    compare_w_waiver: 'w/ Waiver',
+    mfsn_enroll: 'Activate Credit Monitoring',
+    mfsn_required: '$29.99/mo — Required before audit begins',
   },
   es: {
     lang_label: 'Idioma:',
@@ -613,8 +700,8 @@ const IMG = {
   testimonials: 'https://media.rickjeffersonsolutions.com/iytin%20funnel/Multi-cultural_ITIN_client_testimonials_showcase_f-1771888510005.png',
   testimonials2: 'https://media.rickjeffersonsolutions.com/iytin%20funnel/Multi-cultural_ITIN_client_testimonials_showcase_f-1771888510005.png',
   testimonials3: 'https://media.rickjeffersonsolutions.com/iytin%20funnel/Multi-cultural_ITIN_client_testimonials_showcase_f-1771888512950.png',
-  // Rick Portrait — locally hosted (generated 2026-02-24)
-  rickPortrait: '/static/images/rick-jefferson-portrait.png',
+  // Rick Portrait — real professional headshot from media CDN
+  rickPortrait: 'https://media.rickjeffersonsolutions.com/Rick/Professional_corporate_headshot_of_Rick_Jefferson-1772050939311.png',
   // ITIN vs SSN Comparison — locally hosted (generated 2026-02-24)
   itinVsSsn: '/static/images/itin-vs-ssn-comparison.png',
   // Value Stack — media CDN (verified 200 OK)
@@ -910,6 +997,7 @@ function pageLayout(locale: string, title: string, content: string): string {
 function mainFunnelHTML(locale: string): string {
   const T = (key: string) => t(locale, key)
   const planNames: Record<string, string> = { basic: T('plan_basic'), professional: T('plan_pro'), premium: T('plan_premium') }
+  const MFSN_URL = 'https://app.myfreescorenow.com/enroll/B01A8289'
 
   return pageLayout(locale, T('site_title'), `
   <!-- HERO with Background Banner -->
@@ -918,9 +1006,6 @@ function mainFunnelHTML(locale: string): string {
       <img src="${IMG.heroBanner}" alt="ITIN Credit Repair - Multi-Ethnic Community" width="1365" height="768" loading="eager">
     </div>
     <div class="cx tc hero-content">
-      <div class="hero-logo">
-        <img src="${IMG.logo}" alt="RJ Business Solutions" width="280">
-      </div>
       <div class="hero-badge">⭐ ${T('hero_badge')}</div>
       <h1>${T('hero_title')}</h1>
       <p class="sub">${T('hero_sub')}</p>
@@ -933,6 +1018,21 @@ function mainFunnelHTML(locale: string): string {
   <section class="lang-flags">
     <div class="cs tc">
       <img src="${IMG.multiLangFlags}" alt="Multi-Language Support: English, Spanish, Portuguese, French, Haitian Creole" class="section-img ao" width="1365" height="768" loading="lazy" style="max-width:900px">
+    </div>
+  </section>
+
+  <!-- WHY RJ BUSINESS SOLUTIONS -->
+  <section style="padding:5rem 0;background:linear-gradient(180deg,#0a0f1f,#111827)">
+    <div class="cs">
+      <h2 class="stt tc ao">${T('why_rj')}</h2>
+      <div class="ao" style="max-width:800px;margin:2rem auto 0;background:linear-gradient(135deg,rgba(59,130,246,.08),rgba(139,92,246,.08));border:1px solid rgba(59,130,246,.2);border-radius:1rem;padding:2rem">
+        <p style="color:#d1d5db;font-size:.95rem;line-height:1.8;margin-bottom:1rem">${T('why_rj_desc')}</p>
+        <p style="color:#d1d5db;font-size:.95rem;line-height:1.8">${T('why_rj_desc2')}</p>
+      </div>
+      <div class="ao" style="text-align:center;margin-top:2rem">
+        <p style="color:#fbbf24;font-weight:700;font-size:.95rem">📊 ${T('mfsn_required')}</p>
+        <a href="${MFSN_URL}" target="_blank" class="btn-primary" style="margin-top:1rem;display:inline-block">${T('mfsn_enroll')} →</a>
+      </div>
     </div>
   </section>
 
@@ -949,8 +1049,22 @@ function mainFunnelHTML(locale: string): string {
     </div>
   </section>
 
+  <!-- FORENSIC AUDIT SECTION -->
+  <section style="padding:5rem 0;background:linear-gradient(180deg,#111827,#0f172a)">
+    <div class="cs">
+      <h2 class="stt tc ao">🧾 ${T('audit_title')}</h2>
+      <p class="sts tc ao" style="max-width:800px;margin:0 auto">${T('audit_desc')}</p>
+      <div class="ao" style="max-width:750px;margin:2.5rem auto 0;background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:2rem">
+        <h3 style="color:#60a5fa;font-size:1.15rem;font-weight:800;margin-bottom:1.5rem;text-align:center">${T('audit_roadmap')}</h3>
+        <div style="display:flex;flex-direction:column;gap:.75rem">
+          ${[1,2,3,4,5,6,7,8,9,10].map(n => `<div style="display:flex;align-items:flex-start;gap:.75rem"><div style="width:28px;height:28px;min-width:28px;background:linear-gradient(135deg,#3b82f6,#06b6d4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.72rem;color:#fff">${n}</div><span style="color:#d1d5db;font-size:.88rem;line-height:1.5">${T('roadmap_' + n)}</span></div>`).join('')}
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- PLAN CARDS -->
-  <section id="plans" style="padding:5rem 0;background:linear-gradient(180deg,#0a0f1f,#0f172a)">
+  <section id="plans" style="padding:5rem 0;background:linear-gradient(180deg,#0f172a,#0a0f1f)">
     <div class="ct tc">
       <h2 class="stt ao">${T('plans_title')}</h2>
       <p class="sts ao">${T('plans_sub')}</p>
@@ -959,6 +1073,7 @@ function mainFunnelHTML(locale: string): string {
         <!-- BASIC -->
         <div class="plan-card ao s1">
           <div class="plan-name" style="color:#3b82f6">${T('plan_basic')}</div>
+          <div class="plan-tag" style="background:#3b82f622;color:#3b82f6;border:1px solid #3b82f644">${T('plan_basic_tag')}</div>
           <div class="plan-target">${T('plan_basic_target')}</div>
           <div class="plan-price">$99<span>${T('plan_per_month')}</span></div>
           <p class="plan-desc">${T('plan_basic_desc')}</p>
@@ -970,13 +1085,14 @@ function mainFunnelHTML(locale: string): string {
             <li>${T('feat_support')}</li>
             <li>${T('feat_library')}</li>
           </ul>
+          <p style="color:#9ca3af;font-size:.78rem;margin-top:.5rem;padding:0 .5rem">${T('basic_billing')}</p>
           <a href="/${locale}/basic" class="plan-btn" style="background:linear-gradient(135deg,#3b82f6,#2563eb)">${T('plan_start')} ${T('plan_basic')} →</a>
           <p class="plan-notes">$99 ${T('plan_audit_fee')} + ${T('plan_monitoring')}</p>
         </div>
 
         <!-- PROFESSIONAL (Featured) -->
         <div class="plan-card featured ao s2">
-          <div class="plan-tag">${T('plan_pro_tag')}</div>
+          <div class="plan-tag">${T('plan_pro_tag')} — 73%</div>
           <div class="plan-name" style="color:#8b5cf6">${T('plan_pro')}</div>
           <div class="plan-target">${T('plan_pro_target')}</div>
           <div class="plan-price">$149<span>${T('plan_per_month')}</span></div>
@@ -985,19 +1101,23 @@ function mainFunnelHTML(locale: string): string {
             <li>${T('feat_audit')}</li>
             <li>${T('feat_roadmap')}</li>
             <li>${T('up_to')} 25 ${T('feat_disputes')}</li>
-            <li>${T('feat_reports')}</li>
+            <li>${T('feat_reports')} (${T('compare_biweekly')})</li>
             <li>${T('feat_support')}</li>
             <li>${T('feat_library')}</li>
-            <li>${T('feat_analyst')}</li>
-            <li>${T('feat_creditor')}</li>
+            <li>⭐ ${T('feat_analyst')}</li>
+            <li>⭐ ${T('feat_creditor')}</li>
+            <li>⭐ ${T('feat_goodwill')}</li>
+            <li>⭐ Pay-for-Delete</li>
           </ul>
+          <p style="color:#9ca3af;font-size:.78rem;margin-top:.5rem;padding:0 .5rem">${T('pro_billing')}</p>
           <a href="/${locale}/professional" class="plan-btn" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9)">${T('plan_start')} ${T('plan_pro')} →</a>
           <p class="plan-notes">$149 ${T('plan_audit_fee')} + ${T('plan_monitoring')}</p>
         </div>
 
         <!-- PREMIUM -->
         <div class="plan-card ao s3">
-          <div class="plan-name" style="color:#f59e0b">${T('plan_premium')}</div>
+          <div class="plan-name" style="color:#f59e0b">👑 ${T('plan_premium')}</div>
+          <div class="plan-tag" style="background:#f59e0b22;color:#f59e0b;border:1px solid #f59e0b44">${T('plan_premium_tag')}</div>
           <div class="plan-target">${T('plan_premium_target')}</div>
           <div class="plan-price">$199<span>${T('plan_per_month')}</span></div>
           <p class="plan-desc">${T('plan_premium_desc')}</p>
@@ -1005,19 +1125,88 @@ function mainFunnelHTML(locale: string): string {
             <li>${T('feat_audit')}</li>
             <li>${T('feat_roadmap')}</li>
             <li>${T('up_to')} 40 ${T('feat_disputes')}</li>
-            <li>${T('feat_reports')}</li>
+            <li>${T('feat_reports')} (${T('compare_weekly')})</li>
             <li>${T('feat_support')}</li>
             <li>${T('feat_library')}</li>
             <li>${T('feat_analyst')}</li>
-            <li>${T('feat_priority')}</li>
             <li>${T('feat_creditor')}</li>
-            <li>${T('feat_goodwill')}</li>
+            <li>${T('feat_goodwill')} (${T('compare_expanded')})</li>
+            <li>⭐ ${T('compare_legal')}</li>
+            <li>⭐ ${T('compare_mortgage')}</li>
+            <li>⭐ ${T('compare_rescore')}</li>
+            <li>⭐ ${T('compare_business')}</li>
+            <li>⭐ ${T('compare_vip')}</li>
           </ul>
+          <p style="color:#9ca3af;font-size:.78rem;margin-top:.5rem;padding:0 .5rem">${T('premium_billing')}</p>
           <a href="/${locale}/premium" class="plan-btn" style="background:linear-gradient(135deg,#f59e0b,#d97706)">${T('plan_start')} ${T('plan_premium')} →</a>
           <p class="plan-notes">$199 ${T('plan_audit_fee')} + ${T('plan_monitoring')}</p>
         </div>
       </div>
       <p class="ao" style="color:#4ade80;font-weight:700;margin-top:1.5rem;font-size:.95rem">✓ ${T('plan_guarantee')} &bull; ✓ ${T('plan_no_pay')}</p>
+    </div>
+  </section>
+
+  <!-- SIDE-BY-SIDE COMPARISON TABLE -->
+  <section style="padding:5rem 0;background:linear-gradient(180deg,#0a0f1f,#111827)">
+    <div class="cs">
+      <h2 class="stt tc ao">📊 ${T('compare_title')}</h2>
+      <div class="ao" style="overflow-x:auto;margin-top:2rem">
+        <table style="width:100%;border-collapse:collapse;min-width:700px;font-size:.85rem">
+          <thead>
+            <tr style="border-bottom:2px solid #1e3a5f">
+              <th style="text-align:left;padding:.75rem;color:#9ca3af;font-weight:600">${T('compare_feature')}</th>
+              <th style="text-align:center;padding:.75rem;color:#3b82f6;font-weight:700">${T('plan_basic')} $99</th>
+              <th style="text-align:center;padding:.75rem;color:#8b5cf6;font-weight:700;background:rgba(139,92,246,.05)">${T('plan_pro')} $149</th>
+              <th style="text-align:center;padding:.75rem;color:#f59e0b;font-weight:700">${T('plan_premium')} $199</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${[
+              ['compare_neg_items', '1–5', '6–15', '16+'],
+              ['compare_disputes', '15', '25', '40'],
+              ['compare_audit', '$99', '$149', '$199'],
+              ['compare_monitoring', '$29.99/mo', '$29.99/mo', '$29.99/mo'],
+              ['compare_forensic', '✅', '✅', '✅'],
+              ['compare_roadmap', '✅', '✅ Enhanced', '✅ Full'],
+              ['compare_reports', 'Monthly', 'Bi-Weekly', 'Weekly'],
+              ['compare_bilingual', '✅ EN/ES', '✅ EN/ES', '✅ All'],
+              ['compare_analyst', '❌', '✅', '✅'],
+              ['compare_creditor', '❌', '✅', '✅'],
+              ['compare_goodwill', '❌', '✅', '✅ Expanded'],
+              ['compare_paydelete', '❌', '✅', '✅'],
+              ['compare_legal', '❌', '❌', '✅'],
+              ['compare_identity', '❌', '❌', '✅ w/ Waiver'],
+              ['compare_mortgage', '❌', '❌', '✅'],
+              ['compare_rescore', '❌', '❌', '✅'],
+              ['compare_business', '❌', '❌', '✅'],
+              ['compare_vip', '❌', '❌', '✅'],
+              ['compare_guarantee', '✅', '✅', '✅'],
+              ['compare_pay_only', '✅', '✅', '✅']
+            ].map((row, i) => `<tr style="border-bottom:1px solid #1f2937;${i % 2 === 0 ? '' : 'background:rgba(255,255,255,.02)'}"><td style="padding:.65rem .75rem;color:#d1d5db">${T(row[0])}</td><td style="text-align:center;padding:.65rem .75rem;color:#e2e8f0">${row[1]}</td><td style="text-align:center;padding:.65rem .75rem;color:#e2e8f0;background:rgba(139,92,246,.03)">${row[2]}</td><td style="text-align:center;padding:.65rem .75rem;color:#e2e8f0">${row[3]}</td></tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW TO GET STARTED -->
+  <section style="padding:5rem 0;background:linear-gradient(180deg,#111827,#0f172a)">
+    <div class="cs">
+      <h2 class="stt tc ao">🚀 ${T('steps_title')}</h2>
+      <div style="max-width:700px;margin:2.5rem auto 0;display:flex;flex-direction:column;gap:1rem">
+        ${[
+          {n:1, icon:'📊', text: T('step_1'), link: MFSN_URL, linkText: T('mfsn_enroll')},
+          {n:2, icon:'📦', text: T('step_2')},
+          {n:3, icon:'💳', text: T('step_3')},
+          {n:4, icon:'🚀', text: T('step_4')}
+        ].map(s => `<div class="ao s${s.n}" style="display:flex;gap:1.25rem;background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:1.25rem 1.5rem;align-items:flex-start">
+          <div style="width:48px;height:48px;min-width:48px;background:linear-gradient(135deg,#3b82f6,#06b6d4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.1rem;color:#fff">${s.n}</div>
+          <div>
+            <p style="color:#d1d5db;font-size:.92rem;line-height:1.6">${s.icon} ${s.text}</p>
+            ${s.link ? '<a href="' + s.link + '" target="_blank" style="color:#60a5fa;font-size:.85rem;font-weight:600;margin-top:.5rem;display:inline-block">' + s.linkText + ' →</a>' : ''}
+          </div>
+        </div>`).join('')}
+      </div>
     </div>
   </section>
 
@@ -1084,8 +1273,8 @@ function mainFunnelHTML(locale: string): string {
       <div style="margin-top:2rem">
         ${[1,2,3,4,5,6].map(n => `
         <div class="faq-item ao">
-          <div class="faq-q">${T(`faq_q${n}`)}</div>
-          <div class="faq-a">${T(`faq_a${n}`)}</div>
+          <div class="faq-q">${T('faq_q' + n)}</div>
+          <div class="faq-a">${T('faq_a' + n)}</div>
         </div>`).join('')}
       </div>
     </div>
@@ -1114,8 +1303,8 @@ function mainFunnelHTML(locale: string): string {
   <!-- COMPLIANCE FOOTER -->
   <section class="comp-footer">
     <div class="ct">
-      <h3 style="text-align:center;font-size:1.1rem;font-weight:700;color:#9ca3af;margin-bottom:1rem">${T('comp_title')}</h3>
-      <p style="text-align:center;color:#6b7280;font-size:.78rem;margin-bottom:1.5rem">${T('comp_notice')}</p>
+      <h3 style="text-align:center;font-size:1rem;font-weight:700;color:#9ca3af;margin-bottom:1rem">${T('comp_title')}</h3>
+      <p style="text-align:center;color:#6b7280;font-size:.75rem;margin-bottom:1rem">${T('comp_notice')}</p>
       <div class="comp-grid">
         <div class="comp-item"><h4>CROA</h4><p>${T('comp_croa')}</p></div>
         <div class="comp-item"><h4>FCRA</h4><p>${T('comp_fcra')}</p></div>
@@ -1124,12 +1313,30 @@ function mainFunnelHTML(locale: string): string {
         <div class="comp-item"><h4>TSR / FTC / CFPB</h4><p>${T('comp_tsr')}</p></div>
         <div class="comp-item"><h4>Identity Policy</h4><p>${T('comp_identity')}</p></div>
       </div>
-      <p style="text-align:center;color:#6b7280;font-size:.75rem;margin-top:1rem">${T('comp_contact')} <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa">rickjefferson@rickjeffersonsolutions.com</a></p>
+      <p style="text-align:center;color:#6b7280;font-size:.72rem;margin-top:1rem">${T('comp_contact')} <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa">rickjefferson@rickjeffersonsolutions.com</a></p>
     </div>
   </section>
+
+  <footer style="padding:2rem 0;border-top:1px solid #1f2937;text-align:center">
+    <div class="ct">
+      <img src="${IMG.logo}" alt="RJ Business Solutions" width="180" style="margin:0 auto .75rem;border-radius:6px">
+      <p style="color:#6b7280;font-size:.75rem">© 2026 RJ Business Solutions. 1342 NM 333, Tijeras, New Mexico 87059</p>
+      <p style="color:#4b5563;font-size:.68rem;margin-top:.3rem">All services comply with CROA, FCRA, FDCPA, FCBA, FTC TSR, ECOA, and CFPB guidelines.</p>
+      <div style="display:flex;justify-content:center;gap:1rem;margin-top:.75rem;flex-wrap:wrap">
+        <a href="/${locale}/legal" style="color:#60a5fa;font-size:.72rem">${T('nav_legal')}</a>
+        <a href="/${locale}/privacy" style="color:#60a5fa;font-size:.72rem">${T('nav_privacy')}</a>
+        <a href="/${locale}/terms" style="color:#60a5fa;font-size:.72rem">${T('nav_terms')}</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  document.querySelectorAll('.faq-q').forEach(q=>{q.addEventListener('click',()=>{const a=q.nextElementSibling;const isOpen=a.style.maxHeight&&a.style.maxHeight!=='0px';document.querySelectorAll('.faq-a').forEach(x=>{x.style.maxHeight='0px';x.style.padding='0 1.5rem';x.previousElementSibling.classList.remove('open')});if(!isOpen){a.style.maxHeight=a.scrollHeight+'px';a.style.padding='1rem 1.5rem';q.classList.add('open')}})});
+  const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}})},{threshold:.1});
+  document.querySelectorAll('.ao').forEach(el=>obs.observe(el));
+  </script>
   `)
 }
-
 // ═══════════════════════════════════════════════════════════════
 // INDIVIDUAL PLAN PAGE
 // ═══════════════════════════════════════════════════════════════
@@ -1163,9 +1370,6 @@ function planPageHTML(locale: string, plan: 'basic' | 'professional' | 'premium'
       <img src="${IMG.heroBanner2}" alt="ITIN Credit Repair" width="1365" height="768" loading="eager">
     </div>
     <div class="cx tc hero-content">
-      <div class="hero-logo">
-        <img src="${IMG.logo}" alt="RJ Business Solutions" width="240">
-      </div>
       <div style="display:inline-block;background:${cfg.color}22;border:1px solid ${cfg.color}66;padding:.35rem 1rem;border-radius:999px;margin-bottom:1rem">
         <span style="color:${cfg.color};font-weight:700;font-size:.85rem">${T(targetKey)}</span>
       </div>
