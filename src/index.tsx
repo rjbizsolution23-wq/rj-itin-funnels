@@ -7,8 +7,12 @@ import { cors } from 'hono/cors'
 // ═══════════════════════════════════════════════════════════════
 
 type Bindings = {
+  DB: D1Database
   STRIPE_SECRET_KEY: string
   STRIPE_PUBLISHABLE_KEY: string
+  RESEND_API_KEY: string
+  OPENAI_API_KEY: string
+  JWT_SECRET: string
   MFSN_API_BASE: string
   MFSN_EMAIL: string
   MFSN_PASSWORD: string
@@ -1072,7 +1076,7 @@ function pageLayout(locale: string, title: string, content: string, seoOpts?: { 
   function toggleRickBot(){const p=document.getElementById('rickbot-panel');p.style.display=p.style.display==='none'?'block':'none'}
   const rickBotAnswers={en:{'What plans do you offer?':'We have 3 plans:\\n• Basic ($99/mo) — up to 15 disputes/mo for 1-5 negative items\\n• Professional ($149/mo) — up to 25 disputes/mo with dedicated analyst\\n• Premium ($199/mo) — up to 40 disputes/mo, VIP access, business credit\\n\\nAll plans include a 90-day money-back guarantee!','Do ITIN holders have credit rights?':'Absolutely! Under FCRA and ECOA, ITIN holders have the EXACT same credit dispute rights as SSN holders. All 3 bureaus (TransUnion, Equifax, Experian) accept ITIN numbers.','How do I get started?':'3 easy steps:\\n1. Enroll in MyFreeScoreNow credit monitoring ($29.99/mo)\\n2. Choose your plan (Basic, Professional, or Premium)\\n3. Pay the one-time audit fee — your forensic report arrives in 5 business days!','Talk to Rick':'Email Rick directly at rickjefferson@rickjeffersonsolutions.com — he typically responds within 24 hours. You can also reach us through our contact page!'},es:{'¿Qué planes ofrecen?':'Tenemos 3 planes:\\n• Básico ($99/mes) — hasta 15 disputas/mes\\n• Profesional ($149/mes) — hasta 25 disputas con analista dedicado\\n• Premium ($199/mes) — hasta 40 disputas, acceso VIP\\n\\n¡Todos incluyen garantía de 90 días!','¿Tengo derechos con ITIN?':'¡Absolutamente! Bajo FCRA y ECOA, los titulares de ITIN tienen los MISMOS derechos de disputa que los titulares de SSN. Las 3 agencias aceptan números ITIN.','¿Cómo empiezo?':'3 pasos fáciles:\\n1. Inscríbete en MyFreeScoreNow ($29.99/mes)\\n2. Elige tu plan\\n3. Paga la tarifa de auditoría — tu reporte llega en 5 días hábiles!','Hablar con Rick':'Envía un email a rickjefferson@rickjeffersonsolutions.com — Rick responde en 24 horas.'}}
   function rickBotReply(btn,q){const msgs=document.getElementById('rickbot-messages');msgs.innerHTML+='<div style="align-self:flex-end;background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.3);border-radius:.75rem .75rem .2rem .75rem;padding:.75rem;max-width:85%"><p style="color:#d1d5db;font-size:.82rem">'+q+'</p></div>';const lang='${locale}';const a=(rickBotAnswers[lang]||rickBotAnswers.en)[q]||'Please email rickjefferson@rickjeffersonsolutions.com for personalized help!';setTimeout(()=>{msgs.innerHTML+='<div style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:.75rem .75rem .75rem .2rem;padding:.75rem;max-width:85%"><p style="color:#d1d5db;font-size:.82rem;line-height:1.5;white-space:pre-line">'+a+'</p></div>';msgs.scrollTop=msgs.scrollHeight},500)}
-  function sendRickBot(){const inp=document.getElementById('rickbot-input');if(!inp.value.trim())return;const q=inp.value;inp.value='';const msgs=document.getElementById('rickbot-messages');msgs.innerHTML+='<div style="align-self:flex-end;background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.3);border-radius:.75rem .75rem .2rem .75rem;padding:.75rem;max-width:85%"><p style="color:#d1d5db;font-size:.82rem">'+q+'</p></div>';setTimeout(()=>{const lang='${locale}';const defaultA=lang==='es'?'Gracias por tu pregunta. Para asistencia personalizada, envía un email a rickjefferson@rickjeffersonsolutions.com o elige un plan en nuestra página principal.':'Thanks for your question! For personalized help, email rickjefferson@rickjeffersonsolutions.com or choose a plan on our homepage.';msgs.innerHTML+='<div style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:.75rem .75rem .75rem .2rem;padding:.75rem;max-width:85%"><p style="color:#d1d5db;font-size:.82rem;line-height:1.5">'+defaultA+'</p></div>';msgs.scrollTop=msgs.scrollHeight},800)}
+  function sendRickBot(){const inp=document.getElementById('rickbot-input');if(!inp.value.trim())return;const q=inp.value;inp.value='';const msgs=document.getElementById('rickbot-messages');msgs.innerHTML+='<div style="align-self:flex-end;background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.3);border-radius:.75rem .75rem .2rem .75rem;padding:.75rem;max-width:85%"><p style="color:#d1d5db;font-size:.82rem">'+q+'</p></div>';msgs.innerHTML+='<div id="rickbot-typing" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:.75rem .75rem .75rem .2rem;padding:.75rem;max-width:85%"><p style="color:#9ca3af;font-size:.82rem">Typing...</p></div>';msgs.scrollTop=msgs.scrollHeight;const sid=window._rickbotSid||'';fetch('/api/rickbot',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q,locale:'${locale}',sessionId:sid})}).then(r=>r.json()).then(data=>{const el=document.getElementById('rickbot-typing');if(el)el.remove();if(data.success){window._rickbotSid=data.sessionId;msgs.innerHTML+='<div style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:.75rem .75rem .75rem .2rem;padding:.75rem;max-width:85%"><p style="color:#d1d5db;font-size:.82rem;line-height:1.5;white-space:pre-line">'+data.reply+'</p></div>'}else{msgs.innerHTML+='<div style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:.75rem .75rem .75rem .2rem;padding:.75rem;max-width:85%"><p style="color:#d1d5db;font-size:.82rem;line-height:1.5">Email rickjefferson@rickjeffersonsolutions.com for help!</p></div>'}msgs.scrollTop=msgs.scrollHeight}).catch(()=>{const el=document.getElementById('rickbot-typing');if(el)el.remove();msgs.innerHTML+='<div style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:.75rem .75rem .75rem .2rem;padding:.75rem;max-width:85%"><p style="color:#d1d5db;font-size:.82rem">Connection error. Email rickjefferson@rickjeffersonsolutions.com</p></div>';msgs.scrollTop=msgs.scrollHeight})}
 
   /* EXIT INTENT */
   let exitShown=false;
@@ -1824,33 +1828,108 @@ function planPageHTML(locale: string, plan: 'basic' | 'professional' | 'premium'
 }
 
 // ═══════════════════════════════════════════════════════════════
-// API ROUTES
+// PRODUCTION UTILITY: Web Crypto password hashing & JWT
 // ═══════════════════════════════════════════════════════════════
-app.get('/api/health', (c) => {
-  return c.json({ status: 'healthy', project: 'rj-itin-funnels', timestamp: new Date().toISOString(), locales: SUPPORTED_LOCALES, plans: Object.keys(PLANS) })
+async function hashPassword(password: string): Promise<string> {
+  const enc = new TextEncoder()
+  const salt = crypto.getRandomValues(new Uint8Array(16))
+  const key = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveBits'])
+  const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' }, key, 256)
+  const hashArr = new Uint8Array(bits)
+  const saltHex = [...salt].map(b => b.toString(16).padStart(2, '0')).join('')
+  const hashHex = [...hashArr].map(b => b.toString(16).padStart(2, '0')).join('')
+  return `${saltHex}:${hashHex}`
+}
+
+async function verifyPassword(password: string, stored: string): Promise<boolean> {
+  const [saltHex, hashHex] = stored.split(':')
+  if (!saltHex || !hashHex) return false
+  const salt = new Uint8Array(saltHex.match(/.{2}/g)!.map(b => parseInt(b, 16)))
+  const enc = new TextEncoder()
+  const key = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveBits'])
+  const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' }, key, 256)
+  const hashArr = [...new Uint8Array(bits)].map(b => b.toString(16).padStart(2, '0')).join('')
+  return hashArr === hashHex
+}
+
+async function signJWT(payload: any, secret: string): Promise<string> {
+  const enc = new TextEncoder()
+  const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).replace(/=/g, '')
+  const body = btoa(JSON.stringify({ ...payload, iat: Math.floor(Date.now() / 1000), exp: Math.floor(Date.now() / 1000) + 86400 * 7 })).replace(/=/g, '')
+  const key = await crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'])
+  const sig = await crypto.subtle.sign('HMAC', key, enc.encode(`${header}.${body}`))
+  const sigStr = btoa(String.fromCharCode(...new Uint8Array(sig))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
+  return `${header}.${body}.${sigStr}`
+}
+
+async function verifyJWT(token: string, secret: string): Promise<any> {
+  try {
+    const [header, body, sig] = token.split('.')
+    if (!header || !body || !sig) return null
+    const enc = new TextEncoder()
+    const key = await crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['verify'])
+    const sigBuf = Uint8Array.from(atob(sig.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0))
+    const valid = await crypto.subtle.verify('HMAC', key, sigBuf, enc.encode(`${header}.${body}`))
+    if (!valid) return null
+    const payload = JSON.parse(atob(body + '=='.slice(0, (4 - body.length % 4) % 4)))
+    if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) return null
+    return payload
+  } catch { return null }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// API ROUTES — 100% PRODUCTION (D1 Database)
+// ═══════════════════════════════════════════════════════════════
+app.get('/api/health', async (c) => {
+  try {
+    const db = c.env.DB
+    let dbStatus = 'disconnected'
+    if (db) {
+      const r = await db.prepare('SELECT COUNT(*) as cnt FROM leads').first() as any
+      dbStatus = `connected (${r?.cnt || 0} leads)`
+    }
+    return c.json({ status: 'healthy', project: 'rj-itin-funnels', database: dbStatus, timestamp: new Date().toISOString(), locales: SUPPORTED_LOCALES, plans: Object.keys(PLANS) })
+  } catch (e: any) { return c.json({ status: 'healthy', project: 'rj-itin-funnels', database: 'error: ' + e.message, timestamp: new Date().toISOString() }) }
 })
 
+// ─── LEAD CAPTURE (persisted to D1) ───
 app.post('/api/leads', async (c) => {
   try {
-    const { name, email, phone, plan, locale } = await c.req.json()
+    const { name, email, phone, plan, locale, source, utm_source, utm_medium, utm_campaign, ref } = await c.req.json()
     if (!name || !email) return c.json({ success: false, error: 'Name and email required' }, 400)
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return c.json({ success: false, error: 'Invalid email' }, 400)
-    console.log(`[LEAD] ${name} <${email}> plan=${plan||'basic'} locale=${locale||'en'}`)
+    const db = c.env.DB
+    const result = await db.prepare(
+      'INSERT INTO leads (name, email, phone, plan, locale, source, utm_source, utm_medium, utm_campaign) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    ).bind(name, email, phone || null, plan || 'basic', locale || 'en', source || 'funnel', utm_source || null, utm_medium || null, utm_campaign || null).run()
+    const leadId = result.meta.last_row_id
+    // Track referral if ref code provided
+    if (ref) {
+      const partner = await db.prepare('SELECT id FROM partners WHERE ref_code = ? AND status = ?').bind(ref, 'active').first() as any
+      if (partner) {
+        await db.prepare('INSERT INTO referrals (partner_id, lead_id, status) VALUES (?, ?, ?)').bind(partner.id, leadId, 'pending').run()
+        await db.prepare('UPDATE partners SET total_referrals = total_referrals + 1, updated_at = datetime(?) WHERE id = ?').bind(new Date().toISOString(), partner.id).run()
+      }
+    }
+    // Log analytics event
+    await db.prepare('INSERT INTO analytics (event, page, locale, plan, visitor_id, referrer) VALUES (?, ?, ?, ?, ?, ?)').bind('lead_captured', 'funnel', locale || 'en', plan || 'basic', email, ref || null).run()
     const mfsnUrl = getMfsnUrl(c, plan || 'basic')
-    return c.json({ success: true, data: { leadId: Date.now(), name, email, plan: plan || 'basic', mfsnUrl } })
-  } catch (err) { return c.json({ success: false, error: 'Server error' }, 500) }
+    return c.json({ success: true, data: { leadId, name, email, plan: plan || 'basic', mfsnUrl } })
+  } catch (err: any) { return c.json({ success: false, error: err.message || 'Server error' }, 500) }
 })
 
+// ─── CHECKOUT (Stripe + D1 tracking) ───
 app.post('/api/checkout', async (c) => {
   try {
     const { email, name, leadId, plan } = await c.req.json()
     const planKey = (plan || 'basic') as keyof typeof PLANS
     const cfg = PLANS[planKey] || PLANS.basic
     if (!c.env.STRIPE_SECRET_KEY) return c.json({ success: false, error: 'Payment not configured' }, 503)
+    const origin = c.req.header('origin') || 'https://rj-itin-funnels.pages.dev'
     const params = new URLSearchParams()
     params.append('mode', 'payment')
-    params.append('success_url', `${c.req.header('origin') || 'https://rj-itin-funnels.pages.dev'}/en/success?plan=${planKey}`)
-    params.append('cancel_url', `${c.req.header('origin') || 'https://rj-itin-funnels.pages.dev'}/en/${planKey}?canceled=true`)
+    params.append('success_url', `${origin}/en/thank-you/${planKey}?session_id={CHECKOUT_SESSION_ID}`)
+    params.append('cancel_url', `${origin}/en/${planKey}?canceled=true`)
     params.append('line_items[0][price_data][currency]', 'usd')
     params.append('line_items[0][price_data][product_data][name]', `Forensic 3-Bureau ITIN/SSN Credit Audit — ${planKey.charAt(0).toUpperCase() + planKey.slice(1)} Plan`)
     params.append('line_items[0][price_data][unit_amount]', String(cfg.stripeCents))
@@ -1867,9 +1946,243 @@ app.post('/api/checkout', async (c) => {
       body: params.toString()
     })
     const session = await res.json() as any
-    if (session.error) return c.json({ success: false, error: 'Payment session failed' }, 500)
+    if (session.error) return c.json({ success: false, error: session.error.message || 'Payment session failed' }, 500)
+    // Track analytics
+    const db = c.env.DB
+    await db.prepare('INSERT INTO analytics (event, page, locale, plan, visitor_id, metadata) VALUES (?, ?, ?, ?, ?, ?)').bind('checkout_started', 'checkout', 'en', planKey, email || 'anonymous', JSON.stringify({ session_id: session.id })).run()
+    // Mark lead as converted if we have leadId
+    if (leadId) await db.prepare('UPDATE leads SET converted = 1, updated_at = datetime(?) WHERE id = ?').bind(new Date().toISOString(), leadId).run()
     return c.json({ success: true, checkoutUrl: session.url, sessionId: session.id })
-  } catch (err) { return c.json({ success: false, error: 'Checkout error' }, 500) }
+  } catch (err: any) { return c.json({ success: false, error: err.message || 'Checkout error' }, 500) }
+})
+
+// ─── STRIPE WEBHOOK (payment confirmation → create client) ───
+app.post('/api/webhooks/stripe', async (c) => {
+  try {
+    const body = await c.req.text()
+    const event = JSON.parse(body) as any
+    const db = c.env.DB
+    if (event.type === 'checkout.session.completed') {
+      const session = event.data.object
+      const email = session.customer_email || session.customer_details?.email
+      const name = session.metadata?.customer_name || 'Client'
+      const plan = session.metadata?.plan || 'basic'
+      const leadId = session.metadata?.lead_id ? parseInt(session.metadata.lead_id) : null
+      if (email) {
+        // Check if client exists
+        const existing = await db.prepare('SELECT id FROM clients WHERE email = ?').bind(email).first()
+        if (!existing) {
+          // Generate temp password (client will reset later)
+          const tempPass = crypto.getRandomValues(new Uint8Array(8)).reduce((a, b) => a + b.toString(36), '')
+          const passHash = await hashPassword(tempPass)
+          await db.prepare(
+            'INSERT INTO clients (email, password_hash, name, plan, status, stripe_customer_id, stripe_subscription_id, lead_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+          ).bind(email, passHash, name, plan, 'active', session.customer || null, session.subscription || null, leadId).run()
+          const client = await db.prepare('SELECT id FROM clients WHERE email = ?').bind(email).first() as any
+          // Record payment
+          if (client) {
+            await db.prepare('INSERT INTO payments (client_id, amount, stripe_payment_id, stripe_session_id, plan, type, status) VALUES (?, ?, ?, ?, ?, ?, ?)').bind(client.id, session.amount_total / 100, session.payment_intent, session.id, plan, 'one-time', 'completed').run()
+            // Create initial documents
+            await db.prepare("INSERT INTO documents (client_id, name, type, category) VALUES (?, 'Forensic 3-Bureau Audit Report', 'PDF', 'audit')").bind(client.id).run()
+            await db.prepare("INSERT INTO documents (client_id, name, type, category) VALUES (?, '10-Point Restoration Roadmap', 'PDF', 'roadmap')").bind(client.id).run()
+            await db.prepare("INSERT INTO documents (client_id, name, type, category) VALUES (?, 'CROA Disclosure Agreement', 'PDF', 'legal')").bind(client.id).run()
+            // Track referral conversion
+            if (leadId) {
+              const ref = await db.prepare('SELECT id, partner_id FROM referrals WHERE lead_id = ?').bind(leadId).first() as any
+              if (ref) {
+                const commissionRate = plan === 'premium' ? 60 : plan === 'professional' ? 45 : 30
+                await db.prepare('UPDATE referrals SET client_id = ?, status = ?, commission_amount = ? WHERE id = ?').bind(client.id, 'converted', commissionRate, ref.id).run()
+                await db.prepare('UPDATE partners SET total_conversions = total_conversions + 1, total_commission = total_commission + ?, updated_at = datetime(?) WHERE id = ?').bind(commissionRate, new Date().toISOString(), ref.partner_id).run()
+              }
+            }
+          }
+        }
+        // Track analytics
+        await db.prepare('INSERT INTO analytics (event, page, plan, visitor_id, metadata) VALUES (?, ?, ?, ?, ?)').bind('payment_completed', 'checkout', plan, email, JSON.stringify({ session_id: session.id, amount: session.amount_total })).run()
+      }
+    }
+    return c.json({ received: true })
+  } catch (err: any) { return c.json({ error: err.message }, 500) }
+})
+
+// ─── CLIENT AUTH: Register ───
+app.post('/api/auth/register', async (c) => {
+  try {
+    const { email, password, name, phone, plan } = await c.req.json()
+    if (!email || !password || !name) return c.json({ success: false, error: 'Email, password and name required' }, 400)
+    if (password.length < 8) return c.json({ success: false, error: 'Password must be at least 8 characters' }, 400)
+    const db = c.env.DB
+    const exists = await db.prepare('SELECT id FROM clients WHERE email = ?').bind(email).first()
+    if (exists) return c.json({ success: false, error: 'Email already registered' }, 409)
+    const passHash = await hashPassword(password)
+    await db.prepare(
+      'INSERT INTO clients (email, password_hash, name, phone, plan, status) VALUES (?, ?, ?, ?, ?, ?)'
+    ).bind(email, passHash, name, phone || null, plan || 'basic', 'active').run()
+    const client = await db.prepare('SELECT id, email, name, plan, status FROM clients WHERE email = ?').bind(email).first() as any
+    const token = await signJWT({ sub: client.id, email: client.email, role: 'client' }, c.env.JWT_SECRET || 'rj-itin-default-secret-2026')
+    return c.json({ success: true, token, client: { id: client.id, email: client.email, name: client.name, plan: client.plan } })
+  } catch (err: any) { return c.json({ success: false, error: err.message || 'Registration failed' }, 500) }
+})
+
+// ─── CLIENT AUTH: Login ───
+app.post('/api/auth/login', async (c) => {
+  try {
+    const { email, password } = await c.req.json()
+    if (!email || !password) return c.json({ success: false, error: 'Email and password required' }, 400)
+    const db = c.env.DB
+    const client = await db.prepare('SELECT id, email, name, password_hash, plan, status, score_tu, score_eq, score_ex, score_tu_start, score_eq_start, score_ex_start, items_removed, disputes_active, disputes_total, current_round FROM clients WHERE email = ?').bind(email).first() as any
+    if (!client) return c.json({ success: false, error: 'Invalid credentials' }, 401)
+    if (client.status !== 'active') return c.json({ success: false, error: 'Account is not active' }, 403)
+    const valid = await verifyPassword(password, client.password_hash)
+    if (!valid) return c.json({ success: false, error: 'Invalid credentials' }, 401)
+    const token = await signJWT({ sub: client.id, email: client.email, role: 'client' }, c.env.JWT_SECRET || 'rj-itin-default-secret-2026')
+    return c.json({
+      success: true, token,
+      client: { id: client.id, email: client.email, name: client.name, plan: client.plan, score_tu: client.score_tu, score_eq: client.score_eq, score_ex: client.score_ex, score_tu_start: client.score_tu_start, score_eq_start: client.score_eq_start, score_ex_start: client.score_ex_start, items_removed: client.items_removed, disputes_active: client.disputes_active, disputes_total: client.disputes_total, current_round: client.current_round }
+    })
+  } catch (err: any) { return c.json({ success: false, error: err.message || 'Login failed' }, 500) }
+})
+
+// ─── CLIENT PORTAL DATA (authenticated) ───
+app.get('/api/portal/dashboard', async (c) => {
+  try {
+    const auth = c.req.header('Authorization')?.replace('Bearer ', '')
+    if (!auth) return c.json({ success: false, error: 'Unauthorized' }, 401)
+    const payload = await verifyJWT(auth, c.env.JWT_SECRET || 'rj-itin-default-secret-2026')
+    if (!payload) return c.json({ success: false, error: 'Invalid or expired token' }, 401)
+    const db = c.env.DB
+    const client = await db.prepare('SELECT id, email, name, plan, status, score_tu, score_eq, score_ex, score_tu_start, score_eq_start, score_ex_start, items_removed, disputes_active, disputes_total, current_round, created_at FROM clients WHERE id = ?').bind(payload.sub).first() as any
+    if (!client) return c.json({ success: false, error: 'Client not found' }, 404)
+    // Get disputes
+    const disputes = await db.prepare('SELECT id, item_name, bureau, account_type, amount, status, round, dispute_reason, fcra_section, letter_sent_at, response_at, result, created_at FROM disputes WHERE client_id = ? ORDER BY created_at DESC').bind(client.id).all()
+    // Get documents
+    const documents = await db.prepare('SELECT id, name, type, category, file_key, uploaded_at FROM documents WHERE client_id = ? ORDER BY uploaded_at DESC').bind(client.id).all()
+    // Get score history
+    const scoreHistory = await db.prepare('SELECT score_tu, score_eq, score_ex, recorded_at FROM score_history WHERE client_id = ? ORDER BY recorded_at DESC LIMIT 12').bind(client.id).all()
+    // Get payments
+    const payments = await db.prepare('SELECT amount, plan, type, status, created_at FROM payments WHERE client_id = ? ORDER BY created_at DESC LIMIT 10').bind(client.id).all()
+    // Compute current avg score
+    const avgScore = Math.round(((client.score_tu || 0) + (client.score_eq || 0) + (client.score_ex || 0)) / 3) || null
+    const avgStart = Math.round(((client.score_tu_start || 0) + (client.score_eq_start || 0) + (client.score_ex_start || 0)) / 3) || null
+    const scoreChange = (avgScore && avgStart) ? avgScore - avgStart : null
+    return c.json({
+      success: true,
+      data: {
+        client: { id: client.id, email: client.email, name: client.name, plan: client.plan, status: client.status, current_round: client.current_round, created_at: client.created_at },
+        scores: { tu: client.score_tu, eq: client.score_eq, ex: client.score_ex, tu_start: client.score_tu_start, eq_start: client.score_eq_start, ex_start: client.score_ex_start, average: avgScore, change: scoreChange },
+        kpis: { current_score: avgScore, score_change: scoreChange, disputes_active: client.disputes_active, items_removed: client.items_removed },
+        disputes: disputes.results,
+        documents: documents.results,
+        scoreHistory: scoreHistory.results,
+        payments: payments.results
+      }
+    })
+  } catch (err: any) { return c.json({ success: false, error: err.message || 'Dashboard error' }, 500) }
+})
+
+// ─── RICKBOT AI (OpenAI-powered) ───
+app.post('/api/rickbot', async (c) => {
+  try {
+    const { message, locale, sessionId } = await c.req.json()
+    if (!message) return c.json({ success: false, error: 'Message required' }, 400)
+    const db = c.env.DB
+    const sid = sessionId || crypto.randomUUID()
+    // Save user message
+    await db.prepare('INSERT INTO rickbot_logs (session_id, role, message, locale) VALUES (?, ?, ?, ?)').bind(sid, 'user', message, locale || 'en').run()
+    // Get conversation context (last 10 messages)
+    const history = await db.prepare('SELECT role, message FROM rickbot_logs WHERE session_id = ? ORDER BY created_at DESC LIMIT 10').bind(sid).all()
+    const messages = [
+      {
+        role: 'system',
+        content: `You are RickBot, the AI credit repair assistant for RJ Business Solutions, owned by Rick Jefferson — the nation's leading ITIN credit repair expert. You help ITIN holders understand their credit rights under FCRA, ECOA, FDCPA, and CROA. You are bilingual (English/Spanish). Key facts:
+- ITIN holders have the EXACT same credit repair rights as SSN holders under federal law
+- All 3 bureaus (TransUnion, Equifax, Experian) accept ITIN numbers
+- RJ Business Solutions offers 3 plans: Basic ($99/mo, up to 15 disputes), Professional ($149/mo, up to 25 disputes), Premium ($199/mo, up to 40 disputes)
+- All plans include a Forensic 3-Bureau Audit, FCRA+ECOA dispute letters, and 90-day money-back guarantee
+- Clients must enroll in MyFreeScoreNow ($29.99/mo) for credit monitoring: https://app.myfreescorenow.com/enroll/B01A8289
+- Contact: rickjefferson@rickjeffersonsolutions.com
+- Website: https://rickjeffersonsolutions.com
+- Address: 1342 NM 333, Tijeras, NM 87059
+Be helpful, professional, and encouraging. If asked about specific account details, direct them to the Client Portal. ${locale === 'es' ? 'Respond in Spanish.' : 'Respond in English.'}`
+      },
+      ...((history.results || []) as any[]).reverse().map((m: any) => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.message }))
+    ]
+    // Call OpenAI
+    if (!c.env.OPENAI_API_KEY) {
+      // Fallback without API key
+      const fallback = locale === 'es'
+        ? 'Gracias por tu pregunta. Para asistencia personalizada con la reparacion de credito ITIN, contacta a Rick Jefferson en rickjefferson@rickjeffersonsolutions.com o elige un plan en nuestra pagina.'
+        : 'Thanks for your question! For personalized ITIN credit repair help, contact Rick Jefferson at rickjefferson@rickjeffersonsolutions.com or choose a plan on our homepage.'
+      await db.prepare('INSERT INTO rickbot_logs (session_id, role, message, locale) VALUES (?, ?, ?, ?)').bind(sid, 'assistant', fallback, locale || 'en').run()
+      return c.json({ success: true, reply: fallback, sessionId: sid })
+    }
+    const aiRes = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${c.env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'gpt-4o-mini', messages, max_tokens: 500, temperature: 0.7 })
+    })
+    const aiData = await aiRes.json() as any
+    const reply = aiData.choices?.[0]?.message?.content || (locale === 'es' ? 'Lo siento, no pude procesar tu pregunta. Contacta a rickjefferson@rickjeffersonsolutions.com' : 'Sorry, I could not process your question. Contact rickjefferson@rickjeffersonsolutions.com')
+    // Save assistant reply
+    await db.prepare('INSERT INTO rickbot_logs (session_id, role, message, locale) VALUES (?, ?, ?, ?)').bind(sid, 'assistant', reply, locale || 'en').run()
+    return c.json({ success: true, reply, sessionId: sid })
+  } catch (err: any) { return c.json({ success: false, error: err.message || 'RickBot error' }, 500) }
+})
+
+// ─── PARTNER AUTH: Register ───
+app.post('/api/partners/register', async (c) => {
+  try {
+    const { name, email, password, company, phone, payout_email } = await c.req.json()
+    if (!name || !email || !password) return c.json({ success: false, error: 'Name, email and password required' }, 400)
+    const db = c.env.DB
+    const exists = await db.prepare('SELECT id FROM partners WHERE email = ?').bind(email).first()
+    if (exists) return c.json({ success: false, error: 'Email already registered' }, 409)
+    const passHash = await hashPassword(password)
+    const refCode = 'RJ-' + crypto.getRandomValues(new Uint8Array(4)).reduce((a, b) => a + b.toString(36).toUpperCase(), '')
+    await db.prepare(
+      'INSERT INTO partners (name, email, password_hash, company, phone, ref_code, status, payout_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+    ).bind(name, email, passHash, company || null, phone || null, refCode, 'active', payout_email || email).run()
+    const partner = await db.prepare('SELECT id, name, email, ref_code, tier, status FROM partners WHERE email = ?').bind(email).first() as any
+    const token = await signJWT({ sub: partner.id, email: partner.email, role: 'partner' }, c.env.JWT_SECRET || 'rj-itin-default-secret-2026')
+    return c.json({ success: true, token, partner: { id: partner.id, name: partner.name, email: partner.email, ref_code: partner.ref_code, tier: partner.tier } })
+  } catch (err: any) { return c.json({ success: false, error: err.message || 'Registration failed' }, 500) }
+})
+
+// ─── PARTNER AUTH: Login ───
+app.post('/api/partners/login', async (c) => {
+  try {
+    const { email, password } = await c.req.json()
+    if (!email || !password) return c.json({ success: false, error: 'Email and password required' }, 400)
+    const db = c.env.DB
+    const partner = await db.prepare('SELECT id, name, email, password_hash, ref_code, tier, status, total_referrals, total_conversions, total_commission, commission_paid FROM partners WHERE email = ?').bind(email).first() as any
+    if (!partner) return c.json({ success: false, error: 'Invalid credentials' }, 401)
+    const valid = await verifyPassword(password, partner.password_hash)
+    if (!valid) return c.json({ success: false, error: 'Invalid credentials' }, 401)
+    const token = await signJWT({ sub: partner.id, email: partner.email, role: 'partner' }, c.env.JWT_SECRET || 'rj-itin-default-secret-2026')
+    return c.json({ success: true, token, partner: { id: partner.id, name: partner.name, email: partner.email, ref_code: partner.ref_code, tier: partner.tier, total_referrals: partner.total_referrals, total_conversions: partner.total_conversions, total_commission: partner.total_commission, commission_paid: partner.commission_paid } })
+  } catch (err: any) { return c.json({ success: false, error: err.message || 'Login failed' }, 500) }
+})
+
+// ─── PARTNER DASHBOARD DATA (authenticated) ───
+app.get('/api/partners/dashboard', async (c) => {
+  try {
+    const auth = c.req.header('Authorization')?.replace('Bearer ', '')
+    if (!auth) return c.json({ success: false, error: 'Unauthorized' }, 401)
+    const payload = await verifyJWT(auth, c.env.JWT_SECRET || 'rj-itin-default-secret-2026')
+    if (!payload || payload.role !== 'partner') return c.json({ success: false, error: 'Unauthorized' }, 401)
+    const db = c.env.DB
+    const partner = await db.prepare('SELECT * FROM partners WHERE id = ?').bind(payload.sub).first() as any
+    if (!partner) return c.json({ success: false, error: 'Partner not found' }, 404)
+    const referrals = await db.prepare('SELECT r.*, l.name as lead_name, l.email as lead_email, l.plan as lead_plan FROM referrals r LEFT JOIN leads l ON r.lead_id = l.id WHERE r.partner_id = ? ORDER BY r.created_at DESC LIMIT 50').bind(partner.id).all()
+    return c.json({
+      success: true,
+      data: {
+        partner: { id: partner.id, name: partner.name, email: partner.email, ref_code: partner.ref_code, tier: partner.tier, total_referrals: partner.total_referrals, total_conversions: partner.total_conversions, total_commission: partner.total_commission, commission_paid: partner.commission_paid },
+        referrals: referrals.results,
+        referralLink: `https://rj-itin-funnels.pages.dev/en?ref=${partner.ref_code}`
+      }
+    })
+  } catch (err: any) { return c.json({ success: false, error: err.message || 'Dashboard error' }, 500) }
 })
 
 // ═══════════════════════════════════════════════════════════════
@@ -3209,7 +3522,7 @@ for (const loc of SUPPORTED_LOCALES) {
           <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:1rem">${loc === 'es' ? 'Acceder a tu Portal' : 'Access Your Portal'}</h3>
           <form onsubmit="portalLogin(event)">
             <div class="fg2"><label style="color:#d1d5db;font-size:.82rem;font-weight:600;display:block;margin-bottom:.35rem">Email</label><input type="email" id="portal-email" required style="width:100%;padding:.8rem 1rem;background:#1f2937;border:1px solid #374151;border-radius:.6rem;color:#fff;font-size:.95rem;outline:none"></div>
-            <div class="fg2" style="margin-top:.75rem"><label style="color:#d1d5db;font-size:.82rem;font-weight:600;display:block;margin-bottom:.35rem">${loc === 'es' ? 'ID de Cliente' : 'Client ID'}</label><input type="text" id="portal-id" required style="width:100%;padding:.8rem 1rem;background:#1f2937;border:1px solid #374151;border-radius:.6rem;color:#fff;font-size:.95rem;outline:none"></div>
+            <div class="fg2" style="margin-top:.75rem"><label style="color:#d1d5db;font-size:.82rem;font-weight:600;display:block;margin-bottom:.35rem">${loc === 'es' ? 'Contraseña' : 'Password'}</label><input type="password" id="portal-id" required style="width:100%;padding:.8rem 1rem;background:#1f2937;border:1px solid #374151;border-radius:.6rem;color:#fff;font-size:.95rem;outline:none"></div>
             <button type="submit" style="width:100%;margin-top:1rem;padding:.9rem;background:linear-gradient(135deg,#3b82f6,#06b6d4);color:#fff;font-weight:800;font-size:1rem;border-radius:.65rem;border:none;cursor:pointer">${loc === 'es' ? 'Entrar al Portal' : 'Enter Portal'}</button>
           </form>
           <p style="color:#6b7280;font-size:.72rem;margin-top:.75rem">${loc === 'es' ? '¿Nuevo cliente? Elige tu plan primero.' : 'New client? Choose your plan first.'} <a href="/${loc}#plans" style="color:#60a5fa">→ Plans</a></p>
@@ -3312,24 +3625,8 @@ for (const loc of SUPPORTED_LOCALES) {
           <div id="tab-vault" class="tab-content" style="display:none">
             <div style="background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:2rem">
               <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:1.5rem">📁 ${loc === 'es' ? 'Bóveda de Documentos' : 'Document Vault'}</h3>
-              <div style="display:flex;flex-direction:column;gap:.75rem">
-                ${[
-                  {icon:'📄', name:loc==='es'?'Auditoría Forense 3-Agencias':'Forensic 3-Bureau Audit Report', date:'Feb 25, 2026', type:'PDF'},
-                  {icon:'📝', name:loc==='es'?'Ruta de Restauración':'10-Point Restoration Roadmap', date:'Feb 25, 2026', type:'PDF'},
-                  {icon:'📧', name:loc==='es'?'Cartas de Disputa (Ronda 1)':'Dispute Letters - Round 1', date:'Feb 28, 2026', type:'PDF'},
-                  {icon:'📊', name:loc==='es'?'Reporte de Progreso Mensual':'Monthly Progress Report', date:'Mar 25, 2026', type:'PDF'},
-                  {icon:'📋', name:loc==='es'?'Divulgación CROA':'CROA Disclosure Agreement', date:'Feb 25, 2026', type:'PDF'}
-                ].map(d => `
-                <div style="display:flex;align-items:center;justify-content:space-between;background:#1f2937;border:1px solid #374151;border-radius:.75rem;padding:.75rem 1rem;transition:all .2s" onmouseover="this.style.borderColor='#3b82f6'" onmouseout="this.style.borderColor='#374151'">
-                  <div style="display:flex;align-items:center;gap:.75rem">
-                    <span style="font-size:1.25rem">${d.icon}</span>
-                    <div>
-                      <div style="color:#d1d5db;font-size:.85rem;font-weight:600">${d.name}</div>
-                      <div style="color:#6b7280;font-size:.72rem">${d.date} · ${d.type}</div>
-                    </div>
-                  </div>
-                  <button style="background:rgba(59,130,246,.15);color:#60a5fa;padding:.4rem .75rem;border-radius:.4rem;font-size:.75rem;font-weight:600;border:1px solid rgba(59,130,246,.3);cursor:pointer">Download</button>
-                </div>`).join('')}
+              <div id="doc-list" style="display:flex;flex-direction:column;gap:.75rem">
+                <div style="color:#9ca3af;text-align:center;padding:2rem;font-size:.88rem">${loc === 'es' ? 'Los documentos aparecerán aquí después de iniciar sesión' : 'Documents will appear here after login'}</div>
               </div>
             </div>
           </div>
@@ -3337,40 +3634,105 @@ for (const loc of SUPPORTED_LOCALES) {
       </div>
     </section>
     <script>
-    function portalLogin(e){
+    let portalToken = null;
+    async function portalLogin(e){
       e.preventDefault();
-      document.getElementById('portal-login').style.display='none';
-      document.getElementById('portal-dashboard').style.display='block';
-      // Simulate loading dashboard data
-      setTimeout(()=>{
-        document.getElementById('dash-score').textContent='687';
-        document.getElementById('dash-change').textContent='+43';
-        document.getElementById('dash-disputes').textContent='8';
-        document.getElementById('dash-removed').textContent='5';
-        [['68,100','#3b82f6','+38'],['72,100','#8b5cf6','+47'],['65,100','#22d3ee','+41']].forEach(([dash,color,change],i)=>{
-          document.getElementById('bureau-ring-'+i).setAttribute('stroke-dasharray',dash);
-          document.getElementById('bureau-score-'+i).textContent=['672','701','688'][i];
-          document.getElementById('bureau-change-'+i).innerHTML='<span style="color:#4ade80">'+change+' pts</span>';
+      const email = document.getElementById('portal-email').value;
+      const password = document.getElementById('portal-id').value;
+      const btn = e.target.querySelector('button[type=submit]');
+      btn.textContent = '${loc === 'es' ? 'Verificando...' : 'Verifying...'}';
+      btn.disabled = true;
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ email, password })
         });
-        // Load disputes
-        document.getElementById('dispute-list').innerHTML=[
-          {item:'Capital One Collection $2,340',bureau:'TransUnion',status:'Removed',color:'#4ade80'},
-          {item:'Late Payment - Chase Visa',bureau:'Equifax',status:'Under Investigation',color:'#f59e0b'},
-          {item:'Medical Collection $890',bureau:'Experian',status:'Under Investigation',color:'#f59e0b'},
-          {item:'Hard Inquiry - Unknown Lender',bureau:'TransUnion',status:'Dispute Sent',color:'#3b82f6'},
-          {item:'Midland Credit Collection $1,200',bureau:'All 3 Bureaus',status:'Removed',color:'#4ade80'},
-          {item:'Student Loan Late Payment',bureau:'Equifax',status:'Dispute Sent',color:'#3b82f6'},
-          {item:'AT&T Collection $340',bureau:'Experian',status:'Removed',color:'#4ade80'},
-          {item:'Unauthorized Hard Pull',bureau:'TransUnion',status:'Under Investigation',color:'#f59e0b'}
-        ].map(d=>'<div style="display:flex;align-items:center;justify-content:space-between;background:#1f2937;border:1px solid #374151;border-radius:.75rem;padding:.75rem 1rem"><div><div style="color:#d1d5db;font-size:.85rem;font-weight:600">'+d.item+'</div><div style="color:#6b7280;font-size:.72rem">'+d.bureau+'</div></div><span style="background:'+d.color+'22;color:'+d.color+';font-size:.72rem;font-weight:700;padding:.25rem .65rem;border-radius:999px;border:1px solid '+d.color+'44">'+d.status+'</span></div>').join('');
-      },600);
+        const data = await res.json();
+        if (!data.success) {
+          alert(data.error || '${loc === 'es' ? 'Credenciales invalidas' : 'Invalid credentials'}');
+          btn.textContent = '${loc === 'es' ? 'Entrar al Portal' : 'Enter Portal'}';
+          btn.disabled = false;
+          return;
+        }
+        portalToken = data.token;
+        localStorage.setItem('rj_portal_token', data.token);
+        document.getElementById('portal-login').style.display='none';
+        document.getElementById('portal-dashboard').style.display='block';
+        loadDashboard();
+      } catch(err) {
+        alert('${loc === 'es' ? 'Error de conexion. Intenta de nuevo.' : 'Connection error. Please try again.'}');
+        btn.textContent = '${loc === 'es' ? 'Entrar al Portal' : 'Enter Portal'}';
+        btn.disabled = false;
+      }
+    }
+    async function loadDashboard(){
+      try {
+        const token = portalToken || localStorage.getItem('rj_portal_token');
+        if (!token) return;
+        const res = await fetch('/api/portal/dashboard', { headers: {'Authorization': 'Bearer ' + token} });
+        const data = await res.json();
+        if (!data.success) { localStorage.removeItem('rj_portal_token'); return; }
+        const d = data.data;
+        // KPIs
+        document.getElementById('dash-score').textContent = d.kpis.current_score || '—';
+        document.getElementById('dash-change').textContent = d.kpis.score_change ? (d.kpis.score_change > 0 ? '+' + d.kpis.score_change : d.kpis.score_change) : '—';
+        document.getElementById('dash-disputes').textContent = d.kpis.disputes_active || '0';
+        document.getElementById('dash-removed').textContent = d.kpis.items_removed || '0';
+        // Bureau scores
+        const bureaus = [
+          { score: d.scores.tu, start: d.scores.tu_start, color: '#3b82f6' },
+          { score: d.scores.eq, start: d.scores.eq_start, color: '#8b5cf6' },
+          { score: d.scores.ex, start: d.scores.ex_start, color: '#22d3ee' }
+        ];
+        bureaus.forEach((b, i) => {
+          const pct = b.score ? Math.round((b.score / 850) * 100) : 0;
+          document.getElementById('bureau-ring-' + i).setAttribute('stroke-dasharray', pct + ',100');
+          document.getElementById('bureau-score-' + i).textContent = b.score || '—';
+          const change = (b.score && b.start) ? b.score - b.start : null;
+          document.getElementById('bureau-change-' + i).innerHTML = change ? '<span style="color:' + (change > 0 ? '#4ade80' : '#ef4444') + '">' + (change > 0 ? '+' : '') + change + ' pts</span>' : '';
+        });
+        // Disputes
+        const statusColors = { removed: '#4ade80', verified: '#4ade80', 'under investigation': '#f59e0b', pending: '#f59e0b', 'dispute sent': '#3b82f6', active: '#3b82f6', denied: '#ef4444' };
+        if (d.disputes && d.disputes.length > 0) {
+          document.getElementById('dispute-list').innerHTML = d.disputes.map(function(dis) {
+            const color = statusColors[(dis.status || '').toLowerCase()] || '#9ca3af';
+            const amt = dis.amount ? ' $' + Number(dis.amount).toLocaleString() : '';
+            return '<div style="display:flex;align-items:center;justify-content:space-between;background:#1f2937;border:1px solid #374151;border-radius:.75rem;padding:.75rem 1rem"><div><div style="color:#d1d5db;font-size:.85rem;font-weight:600">' + dis.item_name + amt + '</div><div style="color:#6b7280;font-size:.72rem">' + dis.bureau + (dis.fcra_section ? ' · ' + dis.fcra_section : '') + '</div></div><span style="background:' + color + '22;color:' + color + ';font-size:.72rem;font-weight:700;padding:.25rem .65rem;border-radius:999px;border:1px solid ' + color + '44">' + dis.status + '</span></div>';
+          }).join('');
+        } else {
+          document.getElementById('dispute-list').innerHTML = '<div style="color:#9ca3af;text-align:center;padding:2rem;font-size:.88rem">${loc === 'es' ? 'No hay disputas aun. Tu auditoria esta en proceso.' : 'No disputes yet. Your audit is in progress.'}</div>';
+        }
+        // Documents
+        if (d.documents && d.documents.length > 0) {
+          const docContainer = document.querySelector('#tab-vault .tab-content-inner, #tab-vault > div > div:last-child');
+          const docList = document.getElementById('doc-list');
+          if (docList) {
+            docList.innerHTML = d.documents.map(function(doc) {
+              const icons = { audit: '📄', roadmap: '📝', dispute: '📧', progress: '📊', legal: '📋' };
+              const icon = icons[doc.category] || '📄';
+              return '<div style="display:flex;align-items:center;justify-content:space-between;background:#1f2937;border:1px solid #374151;border-radius:.75rem;padding:.75rem 1rem"><div style="display:flex;align-items:center;gap:.75rem"><span style="font-size:1.25rem">' + icon + '</span><div><div style="color:#d1d5db;font-size:.85rem;font-weight:600">' + doc.name + '</div><div style="color:#6b7280;font-size:.72rem">' + (doc.uploaded_at || '').split('T')[0] + ' · ' + doc.type + '</div></div></div><button style="background:rgba(59,130,246,.15);color:#60a5fa;padding:.4rem .75rem;border-radius:.4rem;font-size:.75rem;font-weight:600;border:1px solid rgba(59,130,246,.3);cursor:pointer">Download</button></div>';
+            }).join('');
+          }
+        }
+      } catch(err) { console.error('Dashboard load error:', err); }
     }
     function showTab(name){
-      document.querySelectorAll('.tab-content').forEach(el=>el.style.display='none');
-      document.querySelectorAll('.tab-btn').forEach(el=>{el.style.background='#1f2937';el.style.color='#9ca3af';el.style.border='1px solid #374151'});
+      document.querySelectorAll('.tab-content').forEach(function(el){el.style.display='none'});
+      document.querySelectorAll('.tab-btn').forEach(function(el){el.style.background='#1f2937';el.style.color='#9ca3af';el.style.border='1px solid #374151'});
       document.getElementById('tab-'+name).style.display='block';
       event.target.style.background='#3b82f6';event.target.style.color='#fff';event.target.style.border='none';
     }
+    // Auto-login if token exists
+    (function(){
+      const token = localStorage.getItem('rj_portal_token');
+      if (token) {
+        portalToken = token;
+        document.getElementById('portal-login').style.display='none';
+        document.getElementById('portal-dashboard').style.display='block';
+        loadDashboard();
+      }
+    })();
     </script>
     `, { description: 'Client portal for ITIN credit repair — track score progress, dispute status, download documents, view restoration roadmap.', canonical: `https://rj-itin-funnels.pages.dev/${loc}/portal`, keywords: 'ITIN credit repair portal, client dashboard, dispute tracker, credit score progress' }))
   })
@@ -3775,7 +4137,47 @@ for (const loc of SUPPORTED_LOCALES) {
 // GAP 9 — OWNER ANALYTICS DASHBOARD (Admin)
 // ═══════════════════════════════════════════════════════════════
 app.get('/admin', (c) => c.redirect('/admin/analytics'))
-app.get('/admin/analytics', (c) => {
+app.get('/admin/analytics', async (c) => {
+  const db = c.env.DB
+  // Query all real stats from D1
+  const [clientCount, leadCount, disputeCount, removedCount, paymentSum, recentLeads, planDist, partnerStats] = await Promise.all([
+    db.prepare("SELECT COUNT(*) as cnt FROM clients WHERE status = 'active'").first() as Promise<any>,
+    db.prepare("SELECT COUNT(*) as cnt FROM leads").first() as Promise<any>,
+    db.prepare("SELECT COUNT(*) as cnt FROM disputes WHERE status != 'removed' AND status != 'verified'").first() as Promise<any>,
+    db.prepare("SELECT COUNT(*) as cnt FROM disputes WHERE status IN ('removed','verified')").first() as Promise<any>,
+    db.prepare("SELECT COALESCE(SUM(amount),0) as total FROM payments WHERE status = 'completed'").first() as Promise<any>,
+    db.prepare("SELECT name, email, plan, created_at FROM leads ORDER BY created_at DESC LIMIT 10").all(),
+    db.prepare("SELECT plan, COUNT(*) as cnt FROM clients WHERE status = 'active' GROUP BY plan").all(),
+    db.prepare("SELECT tier, COUNT(*) as cnt, COALESCE(SUM(total_referrals),0) as refs, COALESCE(SUM(total_commission),0) as comm FROM partners GROUP BY tier").all()
+  ])
+  const totalClients = clientCount?.cnt || 0
+  const totalLeads = leadCount?.cnt || 0
+  const activeDisputes = disputeCount?.cnt || 0
+  const itemsRemoved = removedCount?.cnt || 0
+  const totalRevenue = paymentSum?.total || 0
+  const totalDisputes = activeDisputes + itemsRemoved
+  const successRate = totalDisputes > 0 ? ((itemsRemoved / totalDisputes) * 100).toFixed(1) : '0.0'
+  const convRate = totalLeads > 0 ? ((totalClients / totalLeads) * 100).toFixed(1) : '0.0'
+  // Plan distribution
+  const planMap: Record<string, number> = {}
+  for (const p of (planDist.results || []) as any[]) { planMap[p.plan] = p.cnt }
+  const basicClients = planMap['basic'] || 0
+  const proClients = planMap['professional'] || 0
+  const premClients = planMap['premium'] || 0
+  // Partner tiers
+  const tierMap: Record<string, any> = {}
+  for (const p of (partnerStats.results || []) as any[]) { tierMap[p.tier] = p }
+  // Recent leads
+  const leads = (recentLeads.results || []) as any[]
+  function timeSince(dateStr: string) {
+    const diff = Date.now() - new Date(dateStr + 'Z').getTime()
+    if (diff < 60000) return 'just now'
+    if (diff < 3600000) return Math.floor(diff / 60000) + ' min ago'
+    if (diff < 86400000) return Math.floor(diff / 3600000) + ' hr ago'
+    return Math.floor(diff / 86400000) + ' day(s) ago'
+  }
+  const planColors: Record<string, string> = { basic: '#3b82f6', professional: '#8b5cf6', premium: '#f59e0b' }
+
   return c.html(`<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -3790,7 +4192,6 @@ app.get('/admin/analytics', (c) => {
     .kpi-card{background:#111827;border:1px solid #1f2937;border-radius:1rem;padding:1.5rem;text-align:center}
     .kpi-val{font-size:2rem;font-weight:900;margin:.5rem 0}
     .kpi-label{color:#9ca3af;font-size:.82rem}
-    .kpi-change{font-size:.78rem;font-weight:600}
     .section{padding:0 2rem 2rem}
     .chart-container{background:#111827;border:1px solid #1f2937;border-radius:1rem;padding:1.5rem}
     table{width:100%;border-collapse:collapse;font-size:.85rem}
@@ -3800,45 +4201,30 @@ app.get('/admin/analytics', (c) => {
 </head>
 <body>
   <div class="admin-header">
-    <div><strong style="font-size:1.1rem">📊 RJ Analytics</strong><br><span style="color:#9ca3af;font-size:.78rem">Real-Time Business Dashboard</span></div>
+    <div><strong style="font-size:1.1rem">📊 RJ Analytics</strong><br><span style="color:#9ca3af;font-size:.78rem">Real-Time Production Dashboard — D1 Database</span></div>
     <div style="display:flex;gap:1rem;align-items:center">
-      <span style="color:#4ade80;font-size:.78rem">● Live</span>
+      <span style="color:#4ade80;font-size:.78rem">● Live Production</span>
       <a href="/en" style="color:#60a5fa;font-size:.82rem">← Back to Site</a>
     </div>
   </div>
 
-  <!-- KPIs -->
+  <!-- KPIs from D1 -->
   <div class="admin-grid">
-    <div class="kpi-card"><div style="font-size:1.25rem">💰</div><div class="kpi-val" style="color:#4ade80">$47,850</div><div class="kpi-label">Monthly Revenue</div><div class="kpi-change" style="color:#4ade80">↑ 23.4%</div></div>
-    <div class="kpi-card"><div style="font-size:1.25rem">👥</div><div class="kpi-val" style="color:#3b82f6">312</div><div class="kpi-label">Active Clients</div><div class="kpi-change" style="color:#4ade80">↑ 18</div></div>
-    <div class="kpi-card"><div style="font-size:1.25rem">📈</div><div class="kpi-val" style="color:#8b5cf6">$12,840</div><div class="kpi-label">MRR (Monthly Recurring)</div><div class="kpi-change" style="color:#4ade80">↑ 12.1%</div></div>
-    <div class="kpi-card"><div style="font-size:1.25rem">📝</div><div class="kpi-val" style="color:#f59e0b">1,847</div><div class="kpi-label">Active Disputes</div><div class="kpi-change" style="color:#4ade80">↑ 234</div></div>
-    <div class="kpi-card"><div style="font-size:1.25rem">✅</div><div class="kpi-val" style="color:#22d3ee">67.3%</div><div class="kpi-label">Dispute Success Rate</div><div class="kpi-change" style="color:#4ade80">↑ 2.1%</div></div>
-    <div class="kpi-card"><div style="font-size:1.25rem">🔄</div><div class="kpi-val" style="color:#ec4899">8.4%</div><div class="kpi-label">Conversion Rate</div><div class="kpi-change" style="color:#4ade80">↑ 1.2%</div></div>
+    <div class="kpi-card"><div style="font-size:1.25rem">💰</div><div class="kpi-val" style="color:#4ade80">$${totalRevenue.toLocaleString()}</div><div class="kpi-label">Total Revenue</div></div>
+    <div class="kpi-card"><div style="font-size:1.25rem">👥</div><div class="kpi-val" style="color:#3b82f6">${totalClients}</div><div class="kpi-label">Active Clients</div></div>
+    <div class="kpi-card"><div style="font-size:1.25rem">📋</div><div class="kpi-val" style="color:#22d3ee">${totalLeads}</div><div class="kpi-label">Total Leads</div></div>
+    <div class="kpi-card"><div style="font-size:1.25rem">📝</div><div class="kpi-val" style="color:#f59e0b">${activeDisputes}</div><div class="kpi-label">Active Disputes</div></div>
+    <div class="kpi-card"><div style="font-size:1.25rem">✅</div><div class="kpi-val" style="color:#4ade80">${itemsRemoved}</div><div class="kpi-label">Items Removed</div></div>
+    <div class="kpi-card"><div style="font-size:1.25rem">🎯</div><div class="kpi-val" style="color:#ec4899">${successRate}%</div><div class="kpi-label">Dispute Success Rate</div></div>
   </div>
 
-  <!-- FUNNEL VISUALIZATION -->
+  <!-- FUNNEL -->
   <div class="section">
     <div class="chart-container">
-      <h3 style="font-size:1rem;font-weight:700;margin-bottom:1.5rem">🔄 Conversion Funnel</h3>
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:1.5rem">🔄 Conversion Funnel (Live)</h3>
       <div style="display:flex;flex-direction:column;gap:.75rem">
-        ${[
-          {stage:'Website Visitors',count:'15,240',pct:100,color:'#3b82f6'},
-          {stage:'Plan Page Views',count:'4,572',pct:30,color:'#8b5cf6'},
-          {stage:'Lead Captures',count:'1,829',pct:12,color:'#f59e0b'},
-          {stage:'MFSN Enrollments',count:'892',pct:5.9,color:'#22d3ee'},
-          {stage:'Audit Payments',count:'456',pct:3,color:'#4ade80'},
-          {stage:'Active Subscriptions',count:'312',pct:2,color:'#ec4899'}
-        ].map(f => `
-        <div style="display:flex;align-items:center;gap:1rem">
-          <div style="width:180px;color:#d1d5db;font-size:.82rem">${f.stage}</div>
-          <div style="flex:1;background:#1f2937;border-radius:.5rem;height:32px;overflow:hidden">
-            <div style="background:${f.color};height:100%;width:${f.pct}%;border-radius:.5rem;display:flex;align-items:center;padding:0 .75rem;min-width:60px">
-              <span style="font-size:.75rem;font-weight:700;white-space:nowrap">${f.count}</span>
-            </div>
-          </div>
-          <div style="width:50px;text-align:right;color:#9ca3af;font-size:.78rem">${f.pct}%</div>
-        </div>`).join('')}
+        <div style="display:flex;align-items:center;gap:1rem"><div style="width:180px;color:#d1d5db;font-size:.82rem">Total Leads</div><div style="flex:1;background:#1f2937;border-radius:.5rem;height:32px;overflow:hidden"><div style="background:#3b82f6;height:100%;width:100%;border-radius:.5rem;display:flex;align-items:center;padding:0 .75rem"><span style="font-size:.75rem;font-weight:700">${totalLeads}</span></div></div></div>
+        <div style="display:flex;align-items:center;gap:1rem"><div style="width:180px;color:#d1d5db;font-size:.82rem">Active Clients</div><div style="flex:1;background:#1f2937;border-radius:.5rem;height:32px;overflow:hidden"><div style="background:#4ade80;height:100%;width:${totalLeads > 0 ? Math.max(5, Math.round((totalClients / totalLeads) * 100)) : 5}%;border-radius:.5rem;display:flex;align-items:center;padding:0 .75rem;min-width:60px"><span style="font-size:.75rem;font-weight:700">${totalClients}</span></div></div><div style="width:50px;text-align:right;color:#9ca3af;font-size:.78rem">${convRate}%</div></div>
       </div>
     </div>
   </div>
@@ -3848,11 +4234,11 @@ app.get('/admin/analytics', (c) => {
     <div class="chart-container">
       <h3 style="font-size:1rem;font-weight:700;margin-bottom:1rem">📦 Plan Distribution</h3>
       <table>
-        <thead><tr><th>Plan</th><th>Clients</th><th>Revenue</th><th>Avg Score Δ</th></tr></thead>
+        <thead><tr><th>Plan</th><th>Clients</th><th>Revenue</th></tr></thead>
         <tbody>
-          <tr><td style="color:#3b82f6;font-weight:700">Basic $99</td><td>98</td><td>$9,702</td><td>+38</td></tr>
-          <tr><td style="color:#8b5cf6;font-weight:700">Professional $149</td><td>156</td><td>$23,244</td><td>+52</td></tr>
-          <tr><td style="color:#f59e0b;font-weight:700">Premium $199</td><td>58</td><td>$11,542</td><td>+71</td></tr>
+          <tr><td style="color:#3b82f6;font-weight:700">Basic $99</td><td>${basicClients}</td><td>$${(basicClients * 99).toLocaleString()}</td></tr>
+          <tr><td style="color:#8b5cf6;font-weight:700">Professional $149</td><td>${proClients}</td><td>$${(proClients * 149).toLocaleString()}</td></tr>
+          <tr><td style="color:#f59e0b;font-weight:700">Premium $199</td><td>${premClients}</td><td>$${(premClients * 199).toLocaleString()}</td></tr>
         </tbody>
       </table>
     </div>
@@ -3861,49 +4247,35 @@ app.get('/admin/analytics', (c) => {
       <table>
         <thead><tr><th>Name</th><th>Plan</th><th>Time</th></tr></thead>
         <tbody>
-          <tr><td>Maria G.</td><td style="color:#8b5cf6">Professional</td><td style="color:#9ca3af">2 min ago</td></tr>
-          <tr><td>Carlos R.</td><td style="color:#f59e0b">Premium</td><td style="color:#9ca3af">15 min ago</td></tr>
-          <tr><td>Ana L.</td><td style="color:#3b82f6">Basic</td><td style="color:#9ca3af">32 min ago</td></tr>
-          <tr><td>Roberto M.</td><td style="color:#8b5cf6">Professional</td><td style="color:#9ca3af">1 hr ago</td></tr>
-          <tr><td>Sandra P.</td><td style="color:#f59e0b">Premium</td><td style="color:#9ca3af">2 hr ago</td></tr>
+          ${leads.length > 0 ? leads.slice(0, 8).map((l: any) => `<tr><td>${(l.name || '').substring(0, 15)}</td><td style="color:${planColors[l.plan] || '#9ca3af'}">${(l.plan || 'basic').charAt(0).toUpperCase() + (l.plan || 'basic').slice(1)}</td><td style="color:#9ca3af">${timeSince(l.created_at)}</td></tr>`).join('') : '<tr><td colspan="3" style="text-align:center;color:#6b7280">No leads yet</td></tr>'}
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- LANGUAGE & PARTNER STATS -->
-  <div class="section" style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
-    <div class="chart-container">
-      <h3 style="font-size:1rem;font-weight:700;margin-bottom:1rem">🌐 Traffic by Language</h3>
-      <table>
-        <thead><tr><th>Language</th><th>Visitors</th><th>Conversions</th></tr></thead>
-        <tbody>
-          <tr><td>🇺🇸 English</td><td>8,940</td><td>287 (3.2%)</td></tr>
-          <tr><td>🇲🇽 Spanish</td><td>4,812</td><td>134 (2.8%)</td></tr>
-          <tr><td>🇧🇷 Portuguese</td><td>892</td><td>22 (2.5%)</td></tr>
-          <tr><td>🇫🇷 French</td><td>340</td><td>8 (2.4%)</td></tr>
-          <tr><td>🇭🇹 Haitian Creole</td><td>256</td><td>5 (2.0%)</td></tr>
-        </tbody>
-      </table>
-    </div>
+  <!-- PARTNER STATS -->
+  <div class="section">
     <div class="chart-container">
       <h3 style="font-size:1rem;font-weight:700;margin-bottom:1rem">🤝 Partner Performance</h3>
       <table>
         <thead><tr><th>Tier</th><th>Partners</th><th>Referrals</th><th>Commission</th></tr></thead>
         <tbody>
-          <tr><td style="color:#CD7F32">🥉 Bronze</td><td>24</td><td>87</td><td>$2,175</td></tr>
-          <tr><td style="color:#C0C0C0">🥈 Silver</td><td>8</td><td>134</td><td>$5,360</td></tr>
-          <tr><td style="color:#FFD700">🥇 Gold</td><td>3</td><td>112</td><td>$6,720</td></tr>
-          <tr><td style="color:#8b5cf6">💎 Enterprise</td><td>1</td><td>67</td><td>$5,360</td></tr>
+          ${['bronze','silver','gold','enterprise'].map(tier => {
+            const d = tierMap[tier] || { cnt: 0, refs: 0, comm: 0 }
+            const icons: Record<string, string> = { bronze: '🥉', silver: '🥈', gold: '🥇', enterprise: '💎' }
+            const colors: Record<string, string> = { bronze: '#CD7F32', silver: '#C0C0C0', gold: '#FFD700', enterprise: '#8b5cf6' }
+            return `<tr><td style="color:${colors[tier]}">${icons[tier]} ${tier.charAt(0).toUpperCase() + tier.slice(1)}</td><td>${d.cnt}</td><td>${d.refs}</td><td>$${Number(d.comm).toLocaleString()}</td></tr>`
+          }).join('')}
         </tbody>
       </table>
     </div>
   </div>
 
   <div style="text-align:center;padding:2rem;color:#6b7280;font-size:.72rem">
-    <p>&copy; 2026 RJ Business Solutions — Admin Analytics Dashboard</p>
-    <p>Data refreshes every 60 seconds · <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa">rickjefferson@rickjeffersonsolutions.com</a></p>
+    <p>&copy; 2026 RJ Business Solutions — Production Admin Dashboard</p>
+    <p>Data from Cloudflare D1 · <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa">rickjefferson@rickjeffersonsolutions.com</a></p>
   </div>
+  <script>setTimeout(function(){location.reload()},60000);</script>
 </body>
 </html>`)
 })
@@ -3913,74 +4285,96 @@ app.get('/admin/analytics', (c) => {
 // ═══════════════════════════════════════════════════════════════
 app.post('/api/email/send', async (c) => {
   try {
-    const { to, sequence, locale } = await c.req.json()
+    const { to, sequence, locale, name } = await c.req.json()
     if (!to || !sequence) return c.json({ success: false, error: 'Missing to/sequence' }, 400)
-
-    const SEQUENCES = {
+    const db = c.env.DB
+    const SEQUENCES: Record<string, any> = {
       'lead-magnet': {
-        subject: locale === 'es' ? 'Tu Guía Gratuita de Derechos FCRA para ITIN' : 'Your Free FCRA Rights Guide for ITIN Holders',
-        body: locale === 'es' ? 'Gracias por descargar tu guía. Tu ITIN te da derechos completos bajo FCRA y ECOA.' : 'Thanks for downloading your guide. Your ITIN gives you full rights under FCRA and ECOA.',
+        subject: locale === 'es' ? 'Tu Guia Gratuita de Derechos FCRA para ITIN' : 'Your Free FCRA Rights Guide for ITIN Holders',
+        html: locale === 'es'
+          ? `<h2>Hola ${name || ''},</h2><p>Gracias por descargar tu guia. Tu ITIN te da derechos completos bajo FCRA y ECOA.</p><p>— Rick Jefferson, RJ Business Solutions</p>`
+          : `<h2>Hey ${name || ''},</h2><p>Thanks for downloading your FCRA rights guide. Your ITIN gives you full credit repair rights under FCRA and ECOA.</p><p>— Rick Jefferson, RJ Business Solutions</p>`,
         followUp: [
-          { delayDays: 3, subject: locale === 'es' ? '¿Revisaste tu reporte de crédito?' : 'Did you check your credit report?' },
+          { delayDays: 3, subject: locale === 'es' ? 'Revisaste tu reporte de credito?' : 'Did you check your credit report?' },
           { delayDays: 7, subject: locale === 'es' ? '3 errores comunes en reportes ITIN' : '3 Common errors on ITIN credit reports' },
-          { delayDays: 14, subject: locale === 'es' ? 'Oferta especial: Auditoría de crédito ITIN' : 'Special offer: ITIN credit audit' }
+          { delayDays: 14, subject: locale === 'es' ? 'Oferta especial: Auditoria de credito ITIN' : 'Special offer: ITIN credit audit' }
         ]
       },
       'new-client': {
         subject: locale === 'es' ? 'Bienvenido a RJ Business Solutions' : 'Welcome to RJ Business Solutions',
-        body: locale === 'es' ? 'Tu auditoría forense está en proceso. Entrega en 24-48 horas.' : 'Your forensic audit is in progress. Delivery in 24-48 hours.',
+        html: locale === 'es'
+          ? `<h2>Bienvenido ${name || ''},</h2><p>Tu auditoria forense esta en proceso. Entrega en 24-48 horas.</p><p>Accede a tu portal: <a href="https://rj-itin-funnels.pages.dev/es/portal">Portal del Cliente</a></p><p>— Rick Jefferson</p>`
+          : `<h2>Welcome ${name || ''},</h2><p>Your forensic audit is in progress. Delivery in 24-48 hours.</p><p>Access your portal: <a href="https://rj-itin-funnels.pages.dev/en/portal">Client Portal</a></p><p>— Rick Jefferson</p>`,
         followUp: [
-          { delayDays: 2, subject: locale === 'es' ? 'Tu auditoría está lista' : 'Your audit is ready' },
-          { delayDays: 7, subject: locale === 'es' ? 'Actualización de disputas' : 'Dispute progress update' },
+          { delayDays: 2, subject: locale === 'es' ? 'Tu auditoria esta lista' : 'Your audit is ready' },
+          { delayDays: 7, subject: locale === 'es' ? 'Actualizacion de disputas' : 'Dispute progress update' },
           { delayDays: 30, subject: locale === 'es' ? 'Tu reporte de progreso mensual' : 'Your monthly progress report' }
         ]
       },
       'win-back': {
-        subject: locale === 'es' ? 'Te extrañamos — tu crédito ITIN merece atención' : 'We miss you — your ITIN credit deserves attention',
-        body: locale === 'es' ? 'Han pasado semanas desde tu última visita. Tu crédito ITIN necesita mantenimiento constante.' : "It's been a while since your last visit. Your ITIN credit needs consistent maintenance.",
+        subject: locale === 'es' ? 'Te extrañamos — tu credito ITIN merece atencion' : 'We miss you — your ITIN credit deserves attention',
+        html: locale === 'es'
+          ? `<h2>Hola ${name || ''},</h2><p>Han pasado semanas desde tu ultima visita. Tu credito ITIN necesita mantenimiento constante.</p><p>— Rick Jefferson</p>`
+          : `<h2>Hey ${name || ''},</h2><p>It has been a while since your last visit. Your ITIN credit needs consistent maintenance.</p><p>— Rick Jefferson</p>`,
         followUp: [
           { delayDays: 5, subject: locale === 'es' ? 'Descuento exclusivo para clientes anteriores' : 'Exclusive discount for returning clients' },
-          { delayDays: 14, subject: locale === 'es' ? 'Última oportunidad: 20% de descuento' : 'Last chance: 20% off your audit' }
+          { delayDays: 14, subject: locale === 'es' ? 'Ultima oportunidad: 20% de descuento' : 'Last chance: 20% off your audit' }
         ]
       }
     }
-
-    const seq = SEQUENCES[sequence as keyof typeof SEQUENCES]
+    const seq = SEQUENCES[sequence]
     if (!seq) return c.json({ success: false, error: 'Unknown sequence' }, 400)
-
-    // Log the email sequence (actual Resend integration goes here when API key is configured)
-    console.log(`[EMAIL] Sequence: ${sequence} | To: ${to} | Subject: ${seq.subject} | Locale: ${locale}`)
-    console.log(`[EMAIL] Follow-ups scheduled: ${seq.followUp.map(f => `Day ${f.delayDays}: ${f.subject}`).join(' | ')}`)
-
-    return c.json({
-      success: true,
-      data: {
-        sequence,
-        to,
-        subject: seq.subject,
-        followUps: seq.followUp.length,
-        mfsnUrl: 'https://myfreescorenow.com/enroll/?AID=RickJeffersonSolutions&PID=49914'
-      }
-    })
-  } catch (err) { return c.json({ success: false, error: 'Server error' }, 500) }
+    // Send via Resend if API key configured
+    let resendId = null
+    if (c.env.RESEND_API_KEY && !c.env.RESEND_API_KEY.includes('YOUR_')) {
+      const emailRes = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${c.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ from: 'Rick Jefferson <rick@rickjeffersonsolutions.com>', to: [to], subject: seq.subject, html: seq.html })
+      })
+      const emailData = await emailRes.json() as any
+      resendId = emailData.id || null
+    }
+    // Log to D1
+    await db.prepare('INSERT INTO email_log (recipient, subject, sequence, step, status, resend_id) VALUES (?, ?, ?, ?, ?, ?)').bind(to, seq.subject, sequence, 1, resendId ? 'sent' : 'queued', resendId).run()
+    return c.json({ success: true, data: { sequence, to, subject: seq.subject, followUps: seq.followUp.length, resendId, sent: !!resendId } })
+  } catch (err: any) { return c.json({ success: false, error: err.message || 'Server error' }, 500) }
 })
 
 // ═══════════════════════════════════════════════════════════════
 // API: Admin Stats
 // ═══════════════════════════════════════════════════════════════
-app.get('/api/admin/stats', (c) => {
-  return c.json({
-    success: true,
-    data: {
-      revenue: { monthly: 47850, mrr: 12840, growthPct: 23.4 },
-      clients: { active: 312, new: 18, churnRate: 4.2 },
-      disputes: { active: 1847, successRate: 67.3, avgScoreChange: 52 },
-      funnel: { visitors: 15240, leads: 1829, mfsnEnrollments: 892, payments: 456, conversionRate: 8.4 },
-      plans: { basic: 98, professional: 156, premium: 58 },
-      partners: { total: 36, referrals: 400, commissionsPaid: 19615 }
-    },
-    timestamp: new Date().toISOString()
-  })
+app.get('/api/admin/stats', async (c) => {
+  try {
+    const db = c.env.DB
+    const [clients, leads, activeDisputes, removedDisputes, revenue, planDist, partners] = await Promise.all([
+      db.prepare("SELECT COUNT(*) as cnt FROM clients WHERE status = 'active'").first() as Promise<any>,
+      db.prepare("SELECT COUNT(*) as cnt FROM leads").first() as Promise<any>,
+      db.prepare("SELECT COUNT(*) as cnt FROM disputes WHERE status NOT IN ('removed','verified')").first() as Promise<any>,
+      db.prepare("SELECT COUNT(*) as cnt FROM disputes WHERE status IN ('removed','verified')").first() as Promise<any>,
+      db.prepare("SELECT COALESCE(SUM(amount),0) as total FROM payments WHERE status = 'completed'").first() as Promise<any>,
+      db.prepare("SELECT plan, COUNT(*) as cnt FROM clients WHERE status = 'active' GROUP BY plan").all(),
+      db.prepare("SELECT COUNT(*) as cnt, COALESCE(SUM(total_referrals),0) as refs, COALESCE(SUM(total_commission),0) as comm FROM partners").first() as Promise<any>
+    ])
+    const totalDisputes = ((activeDisputes?.cnt || 0) + (removedDisputes?.cnt || 0))
+    const successRate = totalDisputes > 0 ? Number(((removedDisputes?.cnt || 0) / totalDisputes * 100).toFixed(1)) : 0
+    const convRate = (leads?.cnt || 0) > 0 ? Number(((clients?.cnt || 0) / (leads?.cnt || 1) * 100).toFixed(1)) : 0
+    const planMap: Record<string, number> = {}
+    for (const p of (planDist.results || []) as any[]) { planMap[p.plan] = p.cnt }
+    return c.json({
+      success: true,
+      data: {
+        revenue: { total: revenue?.total || 0 },
+        clients: { active: clients?.cnt || 0 },
+        leads: { total: leads?.cnt || 0 },
+        disputes: { active: activeDisputes?.cnt || 0, removed: removedDisputes?.cnt || 0, successRate },
+        funnel: { leads: leads?.cnt || 0, clients: clients?.cnt || 0, conversionRate: convRate },
+        plans: { basic: planMap['basic'] || 0, professional: planMap['professional'] || 0, premium: planMap['premium'] || 0 },
+        partners: { total: partners?.cnt || 0, referrals: partners?.refs || 0, commissions: partners?.comm || 0 }
+      },
+      timestamp: new Date().toISOString()
+    })
+  } catch (err: any) { return c.json({ success: false, error: err.message }, 500) }
 })
 
 // Fallback redirects for new pages

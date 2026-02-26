@@ -3,5 +3,12 @@
   "name": "rj-itin-funnels",
   "compatibility_date": "2026-02-23",
   "pages_build_output_dir": "./dist",
-  "compatibility_flags": ["nodejs_compat"]
+  "compatibility_flags": ["nodejs_compat"],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "rj-itin-production",
+      "database_id": "4622bca0-44ab-4793-a381-f053a81228f1"
+    }
+  ]
 }
