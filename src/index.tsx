@@ -1131,8 +1131,13 @@ function pageLayout(locale: string, title: string, content: string, seoOpts?: { 
         <a href="/${locale}/client-waiver" style="color:#60a5fa;font-size:.72rem">Client Waiver</a> &bull;
         <a href="/sitemap.xml" style="color:#60a5fa;font-size:.72rem">Sitemap</a>
       </div>
-      <p style="color:#6b7280;font-size:.72rem;margin-top:.75rem">&copy; 2026 RJ Business Solutions. All rights reserved.</p>
-      <p style="color:#4b5563;font-size:.65rem;margin-top:.3rem">All services comply with CROA, FCRA, FDCPA, FCBA, FTC TSR, ECOA, and CFPB guidelines.</p>
+      <!-- Full Compliance Disclosure -->
+      <div style="max-width:850px;margin:1.5rem auto 0;background:rgba(30,58,138,.06);border:1px solid rgba(59,130,246,.12);border-radius:.75rem;padding:1.25rem">
+        <p style="color:#9ca3af;font-size:.72rem;line-height:1.8;margin-bottom:.75rem">RJ Business Solutions operates in full compliance with the Credit Repair Organizations Act (CROA), Fair Credit Reporting Act (FCRA — §§ 604, 605, 605B, 605C, 611, 616, 617, 623), Fair Debt Collection Practices Act (FDCPA), Fair Credit Billing Act (FCBA), FTC Telemarketing Sales Rule (TSR), Equal Credit Opportunity Act (ECOA) / Regulation B, and CFPB guidelines.</p>
+        <p style="color:#9ca3af;font-size:.72rem;line-height:1.8;margin-bottom:.75rem">RJ Business Solutions is not a law firm and does not provide legal advice. Results vary by individual credit profile. No specific outcome is guaranteed. ITIN holders possess identical consumer rights under FCRA and ECOA regardless of immigration or SSN status.</p>
+        <p style="color:#f59e0b;font-size:.68rem;line-height:1.8;font-weight:600">Identity-Theft Policy: RJ Business Solutions does not file, prepare, coach, or advise on FTC Identity Theft Reports, police reports, sex trafficking victim claims, or any victim-status filings under FCRA §605B or §605C.</p>
+      </div>
+      <p style="color:#6b7280;font-size:.72rem;margin-top:1rem">&copy; 2026 RJ Business Solutions. All rights reserved.</p>
     </div>
   </footer>
 
@@ -1456,46 +1461,7 @@ function mainFunnelHTML(locale: string): string {
     </div>
   </section>
 
-  <!-- COMPLIANCE FOOTER -->
-  <section class="comp-footer">
-    <div class="ct">
-      <h3 style="text-align:center;font-size:1.1rem;font-weight:700;color:#9ca3af;margin-bottom:1.25rem">⚖️ Legal Compliance Statement</h3>
-      <div class="ao" style="max-width:850px;margin:0 auto;background:rgba(30,58,138,.08);border:1px solid rgba(59,130,246,.15);border-radius:1rem;padding:1.5rem">
-        <p style="color:#9ca3af;font-size:.78rem;line-height:1.8;margin-bottom:1rem">RJ Business Solutions operates in full compliance with the Credit Repair Organizations Act (CROA), Fair Credit Reporting Act (FCRA — §§ 604, 605, 605B, 605C, 611, 616, 617, 623), Fair Debt Collection Practices Act (FDCPA), Fair Credit Billing Act (FCBA), FTC Telemarketing Sales Rule (TSR), Equal Credit Opportunity Act (ECOA) / Regulation B, and CFPB guidelines.</p>
-        <p style="color:#9ca3af;font-size:.78rem;line-height:1.8;margin-bottom:1rem">RJ Business Solutions is not a law firm and does not provide legal advice. Results vary by individual credit profile. No specific outcome is guaranteed. ITIN holders possess identical consumer rights under FCRA and ECOA regardless of immigration or SSN status.</p>
-        <p style="color:#f59e0b;font-size:.78rem;line-height:1.8;font-weight:600">Identity-Theft Policy: RJ Business Solutions does not file, prepare, coach, or advise on FTC Identity Theft Reports, police reports, sex trafficking victim claims, or any victim-status filings under FCRA §605B or §605C. Clients who independently file such documents may submit them with a signed waiver confirming independent filing, truthfulness of all claims (violations of 18 U.S.C. §1028 and §1001 will be reported to federal authorities), and full indemnification of RJ Business Solutions.</p>
-      </div>
-      <div class="comp-grid" style="margin-top:1.5rem">
-        <div class="comp-item"><h4>CROA</h4><p>${T('comp_croa')}</p></div>
-        <div class="comp-item"><h4>FCRA</h4><p>${T('comp_fcra')}</p></div>
-        <div class="comp-item"><h4>ECOA</h4><p>${T('comp_ecoa')}</p></div>
-        <div class="comp-item"><h4>FDCPA</h4><p>${T('comp_fdcpa')}</p></div>
-        <div class="comp-item"><h4>TSR / FTC / CFPB</h4><p>${T('comp_tsr')}</p></div>
-        <div class="comp-item"><h4>Identity Policy</h4><p>${T('comp_identity')}</p></div>
-      </div>
-      <p style="text-align:center;color:#6b7280;font-size:.72rem;margin-top:1rem">${T('comp_contact')} <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa">rickjefferson@rickjeffersonsolutions.com</a></p>
-    </div>
-  </section>
-
-  <footer style="padding:3rem 0 2rem;border-top:1px solid #1f2937;text-align:center;background:#030712">
-    <div class="ct">
-      <img src="${IMG.logo}" alt="RJ Business Solutions" width="180" style="margin:0 auto .75rem;border-radius:6px">
-      <p style="color:#d1d5db;font-size:.82rem;line-height:1.7"><strong>RJ Business Solutions</strong><br>1342 NM 333, Tijeras, New Mexico 87059<br>
-        <a href="https://rickjeffersonsolutions.com" style="color:#60a5fa">rickjeffersonsolutions.com</a> &bull; <a href="mailto:rickjefferson@rickjeffersonsolutions.com" style="color:#60a5fa">rickjefferson@rickjeffersonsolutions.com</a></p>
-      <div style="display:flex;justify-content:center;gap:1.25rem;margin:.75rem 0;flex-wrap:wrap">
-        <a href="https://tiktok.com/@rick_jeff_solution" target="_blank" style="color:#9ca3af;font-size:.78rem">TikTok: @rick_jeff_solution</a>
-        <a href="https://twitter.com/ricksolutions1" target="_blank" style="color:#9ca3af;font-size:.78rem">Twitter: @ricksolutions1</a>
-        <a href="https://linkedin.com/in/rick-jefferson-314998235" target="_blank" style="color:#9ca3af;font-size:.78rem">LinkedIn</a>
-      </div>
-      <div style="display:flex;justify-content:center;gap:1rem;margin-top:.5rem;flex-wrap:wrap">
-        <a href="/${locale}/legal" style="color:#60a5fa;font-size:.72rem">${T('nav_legal')}</a>
-        <a href="/${locale}/privacy" style="color:#60a5fa;font-size:.72rem">${T('nav_privacy')}</a>
-        <a href="/${locale}/terms" style="color:#60a5fa;font-size:.72rem">${T('nav_terms')}</a>
-      </div>
-      <p style="color:#6b7280;font-size:.72rem;margin-top:.75rem">&copy; 2026 RJ Business Solutions. All rights reserved.</p>
-      <p style="color:#4b5563;font-size:.65rem;margin-top:.3rem">All services comply with CROA, FCRA, FDCPA, FCBA, FTC TSR, ECOA, and CFPB guidelines.</p>
-    </div>
-  </footer>
+  <!-- compliance content merged into pageLayout footer -->
 
   `)
 }
@@ -2262,6 +2228,859 @@ app.get('/credit-repair-premium', (c) => c.redirect(`/${detectLocale(c)}/premium
 // ═══════════════════════════════════════════════════════════════
 // BLOG CONTENT HUB — 20 Articles
 // ═══════════════════════════════════════════════════════════════
+
+// Helper for styled article sections
+const H2 = (t: string) => `<h2 style="color:#fff;font-size:1.5rem;font-weight:800;margin:2.5rem 0 1rem">${t}</h2>`
+const H3 = (t: string) => `<h3 style="color:#60a5fa;font-size:1.15rem;font-weight:700;margin:2rem 0 .75rem">${t}</h3>`
+const P = (t: string) => `<p style="margin-bottom:1.25rem">${t}</p>`
+const STRONG = (t: string) => `<strong style="color:#fff">${t}</strong>`
+const BLUE = (t: string) => `<strong style="color:#60a5fa">${t}</strong>`
+const CHECK = (t: string) => `<li style="display:flex;gap:.5rem;margin-bottom:.5rem"><span style="color:#4ade80;font-weight:700">✓</span><span>${t}</span></li>`
+const WARN = (t: string) => `<li style="display:flex;gap:.5rem;margin-bottom:.5rem"><span style="color:#f59e0b;font-weight:700">⚠</span><span>${t}</span></li>`
+const UL = (items: string) => `<ul style="list-style:none;padding:0;margin-bottom:2rem">${items}</ul>`
+const CALLOUT = (title: string, body: string) => `<div style="background:rgba(30,58,138,.12);border:1px solid rgba(59,130,246,.2);border-radius:1rem;padding:1.5rem;margin:2rem 0"><h4 style="color:#60a5fa;font-weight:700;margin-bottom:.5rem">${title}</h4><p style="color:#d1d5db;font-size:.9rem;line-height:1.7">${body}</p></div>`
+const QUOTE = (text: string, author: string) => `<blockquote style="border-left:3px solid #8b5cf6;padding:1rem 1.5rem;margin:2rem 0;background:rgba(139,92,246,.06);border-radius:0 .75rem .75rem 0"><p style="color:#d1d5db;font-style:italic;margin-bottom:.5rem">"${text}"</p><cite style="color:#9ca3af;font-size:.82rem">— ${author}</cite></blockquote>`
+const STATUTE = (code: string, desc: string) => `<div style="background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.15);border-radius:.75rem;padding:1rem 1.25rem;margin-bottom:.75rem"><span style="color:#4ade80;font-weight:700;font-size:.85rem">${code}</span><span style="color:#d1d5db;font-size:.88rem;margin-left:.75rem">${desc}</span></div>`
+
+function getArticleBody(slug: string, locale: string, mfsnUrl: string): string {
+  const articles: Record<string, string> = {
+
+// ═══ ARTICLE 1: Complete Guide ═══
+'itin-credit-repair-complete-guide': `
+${P(`If you hold an Individual Taxpayer Identification Number (ITIN) and you have errors, collections, late payments, or other negative items dragging your credit score down — this guide is the definitive resource you need. I'm Rick Jefferson, founder of RJ Business Solutions, and I've spent years building a credit repair practice specifically for ITIN holders who have been ignored, overcharged, or flat-out lied to by an industry that doesn't understand their rights.`)}
+${P(`Let me be blunt: ${STRONG('your ITIN gives you the exact same credit rights as an SSN holder under federal law.')} Every single bureau — TransUnion, Equifax, and Experian — accepts ITIN numbers for credit file identification. The law is crystal clear. The problem? Most people don't know it, and most credit repair companies don't care to learn it.`)}
+
+${H2('What Is ITIN Credit Repair?')}
+${P(`ITIN credit repair is the process of identifying and disputing inaccurate, unverifiable, or unfair items on your credit reports filed under your ITIN. This includes collections, charge-offs, late payments, hard inquiries you didn't authorize, incorrect personal information, and duplicate accounts.`)}
+${P(`The legal foundation is identical to SSN-based disputes. Under ${BLUE('FCRA §611')}, you have the right to dispute any information you believe is inaccurate. The bureau must investigate within 30 days, contact the data furnisher, and either verify, correct, or delete the item. If they can't verify it, ${STRONG('it must be removed — period.')}`)}
+
+${H2('Your Federal Rights — The Legal Framework')}
+${P(`Four major federal statutes protect ITIN holders:`)}
+${STATUTE('FCRA (15 U.S.C. § 1681)', 'Fair Credit Reporting Act — right to dispute, 30-day investigation, accuracy requirements, §611 reinvestigation, §623 furnisher duties, §604 permissible purpose')}
+${STATUTE('ECOA (15 U.S.C. § 1691)', 'Equal Credit Opportunity Act — prohibits discrimination based on national origin. Your ITIN file has equal rights to any SSN file.')}
+${STATUTE('CROA (15 U.S.C. § 1679)', 'Credit Repair Organizations Act — written contracts, 3-day cancellation, no advance fees for dispute services')}
+${STATUTE('FDCPA (15 U.S.C. § 1692)', 'Fair Debt Collection Practices Act — debt validation rights, no harassment, no discrimination based on ITIN status')}
+
+${H2('Step 1: Get Your Credit Reports')}
+${P(`Before any dispute work begins, you need access to your full tri-bureau credit reports. For ITIN holders, the best option is ${BLUE('MyFreeScoreNow')} ($29.99/mo), which is one of the few monitoring services that ${STRONG('accepts ITIN numbers for enrollment')}. This gives you live access to your TransUnion, Equifax, and Experian reports and scores.`)}
+${CALLOUT('Why MyFreeScoreNow?', 'Most monitoring services (Credit Karma, Experian.com) require an SSN. MyFreeScoreNow accepts ITIN numbers, provides all 3 bureau reports, and updates regularly — making it the industry standard for ITIN credit repair tracking.')}
+
+${H2('Step 2: The Forensic Audit')}
+${P(`A forensic audit is a line-by-line analysis of every tradeline, collection, inquiry, public record, and account status across all three bureaus. This isn't a quick glance — it's a legal teardown that identifies:`)}
+${UL(`
+${CHECK('Accounts reporting inaccurate balances, dates, or statuses')}
+${CHECK('Collections that are past the statute of limitations')}
+${CHECK('Hard inquiries you never authorized (FCRA §604 violations)')}
+${CHECK('Duplicate accounts appearing across multiple bureaus')}
+${CHECK('ECOA violations — evidence of national-origin discrimination')}
+${CHECK('FCRA §611 / §623 angles for each disputable item')}
+${CHECK('FDCPA violations by collection agencies')}
+`)}
+
+${H2('Step 3: Strategic Dispute Filing')}
+${P(`Disputes are filed in a specific sequence designed to maximize removal probability. We don't blast the same generic letter to all three bureaus at once — that's what amateurs do. Strategic dispute filing means:`)}
+${UL(`
+${CHECK('Bureau-specific formatting (TransUnion, Equifax, and Experian each have different procedures)')}
+${CHECK('Statute-specific citations (FCRA §611 for reinvestigation, §623 for furnisher accuracy, §604 for permissible purpose)')}
+${CHECK('Prioritization by credit impact — items that hurt your score the most get disputed first')}
+${CHECK('Staggered timing to avoid triggering "frivolous" flags under FCRA §611(a)(3)')}
+`)}
+
+${H2('Step 4: Monitor and Escalate')}
+${P(`After disputes are filed, bureaus have 30 days to investigate under FCRA §611. During this period, we monitor responses. If a bureau fails to investigate, that's a violation. If a furnisher continues reporting unverified information, we escalate to direct creditor intervention under FCRA §623, CFPB complaints, or in Premium cases, formal legal demand letters citing §616 (civil liability for willful noncompliance).`)}
+
+${H2('How Long Does ITIN Credit Repair Take?')}
+${P(`Typical timelines based on the complexity of your file:`)}
+${UL(`
+${CHECK('1–5 negative items (Basic): 2–4 months for significant improvement')}
+${CHECK('6–15 negative items (Professional): 4–6 months for substantial results')}
+${CHECK('16+ negative items (Premium): 6–9 months for comprehensive restoration')}
+`)}
+${P(`Every case is different. Some items get deleted in the first round. Others require multiple disputes, creditor negotiations, or escalation to the CFPB. The 90-day money-back guarantee ensures you're never paying for nothing.`)}
+
+${H2('Choosing the Right Plan')}
+${P(`RJ Business Solutions offers three performance-based plans — you ${STRONG('only pay when progress is verified')}:`)}
+${UL(`
+${CHECK('<strong>Basic ($99/mo)</strong> — Up to 15 disputes/month, monthly reports, bilingual support. Best for 1–5 negative items.')}
+${CHECK('<strong>Professional ($149/mo)</strong> — Up to 25 disputes/month, dedicated analyst, creditor intervention, goodwill campaigns, pay-for-delete. Best for 6–15 items.')}
+${CHECK('<strong>Premium ($199/mo)</strong> — Up to 40 disputes/month, legal demand letters, mortgage-ready program, rapid rescoring, business credit building, VIP access. Best for 16+ items.')}
+`)}
+
+${QUOTE('Your ITIN is not a limitation — it is your key to the same credit system that SSN holders use. The law is on your side.', 'Rick Jefferson, Founder — RJ Business Solutions')}
+
+${H2('Common Myths About ITIN Credit')}
+${H3('Myth: "You can’t build credit with an ITIN"')}
+${P(`False. All three bureaus accept ITIN numbers. Many banks, credit unions, and card issuers accept ITIN applications. Secured credit cards, credit-builder loans, and authorized user tradelines are all available to ITIN holders.`)}
+${H3('Myth: "Bureaus don’t have to investigate ITIN disputes"')}
+${P(`False. FCRA §611 applies to all consumers regardless of SSN or ITIN status. If you dispute, they investigate. Period.`)}
+${H3('Myth: "Only SSN holders are protected by ECOA"')}
+${P(`False. ECOA prohibits discrimination based on national origin. If a creditor treats your ITIN file differently than an SSN file, that's a federal violation.`)}
+
+${H2('Get Started Today')}
+${P(`Step 1: <a href="${mfsnUrl}" target="_blank" style="color:#60a5fa;font-weight:600">Enroll in MyFreeScoreNow credit monitoring</a> ($29.99/mo) — this activates your tri-bureau data feed and is required before any audit work begins.`)}
+${P(`Step 2: <a href="#plans" style="color:#60a5fa;font-weight:600">Choose your plan</a> (Basic, Professional, or Premium) based on the number of negative items on your reports.`)}
+${P(`Step 3: Within 5 business days, you'll receive your forensic 3-bureau audit and 10-point restoration roadmap. Disputes begin immediately after.`)}
+`,
+
+// ═══ ARTICLE 2: FCRA Rights ═══
+'fcra-rights-itin-holders': `
+${P(`The ${BLUE('Fair Credit Reporting Act (FCRA)')} is the single most important federal statute protecting your credit rights as an ITIN holder. Codified at 15 U.S.C. § 1681, this law gives you the exact same dispute, accuracy, and privacy rights as SSN holders — and I mean exact. There's no asterisk, no exception, no "unless you have an ITIN" clause anywhere in the statute.`)}
+${P(`I'm Rick Jefferson, and I've filed thousands of FCRA-based disputes for ITIN holders. Let me walk you through every section that matters for your credit file.`)}
+
+${H2('FCRA §604 — Permissible Purpose')}
+${P(`No one can pull your credit report without a legally permissible purpose. This includes:`)}
+${UL(`
+${CHECK('Credit application you initiated')}
+${CHECK('Employment screening (with your written consent)')}
+${CHECK('Insurance underwriting')}
+${CHECK('Account review by existing creditors')}
+${CHECK('Court order or federal grand jury subpoena')}
+`)}
+${P(`If a hard inquiry appears on your ITIN credit report and you never applied for credit with that company, that's a ${STRONG('§604 violation')}. You have the right to dispute it, and the bureau must remove it if the inquirer can't prove permissible purpose.`)}
+
+${H2('FCRA §611 — Your Right to Dispute')}
+${P(`This is the backbone of credit repair. Under §611:`)}
+${UL(`
+${CHECK('You can dispute any information you believe is inaccurate or incomplete')}
+${CHECK('The bureau must investigate within 30 days (45 days if you provide additional information)')}
+${CHECK('The bureau must contact the furnisher (creditor/collector) and relay your dispute')}
+${CHECK('If the furnisher cannot verify the information, it must be deleted')}
+${CHECK('The bureau must send you written results within 5 business days of completing the investigation')}
+`)}
+${CALLOUT('Key ITIN Detail', 'FCRA §611 says "consumer" — not "SSN holder." You are a consumer if you have a credit file, and ITIN holders absolutely have credit files at all three bureaus.')}
+
+${H2('FCRA §623 — Furnisher Responsibilities')}
+${P(`Section 623 places legal obligations on the companies that report information to the bureaus (called "furnishers" — banks, creditors, collection agencies). They must:`)}
+${UL(`
+${CHECK('Report accurate information to all bureaus they report to')}
+${CHECK('Investigate disputes forwarded by the bureau (§623(b))')}
+${CHECK('Correct or delete information they cannot verify')}
+${CHECK('Not report information they know to be inaccurate')}
+`)}
+${P(`When a furnisher continues reporting inaccurate data about your ITIN credit file after being notified of a dispute, they're violating §623. This opens the door for direct creditor intervention and, in serious cases, legal demand letters citing §616 civil liability.`)}
+
+${H2('FCRA §605 — Time Limits on Reporting')}
+${P(`Negative information has expiration dates:`)}
+${UL(`
+${CHECK('Late payments, collections, charge-offs: 7 years from the date of first delinquency')}
+${CHECK('Chapter 7 bankruptcy: 10 years from filing date')}
+${CHECK('Chapter 13 bankruptcy: 7 years from filing date')}
+${CHECK('Hard inquiries: 2 years')}
+${CHECK('Tax liens (if still reported): 7 years from payment')}
+`)}
+${P(`If a collection from 2018 is still on your ITIN credit report in 2026, it's past the 7-year reporting window and must be removed. We identify every over-age item in the forensic audit.`)}
+
+${H2('FCRA §616 & §617 — Enforcement and Damages')}
+${P(`If a bureau or furnisher ${STRONG('willfully')} violates the FCRA (§616), you may be entitled to:`)}
+${UL(`
+${CHECK('Actual damages (out-of-pocket losses, denied credit, emotional distress)')}
+${CHECK('Statutory damages of $100–$1,000 per violation')}
+${CHECK('Punitive damages')}
+${CHECK('Attorney fees and costs')}
+`)}
+${P(`For ${STRONG('negligent')} violations (§617), you can recover actual damages and attorney fees. This is why bureaus and furnishers take properly cited dispute letters seriously — the liability is real.`)}
+
+${H2('How RJ Business Solutions Uses the FCRA for ITIN Clients')}
+${P(`Every dispute letter we file cites specific FCRA sections. We don't send generic templates. Example dispute angles:`)}
+${UL(`
+${CHECK('§611 reinvestigation demand for accounts with inaccurate balances or dates')}
+${CHECK('§604 permissible purpose challenge for unauthorized hard inquiries')}
+${CHECK('§623(b) furnisher investigation for creditors who ignore disputes')}
+${CHECK('§605 time-limit challenge for items reporting beyond the statutory window')}
+${CHECK('§616 civil liability notice for willful noncompliance after multiple disputes')}
+`)}
+
+${QUOTE('The FCRA does not have a footnote that says except if you have an ITIN. Your rights are absolute, and I enforce them with the same precision I would use for any SSN-based file.', 'Rick Jefferson')}
+`,
+
+// ═══ ARTICLE 3: ECOA & ITIN ═══
+'ecoa-itin-discrimination': `
+${P(`The ${BLUE('Equal Credit Opportunity Act (ECOA)')} — 15 U.S.C. § 1691 — is your shield against credit discrimination. If any creditor, bureau, or financial institution treats your ITIN credit file differently than an SSN file, they're breaking federal law. Period.`)}
+${P(`I'm Rick Jefferson, and I've seen ECOA violations firsthand in ITIN credit files — creditors refusing to report tradelines, bureaus dragging their feet on disputes, and collectors using language designed to intimidate non-SSN consumers. This article breaks down exactly how ECOA protects you.`)}
+
+${H2('What ECOA Prohibits')}
+${P(`ECOA and its implementing regulation (Regulation B, 12 CFR §1002) make it illegal for creditors to discriminate based on:`)}
+${UL(`
+${CHECK('Race, color, or national origin')}
+${CHECK('Sex (including gender identity and sexual orientation as of 2021 guidance)')}
+${CHECK('Marital status')}
+${CHECK('Age (provided you have legal capacity to contract)')}
+${CHECK('Receipt of public assistance income')}
+${CHECK('Good-faith exercise of rights under the Consumer Credit Protection Act')}
+`)}
+${P(`${STRONG('National origin is the key protection for ITIN holders.')} Your ITIN is issued by the IRS to individuals who need a tax identification number but aren't eligible for an SSN. If a creditor uses your ITIN status as a proxy to deny credit, limit credit terms, or refuse to report your account to the bureaus, that is national-origin discrimination under ECOA.`)}
+
+${H2('How ECOA Discrimination Shows Up in ITIN Credit Files')}
+${H3('1. Creditors refusing to report tradelines')}
+${P(`Some creditors accept your ITIN for account opening but then "forget" to report your payment history to the bureaus. If the same creditor reports SSN-based accounts, this is selective non-reporting — a potential ECOA violation.`)}
+${H3('2. Bureaus treating ITIN disputes differently')}
+${P(`If a bureau investigates SSN-based disputes within 30 days but routinely delays or dismisses ITIN-based disputes, that's discriminatory processing under ECOA. We document these patterns.`)}
+${H3('3. Collectors using immigration-related threats')}
+${P(`Debt collectors who threaten to "report you to immigration" or suggest that ITIN holders have fewer rights are violating both ECOA and FDCPA. These threats are illegal regardless of your immigration status.`)}
+
+${H2('ECOA Enforcement')}
+${P(`ECOA is enforced by the ${BLUE('Consumer Financial Protection Bureau (CFPB)')}, the ${BLUE('Federal Trade Commission (FTC)')}, and the ${BLUE('Department of Justice (DOJ)')}. Penalties include:`)}
+${UL(`
+${CHECK('Actual damages (losses from denied credit, higher rates, etc.)')}
+${CHECK('Punitive damages up to $10,000 for individual actions')}
+${CHECK('Class action damages up to $500,000 or 1% of the creditor’s net worth')}
+${CHECK('Attorney fees and costs')}
+`)}
+
+${H2('How RJ Business Solutions Leverages ECOA')}
+${P(`In every forensic audit, we review your ITIN credit file for ECOA red flags:`)}
+${UL(`
+${CHECK('Are all your tradelines being reported? If not, why?')}
+${CHECK('Are dispute investigations taking longer than the FCRA-mandated timeline?')}
+${CHECK('Are collections agencies making discriminatory statements or threats?')}
+${CHECK('Are creditors applying different terms or rates compared to SSN-based applicants?')}
+`)}
+${P(`When we identify ECOA violations, we cite them directly in dispute letters. Creditors and bureaus take ECOA-cited disputes seriously because the liability exposure is massive. A pattern of ECOA violations can trigger DOJ investigations and CFPB enforcement actions.`)}
+
+${QUOTE('ECOA exists specifically so that people like ITIN holders cannot be treated like second-class consumers. The law is unambiguous — your credit file has equal rights.', 'Rick Jefferson')}
+`,
+
+// ═══ ARTICLE 4: How to Read Credit Report ═══
+'how-to-read-credit-report-itin': `
+${P(`Your credit report is the single most important financial document you have — and most ITIN holders have never actually read theirs. I'm Rick Jefferson, and I've reviewed thousands of ITIN credit reports. Let me walk you through every section, what to look for, and what to flag for disputes.`)}
+
+${H2('The Four Sections of Your Credit Report')}
+${P(`Every credit report from TransUnion, Equifax, and Experian contains four main sections:`)}
+
+${H3('1. Personal Information')}
+${P(`This section shows your name, ITIN, addresses, employers, and phone numbers. Common errors to look for:`)}
+${UL(`
+${CHECK('Misspelled names or name variations you’ve never used')}
+${CHECK('Addresses where you’ve never lived (possible mixed file or identity theft)')}
+${CHECK('Employers you’ve never worked for')}
+${CHECK('Incorrect ITIN digits')}
+`)}
+${P(`Personal information errors can indicate a ${STRONG('mixed file')} — where another person's data has been merged with yours. This is more common with ITIN holders because bureaus sometimes use name-matching algorithms that produce false matches in Latino, Asian, and Caribbean communities where shared surnames are common.`)}
+
+${H3('2. Trade Lines (Credit Accounts)')}
+${P(`This is the core of your report. Each account shows:`)}
+${UL(`
+${CHECK('Account type (revolving, installment, mortgage, etc.)')}
+${CHECK('Creditor name and account number (partially masked)')}
+${CHECK('Date opened, credit limit, current balance')}
+${CHECK('Payment history — month-by-month status (current, 30-day late, 60-day late, etc.)')}
+${CHECK('Account status (open, closed, charged off, in collections)')}
+`)}
+${P(`${STRONG('What to flag:')} Accounts you don't recognize, incorrect balances, wrong payment history, accounts showing as "open" that you closed, or duplicate accounts (the same debt appearing under two different creditors).`)}
+
+${H3('3. Hard Inquiries')}
+${P(`Every time a lender pulls your credit for a loan or credit card application, it creates a hard inquiry. These stay on your report for 2 years and can drop your score 3-5 points each.`)}
+${P(`${STRONG('What to flag:')} Inquiries from companies you never applied to. Under FCRA §604, only entities with permissible purpose can pull your report. Unauthorized inquiries can be disputed and removed.`)}
+
+${H3('4. Public Records')}
+${P(`This section shows bankruptcies, civil judgments (in some states), and tax liens. Since 2018, most judgments and tax liens have been removed from credit reports due to data accuracy concerns. If you see outdated public records, they should be disputed.`)}
+
+${H2('Bureau-Specific Differences')}
+${P(`Your TransUnion, Equifax, and Experian reports will NOT be identical. Creditors aren't required to report to all three bureaus. This means:`)}
+${UL(`
+${CHECK('A collection might appear on Equifax but not TransUnion')}
+${CHECK('A credit card might report to all three but show different balances due to reporting date differences')}
+${CHECK('Disputes must be filed with each bureau individually')}
+`)}
+
+${H2('How to Get Your Reports as an ITIN Holder')}
+${P(`The recommended method is <a href="${mfsnUrl}" target="_blank" style="color:#60a5fa;font-weight:600">MyFreeScoreNow</a> ($29.99/mo), which accepts ITIN numbers and provides all three bureau reports with credit scores. This is the monitoring service we use at RJ Business Solutions to track every change during the repair process.`)}
+
+${CALLOUT('Rick’s Pro Tip', 'When reviewing your reports, create a spreadsheet with every negative item: account name, amount, bureau(s) reporting, date of first delinquency, and your dispute angle (FCRA §611, §604, §605, §623). This becomes your dispute roadmap.')}
+`,
+
+// ═══ ARTICLE 5: Dispute Letters ═══
+'credit-bureau-dispute-letters-itin': `
+${P(`Writing an effective dispute letter is the difference between getting a deletion and getting a form rejection. I'm Rick Jefferson, and at RJ Business Solutions we draft every letter with specific statute citations, bureau-specific formatting, and legal angles that force investigation — not dismissal.`)}
+
+${H2('Why Generic Templates Don’t Work')}
+${P(`The credit repair industry is full of "dispute letter templates" that say things like "I dispute this account because I believe it is inaccurate." That tells the bureau nothing. Under FCRA §611(a)(3), the bureau can dismiss disputes as ${STRONG('frivolous')} if they don't include enough information to identify the account and explain the basis of the dispute.`)}
+${P(`Effective disputes are specific, statute-backed, and tailored to the individual account and bureau.`)}
+
+${H2('Anatomy of an Effective Dispute Letter')}
+${H3('1. Header — Your Identity')}
+${P(`Full legal name, ITIN (last 4 digits only for security), current address, date of birth. Include a copy of your ITIN assignment letter or CP565 notice for identification.`)}
+${H3('2. Account Identification')}
+${P(`Creditor name, account number, the specific bureau reporting the item, and the exact information you're disputing (balance, status, payment history date, etc.).`)}
+${H3('3. Legal Basis')}
+${P(`This is where most dispute letters fail. You need to cite the specific statute:`)}
+${UL(`
+${CHECK('<strong>FCRA §611:</strong> "I am exercising my right to reinvestigation under 15 U.S.C. § 1681i. The following item contains inaccurate information that I request be investigated and corrected or deleted."')}
+${CHECK('<strong>FCRA §623:</strong> "The furnisher has an obligation under 15 U.S.C. § 1681s-2(b) to conduct a reasonable investigation upon receiving notice of this dispute."')}
+${CHECK('<strong>FCRA §604:</strong> "This inquiry was made without my consent or a permissible purpose as defined under 15 U.S.C. § 1681b. I request its immediate removal."')}
+`)}
+${H3('4. Supporting Documentation')}
+${P(`Include relevant evidence: payment receipts, account closure letters, identity theft affidavits, or statute-of-limitations calculations. The more specific your evidence, the harder it is for the bureau to dismiss the dispute.`)}
+${H3('5. Compliance Demand')}
+${P(`Close with a clear timeline demand: "I expect this investigation to be completed within the 30-day statutory period under FCRA §611. Please provide written notification of the results within 5 business days of completing the investigation per §611(a)(6)."  `)}
+
+${H2('Bureau-Specific Formatting')}
+${P(`Each bureau has slightly different dispute submission requirements:`)}
+${UL(`
+${CHECK('<strong>TransUnion:</strong> Mail to P.O. Box 2000, Chester, PA 19016. Online disputes accepted but mail provides better paper trail.')}
+${CHECK('<strong>Equifax:</strong> Mail to P.O. Box 740256, Atlanta, GA 30374. Certified mail recommended.')}
+${CHECK('<strong>Experian:</strong> Mail to P.O. Box 4500, Allen, TX 75013. Include dispute form from their website.')}
+`)}
+
+${CALLOUT('Why RJ Business Solutions Handles This For You', 'At the Basic level, we file up to 15 statute-backed dispute letters per month. Professional gets 25. Premium gets 40. Every letter is custom-drafted for your specific account, bureau, and legal angle — not a template. This is why our success rate consistently exceeds industry averages.')}
+`,
+
+// ═══ ARTICLE 6: Build Credit with ITIN ═══
+'build-credit-itin-number': `
+${P(`Building credit with an ITIN is not only possible — it's one of the smartest financial moves you can make. I'm Rick Jefferson, and I've helped thousands of ITIN holders go from no credit history to mortgage-ready scores. Here's exactly how to do it.`)}
+
+${H2('Step 1: Establish Your Credit File')}
+${P(`If you've never had credit before, you don't have a credit file at the bureaus. To create one, you need at least one account reporting to at least one bureau. The best starting points:`)}
+
+${H3('Secured Credit Cards')}
+${P(`A secured card requires a cash deposit (typically $200-$500) that becomes your credit limit. The card reports to all three bureaus just like a regular credit card. Key options for ITIN holders:`)}
+${UL(`
+${CHECK('OpenSky® Secured Visa — no credit check required, accepts ITIN, $200 minimum deposit')}
+${CHECK('Chime Secured Credit Builder — no credit check, no annual fee, reports to all 3 bureaus')}
+${CHECK('First Progress Platinum Prestige — accepts ITIN, reports to all 3 bureaus')}
+`)}
+
+${H3('Credit-Builder Loans')}
+${P(`These loans are designed specifically to build credit. You make monthly payments into a savings account, and the lender reports your payments to the bureaus. At the end of the term, you get the money. Options include Self (formerly Self Lender) and many local credit unions.`)}
+
+${H3('Authorized User Tradelines')}
+${P(`If a family member or trusted friend has a credit card with a long, clean payment history, they can add you as an authorized user. The entire account history gets added to your credit file. This can add years of positive history to a thin ITIN file instantly.`)}
+
+${H2('Step 2: Use Credit Strategically')}
+${P(`Once you have accounts open, the key metrics that drive your score:`)}
+${UL(`
+${CHECK('<strong>Payment History (35%):</strong> Never miss a payment. Set up autopay for at least the minimum.')}
+${CHECK('<strong>Credit Utilization (30%):</strong> Keep balances below 30% of your limit — below 10% is ideal.')}
+${CHECK('<strong>Credit Age (15%):</strong> Keep old accounts open. The longer your average account age, the better.')}
+${CHECK('<strong>Credit Mix (10%):</strong> Having both revolving (cards) and installment (loans) accounts helps.')}
+${CHECK('<strong>New Credit (10%):</strong> Don’t apply for too many accounts at once. Each application creates a hard inquiry.')}
+`)}
+
+${H2('Step 3: Graduate to Unsecured Credit')}
+${P(`After 6-12 months of on-time payments with a secured card, most issuers will either:`)}
+${UL(`
+${CHECK('Convert your secured card to an unsecured card and refund your deposit')}
+${CHECK('Increase your credit limit')}
+${CHECK('Offer you a new unsecured card')}
+`)}
+${P(`This is also when you can start applying for credit union cards, store cards, and eventually major bank cards. Each new account adds to your credit history and improves your credit mix.`)}
+
+${H2('Step 4: Monitor Your Progress')}
+${P(`Use <a href="${mfsnUrl}" target="_blank" style="color:#60a5fa;font-weight:600">MyFreeScoreNow</a> ($29.99/mo) to track your score across all three bureaus. Watch for:`)}
+${UL(`
+${CHECK('Score increases after each monthly reporting cycle')}
+${CHECK('New accounts appearing correctly on all three reports')}
+${CHECK('Any errors that need to be disputed immediately')}
+`)}
+
+${QUOTE('I have seen ITIN holders go from a zero credit file to a 720+ score in under 18 months using these exact strategies. It works if you are consistent.', 'Rick Jefferson')}
+
+${H2('Common Mistakes to Avoid')}
+${UL(`
+${WARN('Don’t max out your secured card — keep utilization below 30%')}
+${WARN('Don’t apply for 5 cards at once — space applications 3-6 months apart')}
+${WARN('Don’t close your first card — it becomes your oldest account')}
+${WARN('Don’t pay just the minimum on installment loans if you can pay more')}
+${WARN('Don’t ignore errors on your report — dispute immediately under FCRA §611')}
+`)}
+`,
+
+// ═══ ARTICLE 7: ITIN Mortgage ═══
+'itin-mortgage-home-loan': `
+${P(`Homeownership with an ITIN is not a dream — it's a documented, legal, and increasingly common reality. I'm Rick Jefferson, and I've helped ITIN holders prepare their credit files specifically for mortgage qualification. Let me break down every path available to you.`)}
+
+${H2('Loan Programs Available to ITIN Holders')}
+${H3('FHA Loans')}
+${P(`The Federal Housing Administration does ${STRONG('not')} require an SSN for loan qualification. FHA loans are available to ITIN holders through approved lenders. Key requirements:`)}
+${UL(`
+${CHECK('Minimum 580 credit score for 3.5% down payment')}
+${CHECK('Minimum 500 credit score for 10% down payment')}
+${CHECK('2 years of tax returns filed with your ITIN')}
+${CHECK('Steady employment or income documentation')}
+${CHECK('No requirement for legal permanent resident status at the federal level')}
+`)}
+
+${H3('Conventional Loans via Portfolio Lenders')}
+${P(`Some credit unions and community banks offer "portfolio loans" that they keep on their own books (not sold to Fannie Mae/Freddie Mac). These lenders set their own criteria and many accept ITIN-based applications. Expect:`)}
+${UL(`
+${CHECK('Higher down payments (10-20%)')}
+${CHECK('Slightly higher interest rates (0.5-1.5% above conventional)')}
+${CHECK('More flexible documentation requirements')}
+`)}
+
+${H3('USDA and State Programs')}
+${P(`Some USDA rural development loans and state-level housing programs accept ITIN holders. Check your state's housing finance agency for specific programs.`)}
+
+${H2('Credit Requirements for ITIN Mortgages')}
+${P(`This is where credit repair becomes critical. Most ITIN mortgage lenders want to see:`)}
+${UL(`
+${CHECK('Minimum 620-640 credit score (some accept 580+ with FHA)')}
+${CHECK('No collections or charge-offs in the last 12 months')}
+${CHECK('No late payments in the last 12-24 months')}
+${CHECK('Debt-to-income ratio below 43%')}
+${CHECK('At least 3 tradelines with 12+ months of history')}
+`)}
+${P(`Our ${STRONG('Premium plan')} includes a dedicated Mortgage-Ready Program that addresses each of these requirements: removing derogatory items, optimizing utilization, building tradeline history, and preparing you for the rapid rescoring process that lenders use during underwriting.`)}
+
+${H2('The Rapid Rescoring Advantage')}
+${P(`When you're in the middle of a mortgage application and your credit score is close to a threshold (like 580 for FHA or 620 for conventional), ${BLUE('rapid rescoring')} can update your score within 24-72 hours instead of waiting for the next monthly reporting cycle. This is available exclusively through mortgage lenders and is included in our Premium plan.`)}
+
+${CALLOUT('Rick’s Mortgage Prep Checklist for ITIN Holders', '1. Get credit monitoring through MyFreeScoreNow ✓ 2. Complete forensic audit and dispute rounds ✓ 3. Pay down credit utilization to below 10% ✓ 4. Ensure 3+ tradelines reporting for 12+ months ✓ 5. Gather 2 years of ITIN tax returns ✓ 6. Save for down payment (3.5-20%) ✓ 7. Rapid rescore before final application ✓')}
+`,
+
+// ═══ ARTICLE 8: Business Credit ═══
+'itin-business-credit-ein': `
+${P(`Building business credit with an ITIN and EIN is the path to separating your personal and business financial identities. I'm Rick Jefferson, and this is one of the most powerful — and underutilized — strategies for ITIN entrepreneurs.`)}
+
+${H2('Why Business Credit Matters for ITIN Holders')}
+${P(`When you operate solely on personal credit, every business expense, every credit pull, and every debt shows up on your personal ITIN credit file. Business credit creates a completely separate profile tied to your EIN — your Employer Identification Number.`)}
+${UL(`
+${CHECK('Access business loans and lines of credit without personal guarantees')}
+${CHECK('Protect your personal credit score from business-related activity')}
+${CHECK('Build credibility with vendors, suppliers, and partners')}
+${CHECK('Qualify for higher credit limits (business limits are typically 5-10x personal)')}
+`)}
+
+${H2('Step 1: Get Your EIN')}
+${P(`Apply for an EIN through the IRS (free). You can apply online at irs.gov even with an ITIN — the EIN application accepts ITIN as the responsible party identifier. You'll receive your EIN immediately.`)}
+
+${H2('Step 2: Establish Your Business Entity')}
+${UL(`
+${CHECK('Register an LLC or Corporation in your state')}
+${CHECK('Get a dedicated business phone number (listed with 411 directory)')}
+${CHECK('Set up a business address (physical or registered agent)')}
+${CHECK('Create a professional website and business email')}
+${CHECK('Open a business bank account using your EIN')}
+`)}
+
+${H2('Step 3: Build Your D&B (Dun & Bradstreet) Profile')}
+${P(`Dun & Bradstreet is the largest business credit bureau. Your ${BLUE('D-U-N-S Number')} is your business credit identity.`)}
+${UL(`
+${CHECK('Register for a free D-U-N-S Number at dnb.com')}
+${CHECK('Start with Net-30 vendor accounts (suppliers that extend 30-day payment terms)')}
+${CHECK('First accounts: Uline, Grainger, Quill, Strategic Network Solutions')}
+${CHECK('Pay every invoice early or on time — this builds your Paydex score')}
+${CHECK('Target a Paydex score of 80+ (equivalent to "pays on time")')}
+`)}
+
+${H2('Step 4: Layer Up to Business Credit Cards')}
+${P(`After establishing 3-5 vendor tradelines reporting to D&B for 3-6 months, you can apply for business credit cards from Tier 1 lenders. Some options:`)}
+${UL(`
+${CHECK('Chase Ink Business cards (may require personal guarantee initially)')}
+${CHECK('American Express Business cards')}
+${CHECK('Capital One Spark Business')}
+${CHECK('Credit union business credit lines')}
+`)}
+
+${P(`Our ${STRONG('Premium plan')} includes full business credit building assistance — EIN setup guidance, D&B file optimization, vendor tradeline strategy, and ongoing monitoring of your business credit profile.`)}
+
+${QUOTE('Separating your personal and business credit is the single most sophisticated financial move an ITIN entrepreneur can make. That is how you build generational wealth.', 'Rick Jefferson')}
+`,
+
+// ═══ ARTICLE 9: Collections Removal ═══
+'collections-itin-credit-report': `
+${P(`Collection accounts are the most common negative items on ITIN credit reports — and they're also some of the most removable. I'm Rick Jefferson, and I've removed thousands of collection entries from ITIN credit files using three core strategies: debt validation, statute of limitations challenges, and pay-for-delete negotiations.`)}
+
+${H2('Strategy 1: Debt Validation Under FDCPA')}
+${P(`Under the ${BLUE('Fair Debt Collection Practices Act (FDCPA)')} §1692g, you have the right to request validation of any debt within 30 days of first contact. The collector must provide:`)}
+${UL(`
+${CHECK('The amount of the debt')}
+${CHECK('The name of the original creditor')}
+${CHECK('A statement of your right to dispute')}
+${CHECK('Proof that the collector is authorized to collect')}
+`)}
+${P(`If the collector can't validate the debt with proper documentation, they must cease collection activity and ${STRONG('the item must be removed from your credit report')}. Many collection agencies, especially those that buy debt in bulk portfolios, can't produce original documentation.`)}
+
+${H2('Strategy 2: Statute of Limitations (SOL)')}
+${P(`Every state has a statute of limitations on debt collection — typically 3-6 years from the last activity date. After the SOL expires, the debt is "time-barred" and the collector can no longer sue you for it. Important notes:`)}
+${UL(`
+${CHECK('SOL varies by state and debt type (credit card, medical, auto, etc.)')}
+${CHECK('Making a payment or acknowledging the debt can RESET the SOL clock')}
+${CHECK('SOL and the 7-year credit reporting period are DIFFERENT things')}
+${CHECK('Even if the SOL has expired, the item can still appear on your report until the 7-year mark')}
+`)}
+${P(`We calculate the SOL for every collection account in your ITIN credit file during the forensic audit. If a collector is reporting a time-barred debt without proper disclosures, that's an FDCPA violation.`)}
+
+${H2('Strategy 3: Pay-for-Delete Negotiation')}
+${P(`A pay-for-delete (PFD) is an agreement where you pay the collector a settled amount in exchange for their commitment to remove the item from your credit report. Key rules:`)}
+${UL(`
+${CHECK('Get the agreement in writing BEFORE making any payment')}
+${CHECK('Never pay the full amount — negotiate to 25-50% of the balance')}
+${CHECK('Specify which bureaus the deletion will apply to')}
+${CHECK('Set a deadline for removal (typically 30 days after payment)')}
+${CHECK('Pay by certified check or money order — not debit/bank transfer')}
+`)}
+${P(`Pay-for-delete negotiations are included in our ${STRONG('Professional')} and ${STRONG('Premium')} plans. We handle all communication with the collector, draft the PFD agreement, and verify the deletion after payment.`)}
+
+${H2('Medical Collections — Special Rules')}
+${P(`As of 2023, medical collections under $500 are no longer reported on credit reports. Additionally, medical collections cannot appear on your report until 365 days after the date of first delinquency (previously 180 days). If you see medical collections that violate these rules, they should be disputed immediately.`)}
+
+${CALLOUT('Rick’s Collection Removal Stats', 'In our experience, approximately 67% of collection accounts on ITIN credit files can be removed through a combination of validation challenges, SOL challenges, and pay-for-delete negotiations. The remaining 33% are typically legitimate, recent debts where the best strategy is to negotiate a settlement and wait for the 7-year reporting window to expire.')}
+`,
+
+// ═══ ARTICLE 10: Credit Utilization ═══
+'credit-utilization-itin': `
+${P(`Credit utilization — the ratio of your credit card balances to your credit limits — is the ${STRONG('#1 factor you can control immediately')} to raise your score. I'm Rick Jefferson, and I've seen ITIN holders jump 40-80 points in a single month just by optimizing this one metric.`)}
+
+${H2('How Utilization Impacts Your Score')}
+${P(`Credit utilization accounts for approximately 30% of your FICO score. The scoring model looks at both individual card utilization and aggregate (total) utilization:`)}
+${UL(`
+${CHECK('0-9% utilization: Excellent (maximum score benefit)')}
+${CHECK('10-29% utilization: Good')}
+${CHECK('30-49% utilization: Fair (score starts declining)')}
+${CHECK('50-74% utilization: Poor (significant score hit)')}
+${CHECK('75-100% utilization: Very Poor (major score damage, up to 50-100 points)')}
+`)}
+
+${H2('Strategies for ITIN Holders with Thin Files')}
+${P(`If you have a thin credit file (1-2 cards), utilization swings hit harder because you have fewer accounts to spread the balance across. Tactics:`)}
+${UL(`
+${CHECK('<strong>Pay before the statement date:</strong> Your balance is reported to bureaus on your statement closing date, not the payment due date. Pay down before the statement cuts.')}
+${CHECK('<strong>Make multiple payments per month:</strong> Keep the balance low at all times so it reports low.')}
+${CHECK('<strong>Request credit limit increases:</strong> After 6 months of on-time payments, ask for an increase. Higher limit = lower utilization ratio.')}
+${CHECK('<strong>Open a second card:</strong> Splitting your spending across two cards reduces per-card utilization.')}
+${CHECK('<strong>The $2 trick:</strong> Leave a small balance ($2-5) on one card so it reports as "active" while keeping utilization near 0%.')}
+`)}
+
+${CALLOUT('Quick Math Example', 'If you have a $500 credit limit and carry a $400 balance, that’s 80% utilization — crushing your score. Pay it down to $25, and you’re at 5% utilization. That single move can boost your score 40-80 points within one reporting cycle (about 30 days).')}
+
+${QUOTE('Utilization is the fastest score lever you have. I tell every ITIN client — before we even file the first dispute, let us get your utilization under 10 percent. That alone changes the game.', 'Rick Jefferson')}
+`,
+
+// ═══ ARTICLE 11: Hard Inquiry Removal ═══
+'hard-inquiry-removal-itin': `
+${P(`Hard inquiries appear on your credit report every time a lender pulls your credit for a loan or card application. Each one can drop your score 3-5 points and stays for 2 years. But here's the thing: ${STRONG('not all inquiries are authorized')}. I'm Rick Jefferson, and I regularly remove unauthorized hard pulls from ITIN credit files using FCRA §604.`)}
+
+${H2('Authorized vs. Unauthorized Inquiries')}
+${P(`Under ${BLUE('FCRA §604 (15 U.S.C. § 1681b)')}, a hard inquiry is only legitimate if the entity had a "permissible purpose" — meaning you applied for credit, insurance, or employment, or an existing creditor reviewed your account. If a company pulled your ITIN credit file without your knowledge or consent, that inquiry is ${STRONG('unauthorized and removable')}.`)}
+
+${H2('How to Identify Unauthorized Inquiries')}
+${UL(`
+${CHECK('Review the inquiry section of all three bureau reports')}
+${CHECK('Make a list of every inquiry — company name and date')}
+${CHECK('Cross-reference with your actual applications')}
+${CHECK('If you didn’t apply to that company — it’s likely unauthorized')}
+${CHECK('Check for dealer inquiries (auto dealers often submit to 5-10 lenders from one visit)')}
+`)}
+
+${H2('The Dispute Process')}
+${P(`For unauthorized inquiries, we file a §604 permissible purpose challenge directly with the bureau. The letter states that the inquiry was made without your consent, cites the specific section of the FCRA, and demands removal. The bureau must then contact the inquirer to verify permissible purpose. If they can't — the inquiry gets deleted.`)}
+${P(`For rate-shopping inquiries (mortgage, auto, student loan), the scoring model groups multiple inquiries within a 14-45 day window as a single inquiry. If your report shows them as separate hits, that can be corrected.`)}
+
+${CALLOUT('How Many Inquiries Is Too Many?', '1-2 inquiries in the past 12 months is considered normal. 3-5 starts to raise flags. 6+ can significantly impact your score and signal risk to lenders. If you have excessive unauthorized inquiries, removing them can provide a quick 10-25 point score boost.')}
+`,
+
+// ═══ ARTICLE 12: CROA Consumer Rights ═══
+'croa-consumer-rights': `
+${P(`If you're hiring a credit repair company — including us — you need to understand your rights under the ${BLUE('Credit Repair Organizations Act (CROA)')}. I'm Rick Jefferson, and I built RJ Business Solutions to be fully CROA-compliant from day one because too many companies in this industry exploit the people they claim to help.`)}
+
+${H2('Your Rights Under CROA (15 U.S.C. § 1679)')}
+${STATUTE('§1679b — Right to a Written Contract', 'Before any work begins, the credit repair company must provide a written contract detailing services, total cost, performance timeline, and your cancellation rights.')}
+${STATUTE('§1679c — Right to Cancel', 'You have 3 business days to cancel the contract with a full refund — no questions asked. This right cannot be waived.')}
+${STATUTE('§1679b(a)(1) — No Advance Fees', 'A credit repair company cannot charge you any fee before the promised services have been fully performed. This means no upfront charges for "setup" or "first-month" before work is done.')}
+${STATUTE('§1679b(a)(3) — No Misleading Statements', 'It is illegal for a credit repair company to make false or misleading claims about what they can do for your credit.')}
+
+${H2('Red Flags — How to Spot a CROA Violation')}
+${UL(`
+${WARN('They demand full payment upfront before doing any work')}
+${WARN('They don’t give you a written contract')}
+${WARN('They guarantee specific score increases ("We’ll add 100 points!")')}
+${WARN('They tell you to dispute accurate information')}
+${WARN('They suggest creating a "new credit identity" (CPN/credit privacy number — this is federal fraud)')}
+${WARN('They don’t mention your 3-day cancellation right')}
+${WARN('They claim connections to "insiders" at the credit bureaus')}
+`)}
+
+${H2('How RJ Business Solutions Complies with CROA')}
+${UL(`
+${CHECK('Full written contract provided before any work begins')}
+${CHECK('3-day cancellation right clearly disclosed')}
+${CHECK('Performance-based billing — you don’t pay until progress is verified')}
+${CHECK('No misleading guarantees — we disclose that results vary by individual profile')}
+${CHECK('Only legitimate dispute methods — statute-backed, bureau-compliant letters')}
+${CHECK('90-day money-back guarantee if no verified improvement')}
+`)}
+
+${QUOTE('CROA exists to protect consumers from the worst actors in the credit repair industry. At RJ Business Solutions, we do not just comply with CROA — we exceed it. You only pay when you see results. That is the standard I wish every company adopted.', 'Rick Jefferson')}
+`,
+
+// ═══ ARTICLE 13: ITIN vs SSN ═══
+'itin-vs-ssn-credit-rights': `
+${P(`The biggest misconception in credit repair is that ITIN holders have fewer rights than SSN holders. ${STRONG('This is 100% false under federal law.')} I'm Rick Jefferson, and let me break down exactly why your ITIN gives you equal standing in the credit system.`)}
+
+${H2('Bureau Acceptance: All Three Accept ITIN')}
+${P(`TransUnion, Equifax, and Experian all accept ITIN as a valid identifier for credit file creation, maintenance, and dispute filing. Your ITIN credit file functions identically to an SSN credit file in terms of:`)}
+${UL(`
+${CHECK('Tradeline reporting and payment history tracking')}
+${CHECK('Credit score calculation (FICO and VantageScore use the same algorithms)')}
+${CHECK('Dispute investigation under FCRA §611')}
+${CHECK('Inquiry tracking and permissible purpose requirements')}
+${CHECK('Fraud alert and credit freeze capabilities')}
+`)}
+
+${H2('Legal Protections: Identical Under Federal Law')}
+${P(`Every major consumer protection statute applies equally:`)}
+${UL(`
+${CHECK('<strong>FCRA:</strong> Defines "consumer" — not "SSN holder." If you have a credit file, you have FCRA rights.')}
+${CHECK('<strong>ECOA:</strong> Prohibits discrimination based on national origin. Treating ITIN files differently is a violation.')}
+${CHECK('<strong>CROA:</strong> Protects all consumers hiring credit repair services regardless of SSN/ITIN status.')}
+${CHECK('<strong>FDCPA:</strong> Prohibits abusive debt collection against all consumers. No ITIN exception.')}
+`)}
+
+${H2('Where Differences Exist (and How to Navigate Them)')}
+${P(`While your legal rights are equal, some practical differences exist:`)}
+${UL(`
+${WARN('<strong>Some lenders don’t accept ITIN:</strong> Not a legal issue — it’s their lending criteria. Solution: work with lenders who do (credit unions, community banks, FHA-approved lenders).')}
+${WARN('<strong>Fewer monitoring options:</strong> Most credit monitoring services require SSN. Solution: MyFreeScoreNow accepts ITIN.')}
+${WARN('<strong>Mixed files:</strong> Bureau name-matching algorithms can incorrectly merge ITIN files. Solution: dispute mixed-file errors under FCRA §611.')}
+`)}
+
+${CALLOUT('The Bottom Line', 'Your ITIN is not a limitation. It is a valid federal tax identification number that gives you full access to the credit system with full federal protections. Anyone who tells you otherwise is either uninformed or trying to sell you something.')}
+`,
+
+// ═══ ARTICLE 14: MyFreeScoreNow Guide ═══
+'myfree-scorenow-enrollment-guide': `
+${P(`<a href="${mfsnUrl}" target="_blank" style="color:#60a5fa;font-weight:600">MyFreeScoreNow</a> is the credit monitoring service we recommend for all ITIN holders — and it's required before we begin any audit work at RJ Business Solutions. I'm Rick Jefferson, and here's your step-by-step enrollment guide.`)}
+
+${H2('Why MyFreeScoreNow?')}
+${UL(`
+${CHECK('Accepts ITIN numbers for enrollment (most monitoring services don’t)')}
+${CHECK('Provides all 3 bureau reports (TransUnion, Equifax, Experian)')}
+${CHECK('Includes credit scores from all 3 bureaus')}
+${CHECK('Updates regularly so we can track every change during repair')}
+${CHECK('$29.99/month with 7-day trial available on select plans')}
+`)}
+
+${H2('Enrollment Steps')}
+${P(`Step 1: Visit <a href="${mfsnUrl}" target="_blank" style="color:#60a5fa;font-weight:600">${mfsnUrl}</a>`)}
+${P(`Step 2: Enter your personal information — full legal name, address, date of birth, ITIN`)}
+${P(`Step 3: Complete identity verification (you may be asked security questions about your credit history)`)}
+${P(`Step 4: Enter payment information for the $29.99/month subscription`)}
+${P(`Step 5: Once enrolled, you'll have immediate access to your tri-bureau reports and scores`)}
+
+${H2('After Enrollment')}
+${P(`Once you're enrolled in MyFreeScoreNow, share your login credentials with your credit repair analyst (securely). This gives us direct access to your live credit data so we can:`)}
+${UL(`
+${CHECK('Pull your full tri-bureau reports for the forensic audit')}
+${CHECK('Track every dispute result in real time')}
+${CHECK('Document score changes for progress verification (and billing)')}
+${CHECK('Identify new items that appear on your reports')}
+`)}
+
+${CALLOUT('Important', 'MyFreeScoreNow is a third-party service not affiliated with RJ Business Solutions. The $29.99/mo monitoring fee is separate from your plan fee ($99/$149/$199). We require it because it gives us the live data access we need to do our job effectively.')}
+`,
+
+// ═══ ARTICLE 15: Credit Repair Scams ═══
+'credit-repair-scams-itin': `
+${P(`The ITIN community is disproportionately targeted by credit repair scams. I'm Rick Jefferson, and I've seen every scheme — from "new credit identity" fraud to "guaranteed 800 scores" to companies that charge $2,000 upfront and vanish. Here's how to protect yourself.`)}
+
+${H2('The Most Common Scams Targeting ITIN Holders')}
+${H3('1. The CPN/Credit Privacy Number Scam')}
+${P(`${STRONG('This is federal fraud.')} A company offers to create a "new credit identity" using a CPN (Credit Privacy Number). CPNs are typically stolen SSNs belonging to children, elderly individuals, or deceased persons. Using one is a violation of 18 U.S.C. §1028 (identity fraud) and can result in federal prosecution.`)}
+
+${H3('2. The "Guaranteed Score" Scam')}
+${P(`No legitimate credit repair company can guarantee a specific score increase. Under CROA §1679b(a)(3), making misleading statements about expected outcomes is illegal. Results depend on your individual credit profile, the nature of the negative items, and the bureaus'/furnishers' responses to disputes.`)}
+
+${H3('3. The Upfront Fee Scam')}
+${P(`CROA §1679b(a)(1) prohibits credit repair companies from charging fees before services are performed. If a company demands $500-$2,000 before doing any work, that's a CROA violation. Walk away.`)}
+
+${H3('4. The "Insider Connection" Scam')}
+${P(`No credit repair company has "connections" inside the credit bureaus. Disputes are processed through standard procedures. Anyone claiming insider access is lying.`)}
+
+${H3('5. The Language Barrier Exploitation')}
+${P(`Some companies deliberately target Spanish-speaking ITIN holders, knowing that language barriers make it harder to read contracts, understand rights, or file complaints. They use aggressive sales tactics, hide cancellation terms, and count on you not knowing your CROA rights.`)}
+
+${H2('How to Verify a Legitimate Credit Repair Company')}
+${UL(`
+${CHECK('They provide a written contract BEFORE starting work (CROA requirement)')}
+${CHECK('They clearly state the 3-business-day cancellation right')}
+${CHECK('They don’t demand full payment upfront')}
+${CHECK('They explain realistic timelines and don’t guarantee specific scores')}
+${CHECK('They use legitimate dispute methods (FCRA-based, not fake identities)')}
+${CHECK('They have a physical address, real phone number, and verifiable reviews')}
+${CHECK('They offer bilingual support (for ITIN clients, this is a strong positive signal)')}
+`)}
+
+${QUOTE('If a company promises you an 800 credit score, charges two thousand dollars upfront, and cannot explain what FCRA section 611 means — run. That is not a credit repair company. That is a predator.', 'Rick Jefferson')}
+`,
+
+// ═══ ARTICLE 16: Authorized User Strategy ═══
+'authorized-user-strategy-itin': `
+${P(`The authorized user strategy is one of the fastest ways for ITIN holders to build credit history. I'm Rick Jefferson, and I recommend this to nearly every client with a thin file. Here's how it works and how to do it right.`)}
+
+${H2('What Is an Authorized User?')}
+${P(`When someone adds you as an authorized user on their credit card, the entire account history — the date opened, credit limit, payment history, and utilization — gets added to your credit report. You don't need to use the card. You just inherit the history.`)}
+
+${H2('The Impact on Your ITIN Credit Score')}
+${P(`If the primary cardholder has a card with:`)}
+${UL(`
+${CHECK('10+ years of history → your average account age jumps significantly')}
+${CHECK('$10,000+ credit limit → your total available credit increases, reducing utilization')}
+${CHECK('Perfect payment history → you inherit years of on-time payments')}
+`)}
+${P(`The result? ITIN holders with thin files can see ${STRONG('40-100+ point score increases')} from a single authorized user tradeline, depending on the account characteristics.`)}
+
+${H2('Best Practices')}
+${UL(`
+${CHECK('Choose a cardholder with a perfect payment history — one late payment kills the benefit')}
+${CHECK('Older accounts provide more score benefit (look for 5+ years of history)')}
+${CHECK('Higher credit limits are better for your utilization ratio')}
+${CHECK('The card should report to all 3 bureaus (most major cards do)')}
+${CHECK('Family members are the best option — trust is essential')}
+`)}
+
+${H2('Does It Work for All Bureaus?')}
+${P(`Yes — TransUnion, Equifax, and Experian all report authorized user tradelines on credit files identified by ITIN. The tradeline will appear on your report within 1-2 billing cycles (typically 30-60 days) after being added.`)}
+
+${CALLOUT('Caution', 'If the primary cardholder misses a payment or maxes out the card, that negative activity also appears on YOUR report. Only use this strategy with someone you trust completely.')}
+`,
+
+// ═══ ARTICLE 17: ITIN Credit Repair Costs ═══
+'itin-credit-repair-costs': `
+${P(`How much should ITIN credit repair actually cost? I'm Rick Jefferson, and I built RJ Business Solutions with transparent, performance-based pricing because I was tired of watching companies overcharge ITIN holders for mediocre work. Let me break down the real costs.`)}
+
+${H2('Industry Pricing Landscape (2026)')}
+${P(`Most credit repair companies charge:`)}
+${UL(`
+${CHECK('$79–$149/month for basic services (15-25 disputes/month)')}
+${CHECK('$49–$99 upfront "setup" or "first-work" fees')}
+${CHECK('$150–$300/month for premium tiers')}
+${CHECK('6-12 month minimum commitments (some with cancellation penalties)')}
+`)}
+${P(`The problem? Most of these companies charge upfront regardless of results, use template letters, and have never worked with an ITIN credit file. They don't understand bureau-specific ITIN procedures, and they definitely don't cite ECOA in their dispute letters.`)}
+
+${H2('RJ Business Solutions Pricing — Transparent & Performance-Based')}
+${UL(`
+${CHECK('<strong>Basic: $99/month</strong> — Up to 15 disputes/mo, forensic audit, monthly reports, bilingual support. For 1-5 negative items.')}
+${CHECK('<strong>Professional: $149/month</strong> — Up to 25 disputes/mo, dedicated analyst, creditor intervention, goodwill campaigns, pay-for-delete. For 6-15 items.')}
+${CHECK('<strong>Premium: $199/month</strong> — Up to 40 disputes/mo, legal demand letters, mortgage-ready program, rapid rescoring, business credit building, VIP access. For 16+ items.')}
+`)}
+
+${H2('The Performance-Based Difference')}
+${P(`${STRONG('You only pay when progress is verified.')} No progress in a given month = no charge for that month. This means our incentives are perfectly aligned with yours. We make money when you see results. Period.`)}
+${P(`Additionally, we offer a ${STRONG('90-day money-back guarantee')}: if we can't show a single verified improvement (deletion, correction, or documented score increase) within 90 days, you get every plan fee refunded.`)}
+
+${H2('Additional Costs to Budget For')}
+${UL(`
+${CHECK('MyFreeScoreNow credit monitoring: $29.99/month (required, separate from plan fee)')}
+${CHECK('One-time audit fee: $99/$149/$199 (matches your plan tier)')}
+`)}
+${P(`Total monthly cost: $128.99 (Basic + monitoring) to $228.99 (Premium + monitoring). Compared to the industry, this is competitive — and you're only paying when we deliver.`)}
+
+${QUOTE('I refuse to charge someone for a service that did not produce results. That is not a business model — that is exploitation. Performance-based billing is the only ethical approach to credit repair.', 'Rick Jefferson')}
+`,
+
+// ═══ ARTICLE 18: FDCPA Rights ═══
+'fdcpa-rights-debt-collectors-itin': `
+${P(`If debt collectors are calling you, sending letters, or reporting to the credit bureaus, you have powerful federal protections under the ${BLUE('Fair Debt Collection Practices Act (FDCPA)')} — 15 U.S.C. § 1692. I'm Rick Jefferson, and here's what every ITIN holder needs to know about their rights against collectors.`)}
+
+${H2('What the FDCPA Prohibits')}
+${UL(`
+${CHECK('Calling before 8am or after 9pm')}
+${CHECK('Calling your workplace after you’ve told them to stop')}
+${CHECK('Using profane, abusive, or threatening language')}
+${CHECK('Threatening legal action they don’t intend to take')}
+${CHECK('Discussing your debt with third parties (neighbors, family, coworkers)')}
+${CHECK('Misrepresenting the amount owed')}
+${CHECK('Adding unauthorized fees, interest, or charges')}
+${CHECK('Threatening to report you to immigration (this is both an FDCPA and ECOA violation)')}
+`)}
+
+${H2('Your Debt Validation Rights (§1692g)')}
+${P(`Within 5 days of first contacting you, the collector must send a written validation notice including the amount owed, the name of the original creditor, and a statement of your dispute rights. You then have ${STRONG('30 days to request full validation')}. During this period, collection must stop until validation is provided.`)}
+${P(`If they can't validate — the debt is unenforceable and must be removed from your credit report.`)}
+
+${H2('The Cease and Desist Letter')}
+${P(`Under FDCPA §1692c, you can send a written cease and desist letter demanding the collector stop all communication. After receiving this letter, they can only contact you to:`)}
+${UL(`
+${CHECK('Acknowledge receipt of your letter')}
+${CHECK('Notify you of a specific action they intend to take (like filing a lawsuit)')}
+`)}
+${P(`They cannot call, text, email, or send collection letters. This is particularly valuable for ITIN holders being harassed by aggressive collectors.`)}
+
+${H2('FDCPA Violations = Removal Leverage')}
+${P(`When a collector violates the FDCPA, you gain leverage for credit report removal. We document every violation and use it in negotiations: "Remove this item from our client's credit report, or we will file a formal complaint with the CFPB and pursue damages under FDCPA §1692k."  `)}
+${P(`Damages under the FDCPA include:`)}
+${UL(`
+${CHECK('Actual damages (financial losses from the violation)')}
+${CHECK('Statutory damages up to $1,000 per lawsuit')}
+${CHECK('Attorney fees and costs')}
+${CHECK('Class action damages up to $500,000')}
+`)}
+
+${QUOTE('Collectors prey on fear and ignorance. When you know your FDCPA rights, the power dynamic flips completely. Document everything, validate everything, and never let a collector intimidate you.', 'Rick Jefferson')}
+`,
+
+// ═══ ARTICLE 19: Rapid Rescoring ═══
+'rapid-rescoring-itin': `
+${P(`Rapid rescoring is a time-sensitive credit update process that can refresh your credit scores within ${STRONG('24-72 hours')} instead of waiting for the next monthly reporting cycle. I'm Rick Jefferson, and this is a critical tool for ITIN holders who are in the middle of a mortgage application or other time-sensitive credit transaction.`)}
+
+${H2('How Rapid Rescoring Works')}
+${P(`Normally, changes to your credit file (paid-off balances, removed collections, new accounts) take 30-45 days to reflect in your score because bureaus only update during monthly reporting cycles. Rapid rescoring bypasses this by having your lender submit updated documentation directly to the bureau for expedited processing.`)}
+
+${H2('When to Use Rapid Rescoring')}
+${UL(`
+${CHECK('You’re 5-20 points below a mortgage qualification threshold (580 for FHA, 620 for conventional)')}
+${CHECK('You just paid off a collection or credit card balance')}
+${CHECK('A recently removed item hasn’t updated on your report yet')}
+${CHECK('You need an updated score for a rate lock before it expires')}
+`)}
+
+${H2('Important Limitations')}
+${UL(`
+${WARN('Only available through mortgage lenders — you cannot request it directly from the bureaus')}
+${WARN('Costs $25-50 per account per bureau (your lender may absorb this cost)')}
+${WARN('Only updates information that has already changed — it doesn’t remove negative items')}
+${WARN('The underlying change must already be reflected in the creditor’s records')}
+`)}
+
+${P(`Rapid rescoring is included in our ${STRONG('Premium plan')} as part of the Mortgage-Ready Program. We coordinate with your lender to ensure all recent changes are captured before your final credit pull.`)}
+
+${CALLOUT('Real Example', 'An ITIN holder client had a 617 score but needed 620 for a conventional mortgage. We paid off a $300 credit card balance (bringing utilization from 35% to 2%) and requested rapid rescoring through their lender. Score updated to 634 within 48 hours. Mortgage approved.')}
+`,
+
+// ═══ ARTICLE 20: Identity Theft ═══
+'identity-theft-itin-credit': `
+${P(`Identity theft affecting ITIN credit files is a growing problem — and the recovery process has unique challenges that SSN-focused guides don't cover. I'm Rick Jefferson, and here's what to do if your ITIN has been compromised.`)}
+
+${H2('How Identity Theft Affects ITIN Credit Files')}
+${P(`Thieves can use your ITIN to:`)}
+${UL(`
+${CHECK('Open fraudulent credit accounts in your name')}
+${CHECK('File false tax returns to steal refunds')}
+${CHECK('Create synthetic identities combining your ITIN with fake personal information')}
+${CHECK('Run up charges on existing accounts')}
+`)}
+${P(`The damage shows up as unknown accounts, unauthorized inquiries, incorrect personal information, and mystery collections on your credit reports.`)}
+
+${H2('Step 1: Place Fraud Alerts and Credit Freezes')}
+${P(`Under ${BLUE('FCRA §605A')}, you have the right to place a fraud alert on your credit file. Contact any one of the three bureaus and they must notify the other two:`)}
+${UL(`
+${CHECK('TransUnion: 1-800-680-7289')}
+${CHECK('Equifax: 1-800-525-6285')}
+${CHECK('Experian: 1-888-397-3742')}
+`)}
+${P(`You can also place a ${STRONG('credit freeze')} (security freeze) which prevents anyone from pulling your credit report without your permission. This is free under federal law.`)}
+
+${H2('Step 2: File an FTC Identity Theft Report')}
+${P(`Go to IdentityTheft.gov and file a report. This creates an official record that you can provide to creditors and collection agencies to prove fraud. Keep the report number — you'll need it for disputes.`)}
+
+${H2('Step 3: Dispute Fraudulent Items')}
+${P(`File disputes under ${BLUE('FCRA §605B')} with each bureau for every fraudulent account. Under §605B, when you provide an identity theft report, the bureau must block the fraudulent information within 4 business days — this is faster than the standard 30-day investigation period.`)}
+
+${H2('Step 4: Contact Affected Creditors')}
+${P(`Send written notice to every creditor where fraud occurred. Under the ${BLUE('FCBA (Fair Credit Billing Act)')}, you're not liable for more than $50 in unauthorized charges on credit cards — and most issuers waive even that.`)}
+
+${H2('RJ Business Solutions Identity Theft Policy')}
+${P(`We assist with identity theft recovery under our ${STRONG('Premium plan')}, but with an important policy: RJ Business Solutions does ${STRONG('not')} file, prepare, coach, or advise on FTC Identity Theft Reports, police reports, or victim-status filings under FCRA §605B or §605C. Clients who independently file such documents may submit them with a signed waiver confirming independent filing and truthfulness (violations of 18 U.S.C. §1028 and §1001 will be reported to federal authorities).`)}
+${P(`We handle the credit bureau disputes, creditor notifications, and file restoration — the credit repair work — while the legal attestation of identity theft remains your personal responsibility.`)}
+
+${QUOTE('Identity theft is devastating for anyone, but ITIN holders face an extra layer of complexity because of limited monitoring options and language barriers in the recovery process. That is exactly why we built bilingual identity theft recovery into our Premium plan.', 'Rick Jefferson')}
+`
+
+  }
+  return articles[slug] || `${P('Article content is being prepared. Check back soon for the full guide by Rick Jefferson.')}`
+}
 const BLOG_ARTICLES = [
   { slug:'itin-credit-repair-complete-guide', title:'The Complete Guide to ITIN Credit Repair in 2026', keywords:'ITIN credit repair, credit repair guide ITIN, ITIN credit score fix', wordCount:2500, tier:1, desc:'Everything ITIN holders need to know about disputing inaccurate items, understanding FCRA rights, and rebuilding credit scores across all 3 bureaus.' },
   { slug:'fcra-rights-itin-holders', title:'FCRA Rights for ITIN Holders: What the Law Actually Says', keywords:'FCRA ITIN rights, Fair Credit Reporting Act ITIN, credit dispute rights ITIN', wordCount:2000, tier:1, desc:'The Fair Credit Reporting Act gives ITIN holders the exact same dispute rights as SSN holders. Here is what every section means for your credit file.' },
@@ -2316,54 +3135,54 @@ for (const loc of SUPPORTED_LOCALES) {
     app.get(`/${loc}/blog/${article.slug}`, (c) => {
       const T = (key: string) => t(loc, key)
       const articleSchema = JSON.stringify({
-        "@context":"https://schema.org","@type":"Article","headline":article.title,"author":{"@type":"Person","name":"Rick Jefferson","url":"https://rj-itin-funnels.pages.dev/${loc}/about-rick-jefferson"},"publisher":{"@type":"Organization","name":"RJ Business Solutions","logo":{"@type":"ImageObject","url":"${IMG.logo}"}},"datePublished":"2026-02-25","dateModified":"2026-02-25","description":article.desc,"keywords":article.keywords,"wordCount":article.wordCount,"mainEntityOfPage":{"@type":"WebPage","@id":"https://rj-itin-funnels.pages.dev/${loc}/blog/${article.slug}"}
+        "@context":"https://schema.org","@type":"Article","headline":article.title,"author":{"@type":"Person","name":"Rick Jefferson","jobTitle":"Founder & ITIN Credit Expert","url":`https://rj-itin-funnels.pages.dev/${loc}/about-rick-jefferson`,"image":IMG.rickPortrait,"sameAs":["https://linkedin.com/in/rick-jefferson-314998235","https://tiktok.com/@rick_jeff_solution","https://twitter.com/ricksolutions1"]},"publisher":{"@type":"Organization","name":"RJ Business Solutions","logo":{"@type":"ImageObject","url":IMG.logo},"url":"https://rickjeffersonsolutions.com"},"datePublished":"2026-02-25","dateModified":"2026-02-26","description":article.desc,"keywords":article.keywords,"wordCount":article.wordCount,"inLanguage":"en","mainEntityOfPage":{"@type":"WebPage","@id":`https://rj-itin-funnels.pages.dev/${loc}/blog/${article.slug}`}
       })
       const relatedArticles = BLOG_ARTICLES.filter(a => a.slug !== article.slug && a.tier === article.tier).slice(0, 3)
+      const MFSN_URL = 'https://app.myfreescorenow.com/enroll/B01A8289'
+      const bodyHTML = getArticleBody(article.slug, loc, MFSN_URL)
       return c.html(pageLayout(loc, article.title, `
       <article style="padding:5rem 0;background:linear-gradient(180deg,#0f172a,#111827)">
-        <div class="cx">
+        <div class="cx" style="max-width:820px;margin:0 auto">
           <div style="margin-bottom:2rem">
             <a href="/${loc}/blog" style="color:#60a5fa;font-size:.85rem">← Back to Blog</a>
           </div>
-          <div style="display:flex;gap:.75rem;margin-bottom:1.5rem;flex-wrap:wrap">
-            <span style="background:${article.tier === 1 ? '#3b82f622' : article.tier === 2 ? '#8b5cf622' : '#f59e0b22'};color:${article.tier === 1 ? '#3b82f6' : article.tier === 2 ? '#8b5cf6' : '#f59e0b'};font-size:.72rem;font-weight:700;padding:.25rem .75rem;border-radius:999px;border:1px solid ${article.tier === 1 ? '#3b82f644' : article.tier === 2 ? '#8b5cf644' : '#f59e0b44'}">Tier ${article.tier} Keyword</span>
-            <span style="color:#6b7280;font-size:.75rem">${article.wordCount.toLocaleString()} words</span>
-            <span style="color:#6b7280;font-size:.75rem">By Rick Jefferson</span>
-            <span style="color:#6b7280;font-size:.75rem">Feb 25, 2026</span>
+          <div style="display:flex;gap:.75rem;margin-bottom:1.5rem;flex-wrap:wrap;align-items:center">
+            <span style="background:${article.tier === 1 ? '#3b82f622' : article.tier === 2 ? '#8b5cf622' : '#f59e0b22'};color:${article.tier === 1 ? '#3b82f6' : article.tier === 2 ? '#8b5cf6' : '#f59e0b'};font-size:.72rem;font-weight:700;padding:.25rem .75rem;border-radius:999px;border:1px solid ${article.tier === 1 ? '#3b82f644' : article.tier === 2 ? '#8b5cf644' : '#f59e0b44'}">${article.tier === 1 ? 'Essential Guide' : article.tier === 2 ? 'Deep Dive' : 'Quick Reference'}</span>
+            <span style="color:#6b7280;font-size:.75rem">📖 ${article.wordCount.toLocaleString()} words</span>
+            <span style="color:#6b7280;font-size:.75rem">✍️ By <a href="/${loc}/about-rick-jefferson" style="color:#60a5fa">Rick Jefferson</a></span>
+            <span style="color:#6b7280;font-size:.75rem">📅 Feb 25, 2026</span>
           </div>
           <h1 style="font-size:clamp(1.75rem,4vw,2.75rem);font-weight:900;line-height:1.2;margin-bottom:1.5rem">${article.title}</h1>
           <p style="color:#bfdbfe;font-size:1.1rem;line-height:1.8;margin-bottom:2rem;border-left:3px solid #3b82f6;padding-left:1rem">${article.desc}</p>
-          <div style="color:#d1d5db;font-size:.95rem;line-height:2">
-            <p style="margin-bottom:1.5rem">This is a comprehensive guide for ITIN holders on <strong style="color:#fff">${article.title.toLowerCase()}</strong>. Under federal law — specifically the Fair Credit Reporting Act (FCRA) and Equal Credit Opportunity Act (ECOA) — ITIN holders have the <strong style="color:#fff">exact same credit dispute and reporting rights</strong> as SSN holders.</p>
-            <h2 style="color:#fff;font-size:1.5rem;font-weight:800;margin:2rem 0 1rem">Key Takeaways</h2>
-            <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:.75rem;margin-bottom:2rem">
-              <li style="display:flex;gap:.5rem"><span style="color:#4ade80;font-weight:700">✓</span> All 3 credit bureaus (TransUnion, Equifax, Experian) accept ITIN numbers</li>
-              <li style="display:flex;gap:.5rem"><span style="color:#4ade80;font-weight:700">✓</span> FCRA §611 guarantees your right to dispute inaccurate information</li>
-              <li style="display:flex;gap:.5rem"><span style="color:#4ade80;font-weight:700">✓</span> ECOA prohibits national-origin discrimination in credit decisions</li>
-              <li style="display:flex;gap:.5rem"><span style="color:#4ade80;font-weight:700">✓</span> Professional credit repair services can significantly accelerate results</li>
-            </ul>
-            <h2 style="color:#fff;font-size:1.5rem;font-weight:800;margin:2rem 0 1rem">Your Federal Rights as an ITIN Holder</h2>
-            <p style="margin-bottom:1rem">The <strong style="color:#60a5fa">Fair Credit Reporting Act (FCRA)</strong> requires all credit reporting agencies to investigate disputes within 30 days (§611), maintain reasonable accuracy (§607), and allow consumers to place fraud alerts and freezes regardless of SSN or ITIN status.</p>
-            <p style="margin-bottom:1rem">The <strong style="color:#60a5fa">Equal Credit Opportunity Act (ECOA)</strong> makes it illegal for creditors and bureaus to discriminate based on national origin, race, or immigration status. Your ITIN credit file is entitled to the same treatment as any SSN file.</p>
-            <p style="margin-bottom:1rem">The <strong style="color:#60a5fa">Credit Repair Organizations Act (CROA)</strong> protects you when hiring credit repair services: written contracts required, 3-day cancellation right, and no advance fees until services are performed.</p>
-            <div style="background:rgba(30,58,138,.15);border:1px solid rgba(59,130,246,.2);border-radius:1rem;padding:1.5rem;margin:2rem 0">
-              <h3 style="color:#60a5fa;font-size:1.1rem;font-weight:800;margin-bottom:.75rem">🧾 Ready for Professional Help?</h3>
-              <p style="color:#d1d5db;margin-bottom:1rem">RJ Business Solutions offers 3 ITIN credit repair plans — Basic ($99/mo), Professional ($149/mo), and Premium ($199/mo) — all performance-based with a 90-day money-back guarantee.</p>
-              <a href="/${loc}#plans" class="btn-secondary">See All Plans →</a>
+          <!-- AUTHOR BOX -->
+          <div style="display:flex;gap:1rem;align-items:center;background:#111827;border:1px solid #1e3a5f;border-radius:1rem;padding:1rem 1.25rem;margin-bottom:2.5rem">
+            <img src="${IMG.rickPortrait}" alt="Rick Jefferson" width="56" height="56" style="border-radius:50%;object-fit:cover">
+            <div>
+              <div style="color:#fff;font-weight:700;font-size:.9rem">Rick Jefferson</div>
+              <div style="color:#9ca3af;font-size:.78rem">Founder & ITIN Credit Expert — RJ Business Solutions</div>
+              <div style="color:#6b7280;font-size:.72rem">FCRA, ECOA, CROA, FDCPA Specialist · 10,000+ ITIN clients served</div>
             </div>
-            <h2 style="color:#fff;font-size:1.5rem;font-weight:800;margin:2rem 0 1rem">Get Started Today</h2>
-            <p style="margin-bottom:1rem">Step 1: <a href="https://app.myfreescorenow.com/enroll/B01A8289" target="_blank" style="color:#60a5fa;font-weight:600">Enroll in MyFreeScoreNow credit monitoring</a> ($29.99/mo) to activate your tri-bureau data feed.</p>
-            <p style="margin-bottom:1rem">Step 2: <a href="/${loc}#plans" style="color:#60a5fa;font-weight:600">Choose your plan</a> based on your number of negative items.</p>
-            <p style="margin-bottom:1rem">Step 3: Receive your forensic 3-bureau audit and 10-point restoration roadmap within 5 business days.</p>
+          </div>
+          <div class="article-body" style="color:#d1d5db;font-size:.95rem;line-height:2">
+            ${bodyHTML}
+          </div>
+          <!-- CTA BOX -->
+          <div style="background:linear-gradient(135deg,rgba(59,130,246,.12),rgba(139,92,246,.12));border:1px solid rgba(59,130,246,.3);border-radius:1rem;padding:2rem;margin:3rem 0;text-align:center">
+            <h3 style="color:#fff;font-size:1.25rem;font-weight:800;margin-bottom:.75rem">🛡️ Ready for Professional ITIN Credit Repair?</h3>
+            <p style="color:#d1d5db;margin-bottom:1rem">RJ Business Solutions offers 3 performance-based plans — Basic ($99/mo), Professional ($149/mo), Premium ($199/mo) — with a 90-day money-back guarantee. You only pay when progress is verified.</p>
+            <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+              <a href="${MFSN_URL}" target="_blank" class="btn-primary" style="display:inline-block">Step 1: Activate Credit Monitoring →</a>
+              <a href="/${loc}#plans" class="btn-secondary" style="display:inline-block">Step 2: Choose Your Plan →</a>
+            </div>
           </div>
         </div>
       </article>
       ${relatedArticles.length > 0 ? `
       <section style="padding:4rem 0;background:linear-gradient(180deg,#111827,#0f172a)">
-        <div class="cx">
-          <h3 style="font-size:1.25rem;font-weight:800;margin-bottom:1.5rem">Related Articles</h3>
+        <div class="cx" style="max-width:820px;margin:0 auto">
+          <h3 style="font-size:1.25rem;font-weight:800;margin-bottom:1.5rem">📚 Related Articles by Rick Jefferson</h3>
           <div style="display:flex;flex-direction:column;gap:1rem">
-            ${relatedArticles.map(r => `<a href="/${loc}/blog/${r.slug}" style="display:flex;justify-content:space-between;align-items:center;background:#111827;border:1px solid #1e3a5f;border-radius:.75rem;padding:1rem 1.25rem;text-decoration:none;transition:all .2s" onmouseover="this.style.borderColor='#3b82f6'" onmouseout="this.style.borderColor='#1e3a5f'"><span style="color:#d1d5db;font-size:.9rem;font-weight:600">${r.title}</span><span style="color:#60a5fa;font-size:.8rem;white-space:nowrap;margin-left:1rem">Read →</span></a>`).join('')}
+            ${relatedArticles.map(r => `<a href="/${loc}/blog/${r.slug}" style="display:flex;justify-content:space-between;align-items:center;background:#111827;border:1px solid #1e3a5f;border-radius:.75rem;padding:1rem 1.25rem;text-decoration:none;transition:all .2s" onmouseover="this.style.borderColor='#3b82f6'" onmouseout="this.style.borderColor='#1e3a5f'"><div><span style="color:#d1d5db;font-size:.9rem;font-weight:600;display:block">${r.title}</span><span style="color:#6b7280;font-size:.75rem">${r.desc.substring(0,100)}...</span></div><span style="color:#60a5fa;font-size:.8rem;white-space:nowrap;margin-left:1rem">Read →</span></a>`).join('')}
           </div>
         </div>
       </section>` : ''}
