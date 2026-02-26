@@ -1004,6 +1004,7 @@ function pageLayout(locale: string, title: string, content: string, seoOpts?: { 
         <a href="/${locale}">${T('nav_home')}</a>
         <a href="/${locale}#plans">${T('nav_plans')}</a>
         <a href="/${locale}/about-rick-jefferson">About</a>
+        <a href="/${locale}/quiz" style="color:#4ade80">Quiz</a>
         <a href="/${locale}/blog">Blog</a>
         <a href="/${locale}/credit-monitoring">Monitoring</a>
         <a href="/${locale}/portal">Portal</a>
@@ -1109,7 +1110,7 @@ function pageLayout(locale: string, title: string, content: string, seoOpts?: { 
       <div style="display:flex;justify-content:center;gap:1rem;margin:.75rem 0;flex-wrap:wrap">
         <a href="https://app.myfreescorenow.com/enroll/B01A8289" target="_blank" style="color:#4ade80;font-size:.82rem;font-weight:600">📊 Credit Monitoring Sign-Up</a>
         <a href="https://app.myfreescorenow.com/enroll/B01A8289" target="_blank" style="color:#22d3ee;font-size:.82rem;font-weight:600">🔒 Enroll in Credit Monitoring</a>
-        <a href="https://rickjeffersonsolutions.com" target="_blank" style="color:#60a5fa;font-size:.82rem;font-weight:600">🧭 ITIN Credit Roadmap Quiz</a>
+        <a href="/${locale}/quiz" style="color:#60a5fa;font-size:.82rem;font-weight:600">🧭 ITIN Credit Roadmap Quiz</a>
       </div>
       <div style="display:flex;justify-content:center;gap:1.25rem;margin:.5rem 0;flex-wrap:wrap">
         <a href="https://tiktok.com/@rick_jeff_solution" target="_blank" style="color:#9ca3af;font-size:.8rem;transition:color .2s" onmouseover="this.style.color='#60a5fa'" onmouseout="this.style.color='#9ca3af'">TikTok: @rick_jeff_solution</a>
@@ -1175,7 +1176,8 @@ function mainFunnelHTML(locale: string): string {
       <h1>${T('hero_title')}</h1>
       <p class="sub">${T('hero_sub')}</p>
       <a href="#plans" class="btn-primary">${T('hero_cta')} →</a>
-      <p style="color:#bfdbfe;font-size:.78rem;margin-top:1rem;text-shadow:0 1px 3px rgba(0,0,0,.4)">${T('spots_left')}</p>
+      <div style="margin-top:1rem"><a href="/${locale}/quiz" style="display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:#fff;font-weight:600;font-size:.88rem;padding:.65rem 1.5rem;border-radius:.6rem;transition:all .3s;text-decoration:none;backdrop-filter:blur(4px)" onmouseover="this.style.background='rgba(59,130,246,.2)';this.style.borderColor='rgba(59,130,246,.5)'" onmouseout="this.style.background='rgba(255,255,255,.08)';this.style.borderColor='rgba(255,255,255,.2)'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>${locale === 'es' ? 'Toma el Quiz de Crédito' : 'Take the Credit Quiz'}</a></div>
+      <p style="color:#bfdbfe;font-size:.78rem;margin-top:.75rem;text-shadow:0 1px 3px rgba(0,0,0,.4)">${T('spots_left')}</p>
     </div>
   </section>
 
@@ -1914,6 +1916,8 @@ app.post('/api/leads', async (c) => {
     // Log analytics event
     await db.prepare('INSERT INTO analytics (event, page, locale, plan, visitor_id, referrer) VALUES (?, ?, ?, ?, ?, ?)').bind('lead_captured', 'funnel', locale || 'en', plan || 'basic', email, ref || null).run()
     const mfsnUrl = getMfsnUrl(c, plan || 'basic')
+    // Alert Rick about new lead
+    await alertRick(c, 'Lead', { name, email, phone: phone || 'Not provided', plan: plan || 'basic', locale: locale || 'en', source: source || 'funnel', ref: ref || 'none' })
     return c.json({ success: true, data: { leadId, name, email, plan: plan || 'basic', mfsnUrl } })
   } catch (err: any) { return c.json({ success: false, error: err.message || 'Server error' }, 500) }
 })
@@ -2401,6 +2405,52 @@ for (const loc of SUPPORTED_LOCALES) {
           <p style="color:#9ca3af;font-size:.9rem;margin-bottom:1rem">Ready to start? Enroll in credit monitoring first:</p>
           <a href="https://app.myfreescorenow.com/enroll/B01A8289" target="_blank" class="btn-primary" style="display:inline-flex">Activate Credit Monitoring →</a>
         </div>
+        <!-- CONTACT FORM -->
+        <div class="ao" style="max-width:600px;margin:3rem auto 0;background:linear-gradient(135deg,rgba(59,130,246,.05),rgba(139,92,246,.05));border:1px solid rgba(59,130,246,.2);border-radius:1.25rem;padding:2rem">
+          <h3 style="font-size:1.15rem;font-weight:800;margin-bottom:1.5rem;text-align:center">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" style="vertical-align:middle;margin-right:.5rem"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            ${loc === 'es' ? 'Envíanos un Mensaje' : 'Send Us a Message'}
+          </h3>
+          <form onsubmit="submitContact(event)">
+            <div class="fg2"><label>${loc === 'es' ? 'Nombre Completo *' : 'Full Name *'}</label><input type="text" id="contact-name" required style="width:100%;padding:.8rem 1rem;background:#1f2937;border:1px solid #374151;border-radius:.6rem;color:#fff;font-size:.95rem;outline:none"></div>
+            <div class="fg2" style="margin-top:.75rem"><label>${loc === 'es' ? 'Correo Electrónico *' : 'Email *'}</label><input type="email" id="contact-email" required style="width:100%;padding:.8rem 1rem;background:#1f2937;border:1px solid #374151;border-radius:.6rem;color:#fff;font-size:.95rem;outline:none"></div>
+            <div class="fg2" style="margin-top:.75rem"><label>${loc === 'es' ? 'Teléfono' : 'Phone'}</label><input type="tel" id="contact-phone" style="width:100%;padding:.8rem 1rem;background:#1f2937;border:1px solid #374151;border-radius:.6rem;color:#fff;font-size:.95rem;outline:none"></div>
+            <div class="fg2" style="margin-top:.75rem"><label>${loc === 'es' ? 'Asunto' : 'Subject'}</label><input type="text" id="contact-subject" style="width:100%;padding:.8rem 1rem;background:#1f2937;border:1px solid #374151;border-radius:.6rem;color:#fff;font-size:.95rem;outline:none"></div>
+            <div class="fg2" style="margin-top:.75rem"><label>${loc === 'es' ? 'Mensaje *' : 'Message *'}</label><textarea id="contact-message" required rows="4" style="width:100%;padding:.8rem 1rem;background:#1f2937;border:1px solid #374151;border-radius:.6rem;color:#fff;font-size:.95rem;outline:none;resize:vertical"></textarea></div>
+            <button type="submit" id="contact-btn" style="width:100%;margin-top:1.25rem;padding:1rem;background:linear-gradient(135deg,#3b82f6,#06b6d4);color:#fff;font-weight:800;font-size:1rem;border-radius:.65rem;border:none;cursor:pointer;transition:all .3s">${loc === 'es' ? 'Enviar Mensaje' : 'Send Message'}</button>
+            <div id="contact-status" style="text-align:center;margin-top:.75rem;font-size:.85rem"></div>
+          </form>
+        </div>
+        <script>
+        async function submitContact(e) {
+          e.preventDefault();
+          const btn = document.getElementById('contact-btn');
+          btn.textContent = '${loc === 'es' ? 'Enviando...' : 'Sending...'}'; btn.disabled = true;
+          try {
+            const res = await fetch('/api/contact', {
+              method: 'POST', headers: {'Content-Type':'application/json'},
+              body: JSON.stringify({
+                name: document.getElementById('contact-name').value,
+                email: document.getElementById('contact-email').value,
+                phone: document.getElementById('contact-phone').value,
+                subject: document.getElementById('contact-subject').value,
+                message: document.getElementById('contact-message').value,
+                locale: '${loc}'
+              })
+            });
+            const data = await res.json();
+            if (data.success) {
+              document.getElementById('contact-status').innerHTML = '<span style="color:#4ade80;font-weight:700">${loc === 'es' ? '✅ ¡Mensaje enviado! Responderemos en 24 horas.' : '✅ Message sent! We will respond within 24 hours.'}</span>';
+              e.target.reset();
+            } else {
+              document.getElementById('contact-status').innerHTML = '<span style="color:#ef4444">' + (data.error || 'Error') + '</span>';
+            }
+          } catch(err) {
+            document.getElementById('contact-status').innerHTML = '<span style="color:#ef4444">${loc === 'es' ? 'Error de conexión' : 'Connection error'}</span>';
+          }
+          btn.textContent = '${loc === 'es' ? 'Enviar Mensaje' : 'Send Message'}'; btn.disabled = false;
+        }
+        </script>
       </div>
     </section>
     `, { description: 'Contact RJ Business Solutions for ITIN credit repair — email, office address, social media. Bilingual support in English & Spanish.', canonical: 'https://rj-itin-funnels.pages.dev/${loc}/contact', keywords: 'contact RJ Business Solutions, ITIN credit repair contact, Rick Jefferson contact, credit repair help' }))
@@ -4204,6 +4254,7 @@ app.get('/admin/analytics', async (c) => {
     <div><strong style="font-size:1.1rem">📊 RJ Analytics</strong><br><span style="color:#9ca3af;font-size:.78rem">Real-Time Production Dashboard — D1 Database</span></div>
     <div style="display:flex;gap:1rem;align-items:center">
       <span style="color:#4ade80;font-size:.78rem">● Live Production</span>
+      <a href="/admin/submissions" style="color:#f59e0b;font-size:.82rem;font-weight:600">📋 Submissions</a>
       <a href="/en" style="color:#60a5fa;font-size:.82rem">← Back to Site</a>
     </div>
   </div>
@@ -4341,6 +4392,102 @@ app.post('/api/email/send', async (c) => {
   } catch (err: any) { return c.json({ success: false, error: err.message || 'Server error' }, 500) }
 })
 
+// ─── HELPER: Send alert email to Rick on every submission ───
+async function alertRick(c: any, type: string, data: any) {
+  try {
+    if (!c.env.RESEND_API_KEY || c.env.RESEND_API_KEY.includes('YOUR_')) return
+    const subject = `[RJ ITIN] New ${type} Submission — ${data.name || data.email || 'Unknown'}`
+    const html = `<div style="font-family:Inter,sans-serif;background:#111827;color:#fff;padding:2rem;border-radius:12px">
+      <h2 style="color:#4ade80;margin:0 0 1rem">New ${type} Submission</h2>
+      <table style="width:100%;border-collapse:collapse">
+        ${Object.entries(data).map(([k, v]) => `<tr><td style="padding:.5rem;color:#9ca3af;border-bottom:1px solid #1f2937;font-weight:600;text-transform:capitalize">${k.replace(/_/g,' ')}</td><td style="padding:.5rem;color:#fff;border-bottom:1px solid #1f2937">${v || '—'}</td></tr>`).join('')}
+      </table>
+      <p style="color:#6b7280;font-size:.75rem;margin-top:1.5rem">Sent from rj-itin-funnels.pages.dev at ${new Date().toISOString()}</p>
+    </div>`
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${c.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from: 'RJ Alerts <rick@rickjeffersonsolutions.com>', to: ['rickjefferson@rickjeffersonsolutions.com'], subject, html })
+    })
+  } catch (_) { /* silent — alerts should never break main flow */ }
+}
+
+// ─── QUIZ SUBMIT API ───
+app.post('/api/quiz', async (c) => {
+  try {
+    const { name, email, phone, locale, negative_items, credit_score_range, goal, timeline, has_monitoring, utm_source, utm_medium, utm_campaign, ref } = await c.req.json()
+    if (!email) return c.json({ success: false, error: 'Email is required' }, 400)
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return c.json({ success: false, error: 'Invalid email' }, 400)
+    // Compute recommended plan
+    let recommended = 'basic'
+    const items = negative_items || ''
+    if (items === '16+' || items === '11-15' || goal === 'mortgage' || goal === 'business_credit') recommended = 'premium'
+    else if (items === '6-10' || goal === 'aggressive_repair' || timeline === 'urgent') recommended = 'professional'
+    const db = c.env.DB
+    await db.prepare(
+      'INSERT INTO quiz_responses (name, email, phone, locale, negative_items, credit_score_range, goal, timeline, has_monitoring, recommended_plan, utm_source, utm_medium, utm_campaign, ref) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    ).bind(name || null, email, phone || null, locale || 'en', items, credit_score_range || null, goal || null, timeline || null, has_monitoring || null, recommended, utm_source || null, utm_medium || null, utm_campaign || null, ref || null).run()
+    // Also create a lead entry
+    await db.prepare(
+      'INSERT INTO leads (name, email, phone, plan, locale, source, utm_source, utm_medium, utm_campaign) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    ).bind(name || 'Quiz Lead', email, phone || null, recommended, locale || 'en', 'quiz', utm_source || null, utm_medium || null, utm_campaign || null).run()
+    // Analytics
+    await db.prepare('INSERT INTO analytics (event, page, locale, plan, visitor_id) VALUES (?, ?, ?, ?, ?)').bind('quiz_completed', 'quiz', locale || 'en', recommended, email).run()
+    // Alert Rick
+    await alertRick(c, 'Quiz', { name: name || 'Not provided', email, phone: phone || 'Not provided', negative_items: items, credit_score_range, goal, timeline, has_monitoring, recommended_plan: recommended })
+    const planConfig = PLANS[recommended as keyof typeof PLANS] || PLANS.basic
+    return c.json({ success: true, data: { recommended_plan: recommended, price: planConfig.price, disputes: planConfig.disputes, mfsnUrl: 'https://app.myfreescorenow.com/enroll/B01A8289' } })
+  } catch (err: any) { return c.json({ success: false, error: err.message || 'Quiz error' }, 500) }
+})
+
+// ─── CONTACT FORM API ───
+app.post('/api/contact', async (c) => {
+  try {
+    const { name, email, phone, subject, message, locale } = await c.req.json()
+    if (!name || !email || !message) return c.json({ success: false, error: 'Name, email and message required' }, 400)
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return c.json({ success: false, error: 'Invalid email' }, 400)
+    const db = c.env.DB
+    await db.prepare(
+      'INSERT INTO contact_submissions (name, email, phone, subject, message, locale) VALUES (?, ?, ?, ?, ?, ?)'
+    ).bind(name, email, phone || null, subject || 'General Inquiry', message, locale || 'en').run()
+    await db.prepare('INSERT INTO analytics (event, page, locale, visitor_id) VALUES (?, ?, ?, ?)').bind('contact_form', 'contact', locale || 'en', email).run()
+    // Alert Rick
+    await alertRick(c, 'Contact Form', { name, email, phone: phone || 'Not provided', subject: subject || 'General Inquiry', message })
+    // Send auto-reply
+    if (c.env.RESEND_API_KEY && !c.env.RESEND_API_KEY.includes('YOUR_')) {
+      await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${c.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ from: 'Rick Jefferson <rick@rickjeffersonsolutions.com>', to: [email], subject: 'Thanks for reaching out — RJ Business Solutions', html: `<h2>Hey ${name},</h2><p>Thanks for contacting RJ Business Solutions. We received your message and Rick will respond within 24 hours.</p><p>In the meantime, check out our <a href="https://rj-itin-funnels.pages.dev/en#plans">ITIN credit repair plans</a>.</p><p>— Rick Jefferson<br>RJ Business Solutions</p>` })
+      })
+    }
+    return c.json({ success: true, message: 'Message sent successfully' })
+  } catch (err: any) { return c.json({ success: false, error: err.message || 'Contact error' }, 500) }
+})
+
+// ─── ADMIN: All Submissions (leads, quiz, contacts, email logs) ───
+app.get('/api/admin/submissions', async (c) => {
+  try {
+    const db = c.env.DB
+    const [leads, quizzes, contacts, emails] = await Promise.all([
+      db.prepare('SELECT id, name, email, phone, plan, locale, source, utm_source, created_at FROM leads ORDER BY created_at DESC LIMIT 100').all(),
+      db.prepare('SELECT id, name, email, phone, negative_items, credit_score_range, goal, timeline, has_monitoring, recommended_plan, created_at FROM quiz_responses ORDER BY created_at DESC LIMIT 100').all(),
+      db.prepare('SELECT id, name, email, phone, subject, message, locale, status, created_at FROM contact_submissions ORDER BY created_at DESC LIMIT 100').all(),
+      db.prepare('SELECT id, recipient, subject, sequence, step, status, resend_id, created_at FROM email_log ORDER BY created_at DESC LIMIT 100').all()
+    ])
+    return c.json({
+      success: true,
+      data: {
+        leads: leads.results || [],
+        quiz_responses: quizzes.results || [],
+        contact_submissions: contacts.results || [],
+        email_log: emails.results || [],
+        counts: { leads: (leads.results || []).length, quizzes: (quizzes.results || []).length, contacts: (contacts.results || []).length, emails: (emails.results || []).length }
+      }
+    })
+  } catch (err: any) { return c.json({ success: false, error: err.message }, 500) }
+})
+
 // ═══════════════════════════════════════════════════════════════
 // API: Admin Stats
 // ═══════════════════════════════════════════════════════════════
@@ -4389,6 +4536,252 @@ app.get('/refund-policy', (c) => c.redirect(`/${detectLocale(c)}/refund-policy`)
 app.get('/results', (c) => c.redirect(`/${detectLocale(c)}/results`))
 app.get('/press', (c) => c.redirect(`/${detectLocale(c)}/press`))
 app.get('/certifications', (c) => c.redirect(`/${detectLocale(c)}/certifications`))
+app.get('/quiz', (c) => c.redirect(`/${detectLocale(c)}/quiz`))
+
+// ═══════════════════════════════════════════════════════════════
+// ITIN CREDIT ROADMAP QUIZ — Full Interactive Quiz Page
+// ═══════════════════════════════════════════════════════════════
+for (const loc of SUPPORTED_LOCALES) {
+  app.get(`/${loc}/quiz`, (c) => {
+    const isEs = loc === 'es'
+    return c.html(pageLayout(loc, isEs ? 'Cuestionario de Crédito ITIN' : 'ITIN Credit Roadmap Quiz', `
+    <section style="padding:4rem 0 6rem;background:linear-gradient(180deg,#0f172a,#111827);min-height:80vh">
+      <div class="cx" style="max-width:680px">
+        <div style="text-align:center;margin-bottom:2.5rem">
+          <div style="width:64px;height:64px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+          <h1 class="stt ao" style="font-size:clamp(1.5rem,4vw,2.25rem)">${isEs ? 'Cuestionario de Ruta de Crédito ITIN' : 'ITIN Credit Roadmap Quiz'}</h1>
+          <p class="sts ao">${isEs ? 'Responde 5 preguntas rápidas y te recomendaremos el plan perfecto para tu situación.' : 'Answer 5 quick questions and we will recommend the perfect plan for your situation.'}</p>
+        </div>
+
+        <!-- QUIZ FORM -->
+        <div id="quiz-container" class="ao" style="background:linear-gradient(135deg,rgba(59,130,246,.05),rgba(139,92,246,.05));border:1px solid rgba(59,130,246,.2);border-radius:1.25rem;padding:2rem;backdrop-filter:blur(8px)">
+          <!-- PROGRESS BAR -->
+          <div style="display:flex;gap:.25rem;margin-bottom:2rem">
+            ${[1,2,3,4,5].map(n => `<div id="prog-${n}" style="flex:1;height:4px;border-radius:99px;background:${n===1?'linear-gradient(90deg,#3b82f6,#8b5cf6)':'#1f2937'};transition:all .4s"></div>`).join('')}
+          </div>
+
+          <!-- STEP 1 -->
+          <div id="step-1" class="quiz-step">
+            <h3 style="font-size:1.1rem;font-weight:800;margin-bottom:.5rem;color:#fff">${isEs ? 'Paso 1 de 5' : 'Step 1 of 5'}</h3>
+            <p style="color:#d1d5db;font-size:.95rem;margin-bottom:1.5rem">${isEs ? '¿Cuántos elementos negativos tienes en tu reporte de crédito?' : 'How many negative items are on your credit report?'}</p>
+            <div style="display:flex;flex-direction:column;gap:.75rem">
+              ${[
+                { val: '1-5', label: isEs ? '1–5 elementos' : '1–5 items', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>' },
+                { val: '6-10', label: isEs ? '6–10 elementos' : '6–10 items', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' },
+                { val: '11-15', label: isEs ? '11–15 elementos' : '11–15 items', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>' },
+                { val: '16+', label: isEs ? '16+ elementos' : '16+ items', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>' },
+                { val: 'unsure', label: isEs ? 'No estoy seguro' : "I'm not sure", icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' }
+              ].map(o => `<button onclick="quizSelect(1,'negative_items','${o.val}')" class="quiz-opt" style="display:flex;align-items:center;gap:1rem;background:#1f2937;border:1px solid #374151;border-radius:.75rem;padding:1rem 1.25rem;color:#d1d5db;font-size:.9rem;cursor:pointer;transition:all .2s;text-align:left;width:100%" onmouseover="this.style.borderColor='#3b82f6';this.style.background='rgba(59,130,246,.1)'" onmouseout="if(!this.classList.contains('selected')){this.style.borderColor='#374151';this.style.background='#1f2937'}">${o.icon}<span>${o.label}</span></button>`).join('')}
+            </div>
+          </div>
+
+          <!-- STEP 2 -->
+          <div id="step-2" class="quiz-step" style="display:none">
+            <h3 style="font-size:1.1rem;font-weight:800;margin-bottom:.5rem;color:#fff">${isEs ? 'Paso 2 de 5' : 'Step 2 of 5'}</h3>
+            <p style="color:#d1d5db;font-size:.95rem;margin-bottom:1.5rem">${isEs ? '¿Cuál es tu rango de puntaje de crédito actual?' : 'What is your current credit score range?'}</p>
+            <div style="display:flex;flex-direction:column;gap:.75rem">
+              ${[
+                { val: 'below-500', label: isEs ? 'Menos de 500' : 'Below 500', color: '#ef4444' },
+                { val: '500-579', label: '500–579', color: '#f87171' },
+                { val: '580-649', label: '580–649', color: '#f59e0b' },
+                { val: '650-699', label: '650–699', color: '#22d3ee' },
+                { val: '700+', label: '700+', color: '#4ade80' },
+                { val: 'unknown', label: isEs ? 'No lo sé' : "I don't know", color: '#9ca3af' }
+              ].map(o => `<button onclick="quizSelect(2,'credit_score_range','${o.val}')" class="quiz-opt" style="display:flex;align-items:center;gap:1rem;background:#1f2937;border:1px solid #374151;border-radius:.75rem;padding:1rem 1.25rem;color:#d1d5db;font-size:.9rem;cursor:pointer;transition:all .2s;width:100%" onmouseover="this.style.borderColor='#3b82f6'" onmouseout="if(!this.classList.contains('selected'))this.style.borderColor='#374151'"><div style="width:12px;height:12px;border-radius:50%;background:${o.color};flex-shrink:0"></div><span>${o.label}</span></button>`).join('')}
+            </div>
+          </div>
+
+          <!-- STEP 3 -->
+          <div id="step-3" class="quiz-step" style="display:none">
+            <h3 style="font-size:1.1rem;font-weight:800;margin-bottom:.5rem;color:#fff">${isEs ? 'Paso 3 de 5' : 'Step 3 of 5'}</h3>
+            <p style="color:#d1d5db;font-size:.95rem;margin-bottom:1.5rem">${isEs ? '¿Cuál es tu objetivo principal?' : 'What is your primary goal?'}</p>
+            <div style="display:flex;flex-direction:column;gap:.75rem">
+              ${[
+                { val: 'clean_report', label: isEs ? 'Limpiar mi reporte de crédito' : 'Clean up my credit report', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>' },
+                { val: 'mortgage', label: isEs ? 'Calificar para hipoteca' : 'Qualify for a mortgage', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>' },
+                { val: 'business_credit', label: isEs ? 'Construir crédito empresarial' : 'Build business credit', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>' },
+                { val: 'aggressive_repair', label: isEs ? 'Reparación agresiva rápida' : 'Aggressive fast repair', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>' },
+                { val: 'maintain', label: isEs ? 'Mantener y mejorar' : 'Maintain and improve', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>' }
+              ].map(o => `<button onclick="quizSelect(3,'goal','${o.val}')" class="quiz-opt" style="display:flex;align-items:center;gap:1rem;background:#1f2937;border:1px solid #374151;border-radius:.75rem;padding:1rem 1.25rem;color:#d1d5db;font-size:.9rem;cursor:pointer;transition:all .2s;width:100%" onmouseover="this.style.borderColor='#3b82f6'" onmouseout="if(!this.classList.contains('selected'))this.style.borderColor='#374151'">${o.icon}<span>${o.label}</span></button>`).join('')}
+            </div>
+          </div>
+
+          <!-- STEP 4 -->
+          <div id="step-4" class="quiz-step" style="display:none">
+            <h3 style="font-size:1.1rem;font-weight:800;margin-bottom:.5rem;color:#fff">${isEs ? 'Paso 4 de 5' : 'Step 4 of 5'}</h3>
+            <p style="color:#d1d5db;font-size:.95rem;margin-bottom:1.5rem">${isEs ? '¿Cuál es tu línea de tiempo?' : 'What is your timeline?'}</p>
+            <div style="display:flex;flex-direction:column;gap:.75rem">
+              ${[
+                { val: 'urgent', label: isEs ? 'Lo antes posible (30 días)' : 'ASAP (within 30 days)' },
+                { val: '3_months', label: isEs ? '1–3 meses' : '1–3 months' },
+                { val: '6_months', label: isEs ? '3–6 meses' : '3–6 months' },
+                { val: 'no_rush', label: isEs ? 'Sin prisa' : 'No rush' }
+              ].map(o => `<button onclick="quizSelect(4,'timeline','${o.val}')" class="quiz-opt" style="display:flex;align-items:center;gap:1rem;background:#1f2937;border:1px solid #374151;border-radius:.75rem;padding:1rem 1.25rem;color:#d1d5db;font-size:.9rem;cursor:pointer;transition:all .2s;width:100%" onmouseover="this.style.borderColor='#3b82f6'" onmouseout="if(!this.classList.contains('selected'))this.style.borderColor='#374151'"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>${o.label}</span></button>`).join('')}
+            </div>
+          </div>
+
+          <!-- STEP 5 -->
+          <div id="step-5" class="quiz-step" style="display:none">
+            <h3 style="font-size:1.1rem;font-weight:800;margin-bottom:.5rem;color:#fff">${isEs ? 'Paso 5 de 5' : 'Step 5 of 5'}</h3>
+            <p style="color:#d1d5db;font-size:.95rem;margin-bottom:1.5rem">${isEs ? '¿Ya tienes monitoreo de crédito MyFreeScoreNow?' : 'Do you already have MyFreeScoreNow credit monitoring?'}</p>
+            <div style="display:flex;flex-direction:column;gap:.75rem">
+              ${[
+                { val: 'yes', label: isEs ? 'Sí, ya estoy inscrito' : 'Yes, already enrolled' },
+                { val: 'no', label: isEs ? 'No, necesito inscribirme' : 'No, I need to enroll' },
+                { val: 'other', label: isEs ? 'Uso otro servicio de monitoreo' : 'I use a different monitoring service' }
+              ].map(o => `<button onclick="quizSelect(5,'has_monitoring','${o.val}')" class="quiz-opt" style="display:flex;align-items:center;gap:1rem;background:#1f2937;border:1px solid #374151;border-radius:.75rem;padding:1rem 1.25rem;color:#d1d5db;font-size:.9rem;cursor:pointer;transition:all .2s;width:100%" onmouseover="this.style.borderColor='#3b82f6'" onmouseout="if(!this.classList.contains('selected'))this.style.borderColor='#374151'"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg><span>${o.label}</span></button>`).join('')}
+            </div>
+          </div>
+
+          <!-- STEP 6: Contact Info -->
+          <div id="step-6" class="quiz-step" style="display:none">
+            <h3 style="font-size:1.1rem;font-weight:800;margin-bottom:.5rem;color:#fff">${isEs ? 'Último paso' : 'Final Step'}</h3>
+            <p style="color:#d1d5db;font-size:.95rem;margin-bottom:1.5rem">${isEs ? 'Ingresa tu información para ver tu recomendación personalizada.' : 'Enter your info to see your personalized recommendation.'}</p>
+            <form onsubmit="submitQuiz(event)">
+              <div class="fg2"><label>${isEs ? 'Nombre Completo' : 'Full Name'}</label><input type="text" id="quiz-name" required placeholder="${isEs ? 'Tu nombre' : 'Your name'}" style="width:100%;padding:.8rem 1rem;background:#1f2937;border:1px solid #374151;border-radius:.6rem;color:#fff;font-size:.95rem;outline:none"></div>
+              <div class="fg2" style="margin-top:.75rem"><label>${isEs ? 'Correo Electrónico' : 'Email Address'} *</label><input type="email" id="quiz-email" required placeholder="${isEs ? 'tu@correo.com' : 'you@email.com'}" style="width:100%;padding:.8rem 1rem;background:#1f2937;border:1px solid #374151;border-radius:.6rem;color:#fff;font-size:.95rem;outline:none"></div>
+              <div class="fg2" style="margin-top:.75rem"><label>${isEs ? 'Teléfono (opcional)' : 'Phone (optional)'}</label><input type="tel" id="quiz-phone" placeholder="${isEs ? '+1 (555) 123-4567' : '+1 (555) 123-4567'}" style="width:100%;padding:.8rem 1rem;background:#1f2937;border:1px solid #374151;border-radius:.6rem;color:#fff;font-size:.95rem;outline:none"></div>
+              <button type="submit" id="quiz-submit-btn" style="width:100%;margin-top:1.25rem;padding:1rem;background:linear-gradient(135deg,#ec4899,#db2777);color:#fff;font-weight:800;font-size:1rem;border-radius:.75rem;border:none;cursor:pointer;transition:all .3s">${isEs ? 'Ver Mi Recomendación' : 'See My Recommendation'} →</button>
+              <p style="color:#6b7280;font-size:.68rem;margin-top:.75rem;text-align:center">${isEs ? 'Tu información es 100% segura. Sin spam.' : 'Your info is 100% secure. No spam.'}</p>
+            </form>
+          </div>
+
+          <!-- RESULT -->
+          <div id="quiz-result" style="display:none;text-align:center"></div>
+        </div>
+      </div>
+    </section>
+    <script>
+    const quizData = {};
+    function quizSelect(step, key, val) {
+      quizData[key] = val;
+      // Highlight selected
+      document.querySelectorAll('#step-'+step+' .quiz-opt').forEach(b => { b.classList.remove('selected'); b.style.borderColor='#374151'; b.style.background='#1f2937'; });
+      event.currentTarget.classList.add('selected'); event.currentTarget.style.borderColor='#3b82f6'; event.currentTarget.style.background='rgba(59,130,246,.15)';
+      // Advance after brief delay
+      setTimeout(() => {
+        document.getElementById('step-'+step).style.display='none';
+        const next = step + 1;
+        if (next <= 6) {
+          document.getElementById('step-'+next).style.display='block';
+          if (next <= 5) document.getElementById('prog-'+next).style.background='linear-gradient(90deg,#3b82f6,#8b5cf6)';
+        }
+      }, 300);
+    }
+    async function submitQuiz(e) {
+      e.preventDefault();
+      const btn = document.getElementById('quiz-submit-btn');
+      btn.textContent = '${isEs ? 'Analizando...' : 'Analyzing...'}'; btn.disabled = true;
+      quizData.name = document.getElementById('quiz-name').value;
+      quizData.email = document.getElementById('quiz-email').value;
+      quizData.phone = document.getElementById('quiz-phone').value;
+      quizData.locale = '${loc}';
+      try {
+        const res = await fetch('/api/quiz', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(quizData) });
+        const data = await res.json();
+        if (data.success) {
+          const plan = data.data.recommended_plan;
+          const colors = { basic:'#3b82f6', professional:'#8b5cf6', premium:'#f59e0b' };
+          const names = { basic:'Basic', professional:'Professional', premium:'Premium' };
+          document.getElementById('quiz-container').innerHTML = '<div style="text-align:center;padding:1rem"><div style="width:80px;height:80px;background:linear-gradient(135deg,' + colors[plan] + ',' + colors[plan] + '88);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:2rem">'+String.fromCodePoint(plan==='premium'?0x1F451:plan==='professional'?0x2B50:0x1F6E1)+'</div><h2 style="font-size:1.5rem;font-weight:900;color:#fff;margin-bottom:.5rem">${isEs ? "Tu Plan Recomendado" : "Your Recommended Plan"}</h2><div style="font-size:2.5rem;font-weight:900;color:'+colors[plan]+';margin:1rem 0">'+names[plan]+'</div><div style="font-size:2rem;font-weight:900;margin:.5rem 0">$'+data.data.price+'<span style="font-size:1rem;color:#9ca3af">${isEs?"/mes":"/mo"}</span></div><p style="color:#d1d5db;font-size:.95rem;margin:1rem 0 1.5rem">${isEs?"Hasta":"Up to"} '+data.data.disputes+' ${isEs?"disputas/mes":"disputes/month"} &bull; ${isEs?"Garantía 90 días":"90-day guarantee"}</p><div style="display:flex;flex-direction:column;gap:.75rem"><a href="'+data.data.mfsnUrl+'" target="_blank" class="btn-primary" style="display:block;text-align:center">${isEs?"Paso 1: Activar Monitoreo":"Step 1: Activate Monitoring"} →</a><a href="/${loc}/'+plan+'" class="btn-secondary" style="display:block;text-align:center">${isEs?"Paso 2: Ver Detalles del Plan":"Step 2: View Plan Details"} →</a></div></div>';
+        } else {
+          btn.textContent = '${isEs ? 'Error — Intenta de nuevo' : 'Error — Try again'}'; btn.disabled = false;
+        }
+      } catch(err) { btn.textContent = '${isEs ? 'Error de conexión' : 'Connection error'}'; btn.disabled = false; }
+    }
+    </script>
+    `))
+  })
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ADMIN: ALL SUBMISSIONS DASHBOARD
+// ═══════════════════════════════════════════════════════════════
+app.get('/admin/submissions', async (c) => {
+  return c.html(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>All Submissions — RJ Admin</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📋</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:#030712;color:#fff;min-height:100vh}
+    .admin-header{background:#111827;border-bottom:1px solid #1f2937;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem}
+    .tabs{display:flex;gap:.5rem;padding:1rem 2rem;flex-wrap:wrap}
+    .tab{padding:.6rem 1.25rem;border-radius:.6rem;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .2s;border:1px solid #374151;background:#1f2937;color:#9ca3af}
+    .tab.active{background:linear-gradient(135deg,#3b82f6,#8b5cf6);border-color:transparent;color:#fff}
+    .tab:hover{border-color:#3b82f6}
+    .badge{background:#ef4444;color:#fff;font-size:.65rem;font-weight:800;padding:.15rem .45rem;border-radius:99px;margin-left:.35rem}
+    .section{padding:0 2rem 2rem;display:none}.section.active{display:block}
+    .card{background:#111827;border:1px solid #1f2937;border-radius:1rem;overflow:hidden}
+    table{width:100%;border-collapse:collapse;font-size:.82rem}
+    th{text-align:left;padding:.75rem;color:#9ca3af;border-bottom:2px solid #1f2937;font-weight:600;white-space:nowrap}
+    td{padding:.65rem .75rem;border-bottom:1px solid #1f2937;color:#d1d5db;max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    tr:hover td{background:rgba(59,130,246,.03)}
+    .status-new{color:#4ade80;font-weight:700}.status-sent{color:#3b82f6;font-weight:700}.status-queued{color:#f59e0b;font-weight:700}
+    .empty{text-align:center;padding:3rem;color:#6b7280}
+    @media(max-width:768px){table{font-size:.72rem}th,td{padding:.5rem}}
+  </style>
+</head>
+<body>
+  <div class="admin-header">
+    <div><strong style="font-size:1.1rem">📋 All Submissions</strong><br><span style="color:#9ca3af;font-size:.78rem">Every form submission, quiz response, and email — D1 Database</span></div>
+    <div style="display:flex;gap:1rem;align-items:center">
+      <span style="color:#4ade80;font-size:.78rem">● Live</span>
+      <a href="/admin/analytics" style="color:#60a5fa;font-size:.82rem">← Analytics</a>
+      <a href="/en" style="color:#60a5fa;font-size:.82rem">← Site</a>
+    </div>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="showSection('leads')">Leads <span class="badge" id="cnt-leads">0</span></div>
+    <div class="tab" onclick="showSection('quizzes')">Quiz Responses <span class="badge" id="cnt-quizzes">0</span></div>
+    <div class="tab" onclick="showSection('contacts')">Contact Forms <span class="badge" id="cnt-contacts">0</span></div>
+    <div class="tab" onclick="showSection('emails')">Email Log <span class="badge" id="cnt-emails">0</span></div>
+  </div>
+
+  <div id="sec-leads" class="section active"><div class="card"><table><thead><tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Plan</th><th>Source</th><th>Locale</th><th>UTM</th><th>Date</th></tr></thead><tbody id="tbl-leads"><tr><td colspan="9" class="empty">Loading...</td></tr></tbody></table></div></div>
+  <div id="sec-quizzes" class="section"><div class="card"><table><thead><tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Neg Items</th><th>Score Range</th><th>Goal</th><th>Timeline</th><th>Monitoring</th><th>Recommended</th><th>Date</th></tr></thead><tbody id="tbl-quizzes"><tr><td colspan="11" class="empty">Loading...</td></tr></tbody></table></div></div>
+  <div id="sec-contacts" class="section"><div class="card"><table><thead><tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Subject</th><th>Message</th><th>Status</th><th>Date</th></tr></thead><tbody id="tbl-contacts"><tr><td colspan="8" class="empty">Loading...</td></tr></tbody></table></div></div>
+  <div id="sec-emails" class="section"><div class="card"><table><thead><tr><th>#</th><th>Recipient</th><th>Subject</th><th>Sequence</th><th>Step</th><th>Status</th><th>Resend ID</th><th>Date</th></tr></thead><tbody id="tbl-emails"><tr><td colspan="8" class="empty">Loading...</td></tr></tbody></table></div></div>
+
+  <div style="text-align:center;padding:2rem;color:#6b7280;font-size:.72rem">&copy; 2026 RJ Business Solutions — All submissions from D1</div>
+
+  <script>
+  function showSection(name) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('sec-'+name).classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+  function fmtDate(d) { if (!d) return '—'; const dt = new Date(d+'Z'); return dt.toLocaleDateString()+' '+dt.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }
+  function esc(s) { return (s||'—').toString().replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  async function loadData() {
+    try {
+      const res = await fetch('/api/admin/submissions');
+      const json = await res.json();
+      if (!json.success) return;
+      const d = json.data;
+      document.getElementById('cnt-leads').textContent = d.counts.leads;
+      document.getElementById('cnt-quizzes').textContent = d.counts.quizzes;
+      document.getElementById('cnt-contacts').textContent = d.counts.contacts;
+      document.getElementById('cnt-emails').textContent = d.counts.emails;
+      // Leads
+      document.getElementById('tbl-leads').innerHTML = d.leads.length ? d.leads.map(l => '<tr><td>'+l.id+'</td><td>'+esc(l.name)+'</td><td>'+esc(l.email)+'</td><td>'+esc(l.phone)+'</td><td style="color:'+({basic:'#3b82f6',professional:'#8b5cf6',premium:'#f59e0b'}[l.plan]||'#9ca3af')+'">'+esc(l.plan)+'</td><td>'+esc(l.source)+'</td><td>'+esc(l.locale)+'</td><td>'+esc(l.utm_source)+'</td><td>'+fmtDate(l.created_at)+'</td></tr>').join('') : '<tr><td colspan="9" class="empty">No leads yet</td></tr>';
+      // Quizzes
+      document.getElementById('tbl-quizzes').innerHTML = d.quiz_responses.length ? d.quiz_responses.map(q => '<tr><td>'+q.id+'</td><td>'+esc(q.name)+'</td><td>'+esc(q.email)+'</td><td>'+esc(q.phone)+'</td><td>'+esc(q.negative_items)+'</td><td>'+esc(q.credit_score_range)+'</td><td>'+esc(q.goal)+'</td><td>'+esc(q.timeline)+'</td><td>'+esc(q.has_monitoring)+'</td><td style="color:'+({basic:'#3b82f6',professional:'#8b5cf6',premium:'#f59e0b'}[q.recommended_plan]||'#9ca3af')+';font-weight:700">'+esc(q.recommended_plan)+'</td><td>'+fmtDate(q.created_at)+'</td></tr>').join('') : '<tr><td colspan="11" class="empty">No quiz responses yet</td></tr>';
+      // Contacts
+      document.getElementById('tbl-contacts').innerHTML = d.contact_submissions.length ? d.contact_submissions.map(ct => '<tr><td>'+ct.id+'</td><td>'+esc(ct.name)+'</td><td>'+esc(ct.email)+'</td><td>'+esc(ct.phone)+'</td><td>'+esc(ct.subject)+'</td><td title="'+esc(ct.message)+'">'+esc(ct.message).substring(0,60)+'</td><td class="status-'+ct.status+'">'+esc(ct.status)+'</td><td>'+fmtDate(ct.created_at)+'</td></tr>').join('') : '<tr><td colspan="8" class="empty">No contact submissions yet</td></tr>';
+      // Emails
+      document.getElementById('tbl-emails').innerHTML = d.email_log.length ? d.email_log.map(e => '<tr><td>'+e.id+'</td><td>'+esc(e.recipient)+'</td><td>'+esc(e.subject)+'</td><td>'+esc(e.sequence)+'</td><td>'+e.step+'</td><td class="status-'+e.status+'">'+esc(e.status)+'</td><td style="font-size:.7rem">'+esc(e.resend_id)+'</td><td>'+fmtDate(e.created_at)+'</td></tr>').join('') : '<tr><td colspan="8" class="empty">No emails sent yet</td></tr>';
+    } catch(err) { console.error('Load error:', err); }
+  }
+  loadData();
+  setInterval(loadData, 30000);
+  </script>
+</body>
+</html>`)
+})
 
 // ═══════════════════════════════════════════════════════════════
 // SITEMAP.XML (UPDATED with all new pages)
@@ -4402,8 +4795,8 @@ app.get('/sitemap.xml', (c) => {
     for (const plan of ['basic','professional','premium']) {
       pages.push({ loc: `${BASE}/${loc}/${plan}`, priority: '0.9', changefreq: 'monthly' })
     }
-    for (const pg of ['about-rick-jefferson','credit-monitoring','contact','faq','testimonials','resources','blog','itin-credit-repair','legal','privacy','terms','portal','partners','croa-disclosure','client-waiver','refund-policy','results','press','certifications']) {
-      pages.push({ loc: `${BASE}/${loc}/${pg}`, priority: pg === 'itin-credit-repair' ? '0.95' : pg === 'portal' || pg === 'partners' ? '0.8' : '0.7', changefreq: 'monthly' })
+    for (const pg of ['about-rick-jefferson','credit-monitoring','contact','faq','testimonials','resources','blog','itin-credit-repair','legal','privacy','terms','portal','partners','croa-disclosure','client-waiver','refund-policy','results','press','certifications','quiz']) {
+      pages.push({ loc: `${BASE}/${loc}/${pg}`, priority: pg === 'itin-credit-repair' ? '0.95' : pg === 'quiz' ? '0.9' : pg === 'portal' || pg === 'partners' ? '0.8' : '0.7', changefreq: 'monthly' })
     }
     for (const plan of ['basic','professional','premium']) {
       pages.push({ loc: `${BASE}/${loc}/checkout/${plan}`, priority: '0.85', changefreq: 'monthly' })
